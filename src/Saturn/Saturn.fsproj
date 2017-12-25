@@ -6,6 +6,7 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controler.fs" />
     <Compile Include="Builders.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
