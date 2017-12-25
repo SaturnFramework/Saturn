@@ -1,4 +1,4 @@
-module Saturn
+module Saturn.Router
 
 open Giraffe.HttpHandlers
 open Giraffe.TokenRouter
