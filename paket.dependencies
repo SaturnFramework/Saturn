@@ -1,6 +1,8 @@
 source https://www.nuget.org/api/v2
+source ../Giraffe/src/Giraffe/bin/Release
 
 framework: >= net461
 nuget FAKE
 nuget FSharp.Core
 nuget Giraffe
+nuget Microsoft.AspNetCore
