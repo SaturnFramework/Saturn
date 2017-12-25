@@ -2,18 +2,21 @@ module Saturn.Router
 
 open Giraffe.HttpHandlers
 open Giraffe.TokenRouter
-open Giraffe.Tasks
 open System.Collections.Generic
+open Microsoft.AspNetCore.Http
 
 type PipelineBuilder () =
   member __.Yield(_) : HttpHandler =
-    fun nxt cntx -> task {return Some cntx}
+    fun nxt cntx -> nxt cntx
 
   [<CustomOperation("plug")>]
   member __.Plug(state, plug) : HttpHandler  = state >=> plug
 
-  [<CustomOperation("text")>]  member __.Text(state, cnt) : HttpHandler  = state >=> (text cnt)
+  [<CustomOperation("text")>]
+  member __.Text(state, cnt) : HttpHandler  = state >=> (text cnt)
 
+  [<CustomOperation("set_header")>]
+  member __.SetHeader(state, key, value) : HttpHandler  = state >=> (setHttpHeader key value)
 
 let pipeline = PipelineBuilder()
 
@@ -24,17 +27,49 @@ type RouteType =
   | Put
   | Delete
   | Patch
-  | NoMethod
+  | Forward
 
-type ScopeState = {
-  Routes: Dictionary<string * RouteType, HttpHandler list>
-  RoutesF: Dictionary<string * RouteType, (obj -> HttpHandler) list>
+type ScopeState =
+  { Routes: Dictionary<string * RouteType, HttpHandler list>
+    RoutesF: Dictionary<string * RouteType, (obj -> HttpHandler) list>
 
-  NotFoundHandler: HttpHandler
-  Pipelines: HttpHandler list
-}
+    NotFoundHandler: HttpHandler
+    Pipelines: HttpHandler list
+  }
+  with
+    member internal state.GetRoutes(typ: RouteType) =
+      let rts =
+        state.Routes
+        |> Seq.map(|KeyValue|)
+        |> Seq.filter(fun ((_, t), _) -> t = typ )
+        |> Seq.map (fun ((p, _), acts) -> (p, acts |> List.rev))
+      let rtsf =
+        state.RoutesF
+        |> Seq.map(|KeyValue|)
+        |> Seq.filter(fun ((_, t), _) -> t = typ )
+        |> Seq.map (fun ((p, _), (acts)) -> (p, acts |> List.rev))
+      rts,rtsf
 
-type ScopeBuilder(scope) =
+type ScopeBuilder() =
+
+  let addRoute typ state path action : ScopeState =
+    let action =  action |> List.foldBack (>=>) state.Pipelines
+    let lst =
+      match state.Routes.TryGetValue((path, typ)) with
+      | false, _ -> []
+      | true, lst -> lst
+    state.Routes.[(path, typ)] <-  action::lst
+    state
+
+  let addRouteF typ state (path: PrintfFormat<_,_,_,_,'f>) action : ScopeState =
+    let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
+    let r = fun (o : obj) -> o |> unbox<'f> |> action
+    let lst =
+      match state.RoutesF.TryGetValue((path.Value, typ)) with
+      | false, _ -> []
+      | true, lst -> lst
+    state.RoutesF.[(path.Value, typ)] <- r::lst
+    state
 
   member __.Yield(_) : ScopeState =
     { Routes = Dictionary()
@@ -43,105 +78,112 @@ type ScopeBuilder(scope) =
       NotFoundHandler = setStatusCode 404 >=> text "Not found" }
 
   member __.Run(state : ScopeState) : HttpHandler =
-    let lst = []
-      // yield GET (List.rev state.Get)
-      // yield POST (List.rev state.Post)
-      // yield PUT (List.rev state.Put)
-      // yield DELETE (List.rev state.Delete)
-      // yield! List.rev state.NoMethod
-    // ]
-    Giraffe.HttpHandlers.route scope >=> (router state.NotFoundHandler lst)
+    let generateRoutes typ =
+      let routes, routesf = state.GetRoutes typ
+      let routes = routes |> Seq.map (fun (p, lst) -> route p (choose lst))
+      let routesf = routesf |> Seq.map (fun (p, lst) ->
+        let pf = PrintfFormat<_,_,_,_,_> p
+        let chooseF = fun o ->
+          lst
+          |> List.map (fun f -> f o)
+          |> choose
+        routefUnsafe pf chooseF
+      )
+      routes, routesf
+
+    let gets, getsf = generateRoutes RouteType.Get
+    let posts, postsf = generateRoutes RouteType.Post
+    let puts, putsf = generateRoutes RouteType.Put
+    let deletes, deletesf = generateRoutes RouteType.Put
+
+    let forwards, _ = state.GetRoutes RouteType.Forward
+    let forwards =
+      forwards
+      |> Seq.map (fun (p, lst) ->
+        let act = ((fun nxt ctx ->
+          let path = ctx.Request.Path.Value
+          if path.StartsWith p then
+            let newPath = path.Substring p.Length
+            ctx.Request.Path <- PathString(newPath)
+          nxt ctx)
+          >=> choose lst )
+
+        routef (PrintfFormat<_,_,_,_,string>(p + "%s")) (fun _ -> act ))
+
+    let lst = [
+      yield GET [
+        yield! gets
+        yield! getsf
+        yield! forwards
+      ]
+      yield POST [
+        yield! posts
+        yield! postsf
+        yield! forwards
+      ]
+      yield PUT [
+        yield! puts
+        yield! putsf
+        yield! forwards
+      ]
+      yield DELETE [
+        yield! deletes
+        yield! deletesf
+        yield! forwards
+      ]
+    ]
+    router state.NotFoundHandler lst
 
   [<CustomOperation("get")>]
   member __.Get(state, path : string, action: HttpHandler) : ScopeState =
-    let action =  action |> List.foldBack (>=>) state.Pipelines
-    let lst =
-      match state.Routes.TryGetValue((path, RouteType.Get)) with
-      | false, _ -> []
-      | true, lst -> lst
-    state.Routes.Add((path, RouteType.Get), action::lst )
-    state
+    addRoute RouteType.Get state path action
 
   [<CustomOperation("getf")>]
   member __.GetF(state, path : PrintfFormat<_,_,_,_,'f>, action) : ScopeState =
-    let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
-    let r = fun (o : obj) -> o |> unbox<'f> |> action
-    let lst =
-      match state.RoutesF.TryGetValue((path.Value, RouteType.Get)) with
-      | false, _ -> []
-      | true, lst -> lst
-    state.RoutesF.Add((path.Value, RouteType.Get), r::lst )
-    state
+    addRouteF RouteType.Get state path action
 
-  // [<CustomOperation("post")>]
-  // member __.Post(state, path : string, action: HttpHandler) : RouterState =
-  //   let action =  action |> List.foldBack (>=>) state.Pipelines
-  //   let r = route path action
-  //   {state with Post = r::state.Post}
+  [<CustomOperation("post")>]
+  member __.Post(state, path : string, action: HttpHandler) : ScopeState =
+    addRoute RouteType.Post state path action
 
-  // [<CustomOperation("postf")>]
-  // member __.PostF(state, path, action) : RouterState =
-  //   let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
-  //   let r = routef path action
-  //   {state with Post = r::state.Post}
+  [<CustomOperation("postf")>]
+  member __.PostF(state, path, action) : ScopeState =
+    addRouteF RouteType.Post state path action
 
-  // [<CustomOperation("put")>]
-  // member __.Put(state, path : string, action: HttpHandler) : RouterState =
-  //   let action =  action |> List.foldBack (>=>) state.Pipelines
-  //   let r = route path action
-  //   {state with Put = r::state.Put}
+  [<CustomOperation("put")>]
+  member __.Put(state, path : string, action: HttpHandler) : ScopeState =
+    addRoute RouteType.Put state path action
 
-  // [<CustomOperation("putf")>]
-  // member __.Put(state, path, action) : RouterState =
-  //   let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
-  //   let r = routef path action
-  //   {state with Put = r::state.Put}
+  [<CustomOperation("putf")>]
+  member __.PutF(state, path, action) : ScopeState =
+    addRouteF RouteType.Put state path action
 
-  // [<CustomOperation("delete")>]
-  // member __.Delete(state, path : string, action: HttpHandler) : RouterState =
-  //   let action =  action |> List.foldBack (>=>) state.Pipelines
-  //   let r = route path action
-  //   {state with Delete = r::state.Delete}
+  [<CustomOperation("delete")>]
+  member __.Delete(state, path : string, action: HttpHandler) : ScopeState =
+    addRoute RouteType.Delete state path action
 
-  // [<CustomOperation("deletef")>]
-  // member __.Delete(state, path, action) : RouterState =
-  //   let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
-  //   let r = routef path action
-  //   {state with Delete = r::state.Delete}
+  [<CustomOperation("deletef")>]
+  member __.DeleteF(state, path, action) : ScopeState =
+    addRouteF RouteType.Delete state path action
 
-  // [<CustomOperation("patch")>]
-  // member __.Patch(state, path : string, action: HttpHandler) : RouterState =
-  //   let action =  action |> List.foldBack (>=>) state.Pipelines
-  //   let r = route path action
-  //   {state with Patch = r::state.Patch}
+  [<CustomOperation("patch")>]
+  member __.Patch(state, path : string, action: HttpHandler) : ScopeState =
+    addRoute RouteType.Patch state path action
 
-  // [<CustomOperation("patchf")>]
-  // member __.Patch(state, path, action) : RouterState =
-  //   let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
-  //   let r = routef path action
-  //   {state with Patch = r::state.Patch}
+  [<CustomOperation("patchf")>]
+  member __.PatchF(state, path, action) : ScopeState =
+    addRouteF RouteType.Patch state path action
 
-  // [<CustomOperation("route")>]
-  // member __.Route(state, path, action) : RouterState =
-  //   let action =  action |> List.foldBack (>=>) state.Pipelines
-  //   let r = route path action
-  //   {state with NoMethod = r::state.NoMethod}
-
-  // [<CustomOperation("routef")>]
-  // member __.Route(state, path, action) : RouterState =
-  //   let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
-  //   let r = routef path action
-  //   {state with NoMethod = r::state.NoMethod}
-
-  // [<CustomOperation("plug")>]
-  // member __.Plug(state, action) : RouterState =
-  //   let action =  action |> List.foldBack (>=>) state.Pipelines
-  //   let r = route "/" action
-  //   {state with NoMethod = r::state.NoMethod}
+  [<CustomOperation("forward")>]
+  member __.Forward(state, path : string, action : HttpHandler) : ScopeState =
+    addRoute RouteType.Forward state path action
 
   [<CustomOperation("pipe_through")>]
   member __.PipeThrough(state, pipe) : ScopeState =
     {state with Pipelines = pipe::state.Pipelines}
 
+  [<CustomOperation("error_handler")>]
+  member __.ErrprHandler(state, handler) : ScopeState =
+    {state with NotFoundHandler = handler}
 
-let scope path = ScopeBuilder(path)
+let scope = ScopeBuilder()
