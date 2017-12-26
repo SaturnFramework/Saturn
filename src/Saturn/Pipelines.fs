@@ -1,5 +1,8 @@
 namespace Saturn
 
+open Microsoft.AspNetCore.Http
+open Giraffe.Tasks
+open System
 module Pipeline =
 
   open Giraffe.HttpHandlers
@@ -133,8 +136,34 @@ module Pipeline =
       set_header "x-permitted-cross-domain-policies" "none"
   }
 
-  //TODO: csrf protection - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/csrf_protection.ex
+  ///TODO: csrf protection - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/csrf_protection.ex
   let protectFromForgery : HttpHandler = failwith "Not implemented"
 
   ///Enables CORS pretection using provided config. Use `CORS.defaultCORSConfig` for default configuration.
   let enableCors config : HttpHandler = CORS.cors config
+
+  ///Fetches session from session provider. If it won't be called session will be synchronusly fetched on first usage.
+  let fetchSession (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
+    task {
+      do! ctx.Session.LoadAsync()
+      return! nxt ctx
+    }
+
+  ///Convert `HEAD` requests to `GET` requests.
+  let head (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
+    if ctx.Request.Method = "HEAD" then ctx.Request.Method <- "GET"
+    nxt ctx
+
+  ///Pipeline for generating a unique request id for each request. A generated request id will in the format `uq8hs30oafhj5vve8ji5pmp7mtopc08f`.
+  ///If a request id already exists as the `x-request-id` HTTP request header, then that value will be used assuming it is between 20 and 200 characters. If it is not, a new request id will be generated.
+  ///Request id is put into `x-request-id` HTTP header and into `Items` directory of HttpContext with `RequestId` key.
+  let requestId  (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
+    let reqId =
+      match ctx.Request.Headers.TryGetValue "x-request-id" with
+      | true, v when v.[0].Length >= 20 && v.[0].Length <= 200 -> v.[0]
+      | _ -> Guid.NewGuid().ToString("N")
+    ctx.Items.["RequestId"] <- reqId
+    setHttpHeader "x-request-id" reqId nxt ctx
+
+  ///TODO: force SSL connections - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/ssl.ex#L1
+  let ssl : HttpHandler = failwith "Not implemented"
