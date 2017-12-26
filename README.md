@@ -4,7 +4,7 @@ Saturn is a web development framework written in F# which implements the server-
 
 It's havily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 
-### Saturn rings
+## Saturn rings
 
 Saturn itself is top layer of a multi layer system designed to create flexible, productive environment for creating web applications.
 
@@ -19,13 +19,13 @@ Saturn itself is top layer of a multi layer system designed to create flexible, 
 
 #### Some good data access library and I have no idea which -_-
 
-### Overview
+## Overview
 
 Building on top of battle-tested ASP.NET Core, and highly flexible, extendable model of Giraffe Saturn provides high level abstractions, helpers and tools to enable high developer productivity, at the same time keeping high application performance provided by Kestrel and Giraffe.
 
 Saturn is made up of a number of distinct parts, each with its own purpose and role to play in building a web application.
 
- - Endpoint [Not implemented yet]
+ - Endpoint **[Not implemented yet]**
     - the start and end of the request lifecycle
     - handles all aspects of requests up until the point where the router takes over
     - provides a core set of plugs to apply to all requests
@@ -41,14 +41,14 @@ Saturn is made up of a number of distinct parts, each with its own purpose and r
         - prepare data and pass it into views
         - invoke rendering via views
         - perform redirects
- - Views [Not implemented yet]
+ - Views  **[Only Giraffe functionality]**
     - render templates
     - act as a presentation layer
     - define helper functions, available in templates, to decorate data for presentation
- - Channels [Not implemented yet]
+ - Channels  **[Not implemented yet]**
     - manage sockets for easy realtime communication
     - are analogous to controllers except that they allow bi-directional communication with persistent connections
- - Scaffolding scripts [Not implemented yet]
+ - Scaffolding scripts  **[Not implemented yet]**
 
 ## How to contribute
 
