@@ -6,8 +6,12 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Utils.fs" />
+    <Compile Include="Common.fs" />
+    <Compile Include="CORS.fs" />
     <Compile Include="Controler.fs" />
-    <Compile Include="Builders.fs" />
+    <Compile Include="Router.fs" />
+    <Compile Include="Pipelines.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

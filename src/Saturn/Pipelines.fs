@@ -1,13 +1,9 @@
-module Saturn.Router
+module Saturn.Pipeline
 
 open Giraffe.HttpHandlers
-open Giraffe.TokenRouter
-open System.Collections.Generic
-open Microsoft.AspNetCore.Http
 
 type PipelineBuilder internal () =
-  member __.Yield(_) : HttpHandler =
-    fun nxt cntx -> nxt cntx
+  member __.Yield(_) : HttpHandler = succeed
 
   ///`plug` enables adding any additional `HttpHandler` to the pipeline
   [<CustomOperation("plug")>]
@@ -112,170 +108,31 @@ type PipelineBuilder internal () =
 ///`pipeline` computation expression is a way to create `HttpHandler` using composition of low-level helper functions.
 let pipeline = PipelineBuilder()
 
-[<RequireQualifiedAccess>]
-type RouteType =
-  | Get
-  | Post
-  | Put
-  | Delete
-  | Patch
-  | Forward
+let acceptJson : HttpHandler = mustAccept ["application/json"]
 
-type ScopeState =
-  { Routes: Dictionary<string * RouteType, HttpHandler list>
-    RoutesF: Dictionary<string * RouteType, (obj -> HttpHandler) list>
+let acceptXml : HttpHandler = mustAccept ["application/xml"]
 
-    NotFoundHandler: HttpHandler
-    Pipelines: HttpHandler list
-  }
-  with
-    member internal state.GetRoutes(typ: RouteType) =
-      let rts =
-        state.Routes
-        |> Seq.map(|KeyValue|)
-        |> Seq.filter(fun ((_, t), _) -> t = typ )
-        |> Seq.map (fun ((p, _), acts) -> (p, acts |> List.rev))
-      let rtsf =
-        state.RoutesF
-        |> Seq.map(|KeyValue|)
-        |> Seq.filter(fun ((_, t), _) -> t = typ )
-        |> Seq.map (fun ((p, _), (acts)) -> (p, acts |> List.rev))
-      rts,rtsf
+let acceptHtml : HttpHandler = mustAccept ["text/html"]
 
-type ScopeBuilder internal () =
+let acceptMultipart : HttpHandler = mustAccept ["multipart/form-data"]
 
-  let addRoute typ state path action : ScopeState =
-    let action =  action |> List.foldBack (>=>) state.Pipelines
-    let lst =
-      match state.Routes.TryGetValue((path, typ)) with
-      | false, _ -> []
-      | true, lst -> lst
-    state.Routes.[(path, typ)] <-  action::lst
-    state
+/// Put headers that improve browser security.
+/// It sets the following headers:
+///  * x-frame-options - set to SAMEORIGIN to avoid clickjacking through iframes unless in the same origin
+///  * x-content-type-options - set to nosniff. This requires script and style tags to be sent with proper content type
+///  * x-xss-protection - set to "1; mode=block" to improve XSS protection on both Chrome and IE
+///  * x-download-options - set to noopen to instruct the browser not to open a download directly in the browser, to avoid HTML files rendering inline and accessing the security context of the application (like critical domain cookies)
+///  * x-permitted-cross-domain-policies - set to none to restrict Adobe Flash Player’s access to data
+let putSecureBrowserHeaders : HttpHandler = pipeline {
+    set_header "x-frame-option" "SAMEORIGIN"
+    set_header "x-xss-protection" "1; mode=block"
+    set_header "x-content-type-options" "nosniff"
+    set_header "x-download-options" "noopen"
+    set_header "x-permitted-cross-domain-policies" "none"
+}
 
-  let addRouteF typ state (path: PrintfFormat<_,_,_,_,'f>) action : ScopeState =
-    let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
-    let r = fun (o : obj) -> o |> unbox<'f> |> action
-    let lst =
-      match state.RoutesF.TryGetValue((path.Value, typ)) with
-      | false, _ -> []
-      | true, lst -> lst
-    state.RoutesF.[(path.Value, typ)] <- r::lst
-    state
+//TODO: csrf protection - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/csrf_protection.ex
 
-  member __.Yield(_) : ScopeState =
-    { Routes = Dictionary()
-      RoutesF = Dictionary()
-      Pipelines = []
-      NotFoundHandler = setStatusCode 404 >=> text "Not found" }
 
-  member __.Run(state : ScopeState) : HttpHandler =
-    let generateRoutes typ =
-      let routes, routesf = state.GetRoutes typ
-      let routes = routes |> Seq.map (fun (p, lst) -> route p (choose lst))
-      let routesf = routesf |> Seq.map (fun (p, lst) ->
-        let pf = PrintfFormat<_,_,_,_,_> p
-        let chooseF = fun o ->
-          lst
-          |> List.map (fun f -> f o)
-          |> choose
-        routefUnsafe pf chooseF
-      )
-      routes, routesf
-
-    let gets, getsf = generateRoutes RouteType.Get
-    let posts, postsf = generateRoutes RouteType.Post
-    let puts, putsf = generateRoutes RouteType.Put
-    let deletes, deletesf = generateRoutes RouteType.Put
-
-    let forwards, _ = state.GetRoutes RouteType.Forward
-    let forwards =
-      forwards
-      |> Seq.map (fun (p, lst) ->
-        let act = ((fun nxt ctx ->
-          let path = ctx.Request.Path.Value
-          if path.StartsWith p then
-            let newPath = path.Substring p.Length
-            ctx.Request.Path <- PathString(newPath)
-          nxt ctx)
-          >=> choose lst )
-
-        routef (PrintfFormat<_,_,_,_,string>(p + "%s")) (fun _ -> act ))
-
-    let lst = [
-      yield GET [
-        yield! gets
-        yield! getsf
-        yield! forwards
-      ]
-      yield POST [
-        yield! posts
-        yield! postsf
-        yield! forwards
-      ]
-      yield PUT [
-        yield! puts
-        yield! putsf
-        yield! forwards
-      ]
-      yield DELETE [
-        yield! deletes
-        yield! deletesf
-        yield! forwards
-      ]
-    ]
-    router state.NotFoundHandler lst
-
-  [<CustomOperation("get")>]
-  member __.Get(state, path : string, action: HttpHandler) : ScopeState =
-    addRoute RouteType.Get state path action
-
-  [<CustomOperation("getf")>]
-  member __.GetF(state, path : PrintfFormat<_,_,_,_,'f>, action) : ScopeState =
-    addRouteF RouteType.Get state path action
-
-  [<CustomOperation("post")>]
-  member __.Post(state, path : string, action: HttpHandler) : ScopeState =
-    addRoute RouteType.Post state path action
-
-  [<CustomOperation("postf")>]
-  member __.PostF(state, path, action) : ScopeState =
-    addRouteF RouteType.Post state path action
-
-  [<CustomOperation("put")>]
-  member __.Put(state, path : string, action: HttpHandler) : ScopeState =
-    addRoute RouteType.Put state path action
-
-  [<CustomOperation("putf")>]
-  member __.PutF(state, path, action) : ScopeState =
-    addRouteF RouteType.Put state path action
-
-  [<CustomOperation("delete")>]
-  member __.Delete(state, path : string, action: HttpHandler) : ScopeState =
-    addRoute RouteType.Delete state path action
-
-  [<CustomOperation("deletef")>]
-  member __.DeleteF(state, path, action) : ScopeState =
-    addRouteF RouteType.Delete state path action
-
-  [<CustomOperation("patch")>]
-  member __.Patch(state, path : string, action: HttpHandler) : ScopeState =
-    addRoute RouteType.Patch state path action
-
-  [<CustomOperation("patchf")>]
-  member __.PatchF(state, path, action) : ScopeState =
-    addRouteF RouteType.Patch state path action
-
-  [<CustomOperation("forward")>]
-  member __.Forward(state, path : string, action : HttpHandler) : ScopeState =
-    addRoute RouteType.Forward state path action
-
-  [<CustomOperation("pipe_through")>]
-  member __.PipeThrough(state, pipe) : ScopeState =
-    {state with Pipelines = pipe::state.Pipelines}
-
-  [<CustomOperation("error_handler")>]
-  member __.ErrprHandler(state, handler) : ScopeState =
-    {state with NotFoundHandler = handler}
-
-let scope = ScopeBuilder()
+///Enables CORS pretection using provided config. Use `CORS.defaultCORSConfig` for default configuration.
+let enableCors config : HttpHandler = CORS.cors config
