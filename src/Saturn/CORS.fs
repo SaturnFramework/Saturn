@@ -1,159 +1,161 @@
-module Saturn.CORS
+namespace Saturn
 
-open Utils
-open Giraffe.HttpHandlers
+module CORS =
 
-[<Literal>]
-let Origin = "Origin"
+  open Utils
+  open Giraffe.HttpHandlers
 
-[<Literal>]
-let AccessControlRequestMethod = "Access-Control-Request-Method"
+  [<Literal>]
+  let Origin = "Origin"
 
-[<Literal>]
-let AccessControlRequestHeaders = "Access-Control-Request-Headers"
+  [<Literal>]
+  let AccessControlRequestMethod = "Access-Control-Request-Method"
 
-[<Literal>]
-let AccessControlAllowOrigin = "Access-Control-Allow-Origin"
+  [<Literal>]
+  let AccessControlRequestHeaders = "Access-Control-Request-Headers"
 
-[<Literal>]
-let AccessControlAllowMethods = "Access-Control-Allow-Methods"
+  [<Literal>]
+  let AccessControlAllowOrigin = "Access-Control-Allow-Origin"
 
-[<Literal>]
-let AccessControlAllowHeaders = "Access-Control-Allow-Headers"
+  [<Literal>]
+  let AccessControlAllowMethods = "Access-Control-Allow-Methods"
 
-[<Literal>]
-let AccessControlAllowCredentials = "Access-Control-Allow-Credentials"
+  [<Literal>]
+  let AccessControlAllowHeaders = "Access-Control-Allow-Headers"
 
-[<Literal>]
-let AccessControlExposeHeaders = "Access-Control-Expose-Headers"
+  [<Literal>]
+  let AccessControlAllowCredentials = "Access-Control-Allow-Credentials"
 
-[<Literal>]
-let AccessControlMaxAge = "Access-Control-Max-Age"
+  [<Literal>]
+  let AccessControlExposeHeaders = "Access-Control-Expose-Headers"
 
-/// The configuration values for CORS
-type CORSConfig =
-  { /// The list of allowed Uri(s) for requests.
-    allowedUris             : InclusiveOption<string list>
-    /// The list of allowed HttpMethods for the request.
-    allowedMethods          : InclusiveOption<System.Net.Http.HttpMethod list>
-    /// Allow cookies? This is sent in the AccessControlAllowCredentials header.
-    allowCookies            : bool
-    /// The list of response headers exposed to client. This is sent in AccessControlExposeHeaders header.
-    exposeHeaders           : InclusiveOption<string list>
-    /// Max age in seconds the user agent is allowed to cache the result of the request.
-    maxAge                  : int option }
+  [<Literal>]
+  let AccessControlMaxAge = "Access-Control-Max-Age"
 
-let private isAllowedOrigin config (value : string) =
-  match config.allowedUris with
-  | InclusiveOption.All ->
-    true
+  /// The configuration values for CORS
+  type CORSConfig =
+    { /// The list of allowed Uri(s) for requests.
+      allowedUris             : InclusiveOption<string list>
+      /// The list of allowed HttpMethods for the request.
+      allowedMethods          : InclusiveOption<System.Net.Http.HttpMethod list>
+      /// Allow cookies? This is sent in the AccessControlAllowCredentials header.
+      allowCookies            : bool
+      /// The list of response headers exposed to client. This is sent in AccessControlExposeHeaders header.
+      exposeHeaders           : InclusiveOption<string list>
+      /// Max age in seconds the user agent is allowed to cache the result of the request.
+      maxAge                  : int option }
 
-  | InclusiveOption.None ->
-    false
+  let private isAllowedOrigin config (value : string) =
+    match config.allowedUris with
+    | InclusiveOption.All ->
+      true
 
-  | InclusiveOption.Some uris ->
-    uris
-    |> List.exists (String.equalsCaseInsensitive value)
+    | InclusiveOption.None ->
+      false
 
-let private setMaxAgeHeader config : HttpHandler =
-  match config.maxAge with
-  | None ->
-    succeed
+    | InclusiveOption.Some uris ->
+      uris
+      |> List.exists (String.equalsCaseInsensitive value)
 
-  | Some age ->
-    setHttpHeader AccessControlMaxAge (age.ToString())
-
-let private setAllowCredentialsHeader config =
-  if config.allowCookies then
-      setHttpHeader AccessControlAllowCredentials "true"
-  else
+  let private setMaxAgeHeader config : HttpHandler =
+    match config.maxAge with
+    | None ->
       succeed
 
-let private setAllowMethodsHeader config value =
-  match config.allowedMethods with
-  | InclusiveOption.None ->
-    succeed
+    | Some age ->
+      setHttpHeader AccessControlMaxAge (age.ToString())
 
-  | InclusiveOption.All ->
-    setHttpHeader AccessControlAllowMethods "*"
-
-  | InclusiveOption.Some (m :: ms) ->
-    let exists = m.ToString() = value || List.exists (fun m -> m.ToString() = value) ms
-    if exists then
-      let header = sprintf "%s,%s" (m.ToString()) (ms |> Seq.map (fun i -> i.ToString()) |> String.concat( ", "))
-      setHttpHeader AccessControlAllowMethods header
+  let private setAllowCredentialsHeader config =
+    if config.allowCookies then
+        setHttpHeader AccessControlAllowCredentials "true"
     else
+        succeed
+
+  let private setAllowMethodsHeader config value =
+    match config.allowedMethods with
+    | InclusiveOption.None ->
       succeed
 
-  | InclusiveOption.Some ([]) ->
-    succeed
+    | InclusiveOption.All ->
+      setHttpHeader AccessControlAllowMethods "*"
 
-let private setAllowOriginHeader value =
-  setHttpHeader AccessControlAllowOrigin value
+    | InclusiveOption.Some (m :: ms) ->
+      let exists = m.ToString() = value || List.exists (fun m -> m.ToString() = value) ms
+      if exists then
+        let header = sprintf "%s,%s" (m.ToString()) (ms |> Seq.map (fun i -> i.ToString()) |> String.concat( ", "))
+        setHttpHeader AccessControlAllowMethods header
+      else
+        succeed
 
-let private setExposeHeadersHeader config =
-  match config.exposeHeaders with
-  | InclusiveOption.None
-  | InclusiveOption.Some [] ->
-    succeed
-  | InclusiveOption.All ->
-    setHttpHeader AccessControlExposeHeaders "*"
-  | InclusiveOption.Some hs ->
-    let header = hs |> String.concat(", ")
-    setHttpHeader AccessControlExposeHeaders header
+    | InclusiveOption.Some ([]) ->
+      succeed
 
-let cors (config : CORSConfig) : HttpHandler =
-  fun (nxt) (ctx) ->
-    let req = ctx.Request
-    match req.Headers.TryGetValue (Origin.ToLowerInvariant()) with
-    | true, originValue -> // CORS request
-      let allowedOrigin = isAllowedOrigin config (originValue.[0])
-      match req.Method with
-      | "OPTIONS" ->
-        match req.Headers.TryGetValue  (AccessControlRequestMethod.ToLowerInvariant()) with
-        | true, requestMethodHeaderValue -> // Preflight request
-          // Does the request have an Access-Control-Request-Headers header? If so, validate. If not, proceed.
-          let setAccessControlRequestHeaders =
-            match req.Headers.TryGetValue (AccessControlRequestHeaders.ToLowerInvariant()) with
-            | true, list ->
-              setHttpHeader AccessControlAllowHeaders (list |> String.concat ", ")
-            | _ ->
-              succeed
+  let private setAllowOriginHeader value =
+    setHttpHeader AccessControlAllowOrigin value
 
-          if allowedOrigin then
-            let composed =
-              setAllowMethodsHeader config requestMethodHeaderValue.[0]
-              >=> setAccessControlRequestHeaders
-              >=> setMaxAgeHeader config
-              >=> setAllowCredentialsHeader config
-              >=> setAllowOriginHeader originValue
-              >=> setStatusCode 204
-              >=> setBody [||]
-            composed nxt ctx
-          else
+  let private setExposeHeadersHeader config =
+    match config.exposeHeaders with
+    | InclusiveOption.None
+    | InclusiveOption.Some [] ->
+      succeed
+    | InclusiveOption.All ->
+      setHttpHeader AccessControlExposeHeaders "*"
+    | InclusiveOption.Some hs ->
+      let header = hs |> String.concat(", ")
+      setHttpHeader AccessControlExposeHeaders header
+
+  let cors (config : CORSConfig) : HttpHandler =
+    fun (nxt) (ctx) ->
+      let req = ctx.Request
+      match req.Headers.TryGetValue (Origin.ToLowerInvariant()) with
+      | true, originValue -> // CORS request
+        let allowedOrigin = isAllowedOrigin config (originValue.[0])
+        match req.Method with
+        | "OPTIONS" ->
+          match req.Headers.TryGetValue  (AccessControlRequestMethod.ToLowerInvariant()) with
+          | true, requestMethodHeaderValue -> // Preflight request
+            // Does the request have an Access-Control-Request-Headers header? If so, validate. If not, proceed.
+            let setAccessControlRequestHeaders =
+              match req.Headers.TryGetValue (AccessControlRequestHeaders.ToLowerInvariant()) with
+              | true, list ->
+                setHttpHeader AccessControlAllowHeaders (list |> String.concat ", ")
+              | _ ->
+                succeed
+
+            if allowedOrigin then
+              let composed =
+                setAllowMethodsHeader config requestMethodHeaderValue.[0]
+                >=> setAccessControlRequestHeaders
+                >=> setMaxAgeHeader config
+                >=> setAllowCredentialsHeader config
+                >=> setAllowOriginHeader originValue
+                >=> setStatusCode 204
+                >=> setBody [||]
+              composed nxt ctx
+            else
+              succeed nxt ctx
+
+          | _ ->
             succeed nxt ctx
 
         | _ ->
-          succeed nxt ctx
+          if allowedOrigin then
+            let composed =
+              setExposeHeadersHeader config
+              >=> setAllowCredentialsHeader config
+              >=> setAllowOriginHeader originValue
+              >=> setAllowMethodsHeader config "*"
+            composed nxt ctx
+          else
+            succeed nxt ctx // No headers will be sent. Browser will deny.
 
       | _ ->
-        if allowedOrigin then
-          let composed =
-            setExposeHeadersHeader config
-            >=> setAllowCredentialsHeader config
-            >=> setAllowOriginHeader originValue
-            >=> setAllowMethodsHeader config "*"
-          composed nxt ctx
-        else
-          succeed nxt ctx // No headers will be sent. Browser will deny.
-
-    | _ ->
-      nxt ctx // Not a CORS request
+        nxt ctx // Not a CORS request
 
 
-let defaultCORSConfig =
-  { allowedUris = InclusiveOption.All
-    allowedMethods = InclusiveOption.All
-    allowCookies = true
-    exposeHeaders = InclusiveOption.None
-    maxAge = None }
+  let defaultCORSConfig =
+    { allowedUris = InclusiveOption.All
+      allowedMethods = InclusiveOption.All
+      allowCookies = true
+      exposeHeaders = InclusiveOption.None
+      maxAge = None }

@@ -1,7 +1,8 @@
 module Sample
 
-open Saturn.Router
 open Saturn.Controler
+open Saturn.Router
+open Saturn.Pipeline
 
 open System
 open System.IO
@@ -118,7 +119,7 @@ let router = scope {
     getf "/name/%s" helloWorldName
     getf "/name/%s/%i" helloWorldNameAge
 
-    //scopes can be defined inline to simulate `TokenRouter` `subRoute` combinator
+    //scopes can be defined inline to simulate `subRoute` combinator
     forward "/other" (scope {
         pipe_through otherHeaderPipe
         error_handler (text "Other 404")
