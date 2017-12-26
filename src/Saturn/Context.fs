@@ -64,3 +64,13 @@ module Context =
       match ctx.Items.TryGetValue "RequestModel" with
       | true, o -> Some (unbox<'a> o)
       | _ -> None
+
+    ///Gets path of the request - it's relative to current `scope`
+    let getPath (ctx: HttpContext) =
+      ctx.Request.Path.Value
+
+    ///Gets url of the request
+    let getUrl (ctx: HttpContext) =
+      match ctx.Items.TryGetValue "RequestUrl" with
+      | true, o -> Some (unbox<string> o)
+      | _ -> None

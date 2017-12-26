@@ -119,7 +119,7 @@ module Router =
           yield! forwards
         ]
       ]
-      router state.NotFoundHandler lst
+      Pipeline.fetchUrl >=> router state.NotFoundHandler lst
 
     [<CustomOperation("get")>]
     member __.Get(state, path : string, action: HttpHandler) : ScopeState =

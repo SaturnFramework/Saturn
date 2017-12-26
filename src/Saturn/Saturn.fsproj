@@ -10,8 +10,8 @@
     <Compile Include="Common.fs" />
     <Compile Include="CORS.fs" />
     <Compile Include="Controler.fs" />
-    <Compile Include="Router.fs" />
     <Compile Include="Pipelines.fs" />
+    <Compile Include="Router.fs" />
     <Compile Include="Context.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
