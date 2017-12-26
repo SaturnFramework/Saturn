@@ -2,7 +2,9 @@ namespace Saturn
 
 open Microsoft.AspNetCore.Http
 open Giraffe.Tasks
+open Giraffe.HttpContextExtensions
 open System
+
 module Pipeline =
 
   open Giraffe.HttpHandlers
@@ -148,6 +150,24 @@ module Pipeline =
       do! ctx.Session.LoadAsync()
       return! nxt ctx
     }
+
+  ///Tries to model from request and puts model into `Items.RequestModel`. If it won't be called content can be fetched using `Context.Controller` helpers.
+  ///It won't crash the pipelines if fetching failed.
+  ///It optionally takes custom JSON deserializer settings, and/or culture name as arguments.
+  let fetchModel<'a> serializer culture (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
+    let clt = culture |> Option.map System.Globalization.CultureInfo.CreateSpecificCulture
+    try
+      let mdl =
+        match serializer, clt with
+        | Some s, Some c -> ctx.BindModelAsync<'a>(s,c)
+        | None, Some c -> ctx.BindModelAsync<'a>(cultureInfo = c)
+        | Some s, None -> ctx.BindModelAsync<'a>(settings = s)
+        | None, None -> ctx.BindModelAsync<'a>()
+      ctx.Items.["RequestModel"] <- mdl
+    with
+    | _ -> ()
+    nxt ctx
+
 
   ///Convert `HEAD` requests to `GET` requests.
   let head (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =

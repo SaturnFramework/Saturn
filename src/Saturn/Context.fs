@@ -59,3 +59,8 @@ module Context =
       | None, Some c -> ctx.BindModelAsync<'a>(cultureInfo = c)
       | Some s, None -> ctx.BindModelAsync<'a>(settings = s)
       | None, None -> ctx.BindModelAsync<'a>()
+
+    let loadModel<'a> (ctx: HttpContext) =
+      match ctx.Items.TryGetValue "RequestModel" with
+      | true, o -> Some (unbox<'a> o)
+      | _ -> None
