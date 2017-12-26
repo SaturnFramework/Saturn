@@ -62,14 +62,6 @@ let apiRouter = scope {
     get "/a" apiHelloWorld2
 }
 
-let otherRouter = scope {
-    pipe_through otherHeaderPipe
-    error_handler (text "Other 404")
-
-    get "/" otherHelloWorld
-    get "/a" otherHelloWorld2
-}
-
 //`controler<'Key>` CE is higher level abstraction following convention of Phoenix Controllers and `resources` macro. It will create
 // complex routing for predefined set of operations which looks like this:
 // [
@@ -126,10 +118,22 @@ let router = scope {
     getf "/name/%s" helloWorldName
     getf "/name/%s/%i" helloWorldNameAge
 
-    forward "/other" otherRouter
+    //scopes can be defined inline to simulate `TokenRouter` `subRoute` combinator
+    forward "/other" (scope {
+        pipe_through otherHeaderPipe
+        error_handler (text "Other 404")
+
+        get "/" otherHelloWorld
+        get "/a" otherHelloWorld2
+    })
+
+    // or can be defined separatly and used as HttpHandler
     forward "/api" apiRouter
+
+    // same with controlers
     forward "/users" userControler
 }
+
 
 
 [<EntryPoint>]
