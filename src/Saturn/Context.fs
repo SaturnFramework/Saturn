@@ -30,7 +30,7 @@ module Context =
 
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
-      ctx.ReturnHtmlFileAsync path //TODO: create better file plug
+      ctx.ReturnHtmlFileAsync path
 
     ///Gets model from body as JSON.
     let getJson<'a> (ctx: HttpContext) =
@@ -93,3 +93,8 @@ module Context =
       match ctx.Items.TryGetValue "RequestUrl" with
       | true, o -> Some (unbox<string> o)
       | _ -> None
+
+    //TODO: Add send download helpers - https://github.com/phoenixframework/phoenix/blob/v1.3.0/lib/phoenix/controller.ex#L851
+    let sendDownload (ctx: HttpContext) (path: string) = ()
+
+    let sendDownloadBinary (ctx: HttpContext) (content: byte []) = ()
