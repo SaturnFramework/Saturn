@@ -64,7 +64,7 @@ type ControlerBuilder<'Key> internal () =
           | Guid -> yield routef "/%O/edit" (fun input nxt ctx -> state.Edit.Value(nxt,ctx, unbox<'Key> input) )
       ]
       POST [
-        if state.Create.IsSome then yield route "/create" (fun nxt ctx -> state.Create.Value(nxt,ctx))
+        if state.Create.IsSome then yield route "/" (fun nxt ctx -> state.Create.Value(nxt,ctx))
       ]
       //TODO: Add Patch
       PUT [
