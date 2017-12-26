@@ -40,7 +40,6 @@ module Router =
   type ScopeBuilder internal () =
 
     let addRoute typ state path action : ScopeState =
-      let action =  action |> List.foldBack (>=>) state.Pipelines
       let lst =
         match state.Routes.TryGetValue((path, typ)) with
         | false, _ -> []
@@ -49,7 +48,6 @@ module Router =
       state
 
     let addRouteF typ state (path: PrintfFormat<_,_,_,_,'f>) action : ScopeState =
-      let action = fun o -> (action o) |> List.foldBack (>=>) state.Pipelines
       let r = fun (o : obj) -> o |> unbox<'f> |> action
       let lst =
         match state.RoutesF.TryGetValue((path.Value, typ)) with
@@ -119,7 +117,7 @@ module Router =
           yield! forwards
         ]
       ]
-      Pipeline.fetchUrl >=> router state.NotFoundHandler lst
+      (Pipeline.fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> router state.NotFoundHandler lst
 
     ///Adds handler for `GET` request.
     [<CustomOperation("get")>]

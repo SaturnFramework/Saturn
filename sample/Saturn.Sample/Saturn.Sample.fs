@@ -152,7 +152,7 @@ let main _ =
 
 
     WebHost.CreateDefaultBuilder()
-        .UseWebRoot(webRoot)
+        // .UseWebRoot(webRoot)
         .Configure(Action<IApplicationBuilder> configureApp)
         .UseUrls("http://0.0.0.0:8085/")
         .Build()

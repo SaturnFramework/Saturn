@@ -144,7 +144,7 @@ module Pipeline =
   }
 
   ///TODO: csrf protection - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/csrf_protection.ex
-  let protectFromForgery : HttpHandler = failwith "Not implemented"
+  let protectFromForgery : HttpHandler = succeed
 
   ///Enables CORS pretection using provided config. Use `CORS.defaultCORSConfig` for default configuration.
   let enableCors config : HttpHandler = CORS.cors config
@@ -196,7 +196,7 @@ module Pipeline =
     setHttpHeader "x-request-id" reqId nxt ctx
 
   ///TODO: force SSL connections - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/ssl.ex#L1
-  let ssl : HttpHandler = failwith "Not implemented"
+  let ssl : HttpHandler = succeed
 
   ///TODO: Add pipeline for hosting static files - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/static.ex#L1
-  let useStatic path : HttpHandler = failwith "Not implemented"
+  let useStatic path : HttpHandler = succeed
