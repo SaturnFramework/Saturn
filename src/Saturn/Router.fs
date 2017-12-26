@@ -121,54 +121,67 @@ module Router =
       ]
       Pipeline.fetchUrl >=> router state.NotFoundHandler lst
 
+    ///Adds handler for `GET` request.
     [<CustomOperation("get")>]
     member __.Get(state, path : string, action: HttpHandler) : ScopeState =
       addRoute RouteType.Get state path action
 
+    ///Adds handler for `GET` request.
     [<CustomOperation("getf")>]
     member __.GetF(state, path : PrintfFormat<_,_,_,_,'f>, action) : ScopeState =
       addRouteF RouteType.Get state path action
 
+    ///Adds handler for `POST` request.
     [<CustomOperation("post")>]
     member __.Post(state, path : string, action: HttpHandler) : ScopeState =
       addRoute RouteType.Post state path action
 
+    ///Adds handler for `POST` request.
     [<CustomOperation("postf")>]
     member __.PostF(state, path, action) : ScopeState =
       addRouteF RouteType.Post state path action
 
+    ///Adds handler for `PUT` request.
     [<CustomOperation("put")>]
     member __.Put(state, path : string, action: HttpHandler) : ScopeState =
       addRoute RouteType.Put state path action
 
+    ///Adds handler for `PUT` request.
     [<CustomOperation("putf")>]
     member __.PutF(state, path, action) : ScopeState =
       addRouteF RouteType.Put state path action
 
+    ///Adds handler for `DELETE` request.
     [<CustomOperation("delete")>]
     member __.Delete(state, path : string, action: HttpHandler) : ScopeState =
       addRoute RouteType.Delete state path action
 
+    ///Adds handler for `DELETE` request.
     [<CustomOperation("deletef")>]
     member __.DeleteF(state, path, action) : ScopeState =
       addRouteF RouteType.Delete state path action
 
+    ///Adds handler for `PATCH` request.
     [<CustomOperation("patch")>]
     member __.Patch(state, path : string, action: HttpHandler) : ScopeState =
       addRoute RouteType.Patch state path action
 
+    ///Adds handler for `PATCH` request.
     [<CustomOperation("patchf")>]
     member __.PatchF(state, path, action) : ScopeState =
       addRouteF RouteType.Patch state path action
 
+    ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
     [<CustomOperation("forward")>]
     member __.Forward(state, path : string, action : HttpHandler) : ScopeState =
       addRoute RouteType.Forward state path action
 
+    ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]
     member __.PipeThrough(state, pipe) : ScopeState =
       {state with Pipelines = pipe::state.Pipelines}
 
+    ///Adds error/not-found handler for current scope
     [<CustomOperation("error_handler")>]
     member __.ErrprHandler(state, handler) : ScopeState =
       {state with NotFoundHandler = handler}

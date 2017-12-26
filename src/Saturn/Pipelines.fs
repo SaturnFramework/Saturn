@@ -116,12 +116,16 @@ module Pipeline =
   ///`pipeline` computation expression is a way to create `HttpHandler` using composition of low-level helper functions.
   let pipeline = PipelineBuilder()
 
+  ///Accepts `application/json`
   let acceptJson : HttpHandler = mustAccept ["application/json"]
 
+  ///Accepts `application/xml`
   let acceptXml : HttpHandler = mustAccept ["application/xml"]
 
+  ///Accepts `text/html`
   let acceptHtml : HttpHandler = mustAccept ["text/html"]
 
+  ///Accepts `multipart/form-data`
   let acceptMultipart : HttpHandler = mustAccept ["multipart/form-data"]
 
   /// Put headers that improve browser security.
@@ -193,3 +197,6 @@ module Pipeline =
 
   ///TODO: force SSL connections - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/ssl.ex#L1
   let ssl : HttpHandler = failwith "Not implemented"
+
+  ///TODO: Add pipeline for hosting static files - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/static.ex#L1
+  let useStatic path : HttpHandler = failwith "Not implemented"

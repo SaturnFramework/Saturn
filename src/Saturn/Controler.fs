@@ -94,34 +94,42 @@ module Controler =
       ]
       router state.NotFoundHandler lst
 
+    ///Operation that should render (or return in case of API controlers) list of data
     [<CustomOperation("index")>]
     member __.Index (state : ControlerState<'Key>, handler) =
       {state with Index = Some handler}
 
+    ///Operation that should render (or return in case of API controlers) single entry of data
     [<CustomOperation("show")>]
     member __.Show (state : ControlerState<'Key>, handler) =
       {state with Show = Some handler}
 
+    ///Operation that should render form for adding new item
     [<CustomOperation("add")>]
     member __.Add (state : ControlerState<'Key>, handler) =
       {state with Add = Some handler}
 
+    ///Operation that should render form for editing existing item
     [<CustomOperation("edit")>]
     member __.Edit (state : ControlerState<'Key>, handler) =
       {state with Edit = Some handler}
 
+    ///Operation that creates new item
     [<CustomOperation("create")>]
     member __.Create (state : ControlerState<'Key>, handler) =
       {state with Create = Some handler}
 
+    ///Operation that updates existing item
     [<CustomOperation("update")>]
     member __.Update (state : ControlerState<'Key>, handler) =
       {state with Update = Some handler}
 
+    ///Operation that deletes existing item
     [<CustomOperation("delete")>]
     member __.Delete (state : ControlerState<'Key>, handler) =
       {state with Delete = Some handler}
 
+    ///Define error/not-found handler for the controler
     [<CustomOperation("error_handler")>]
     member __.ErrprHandler(state : ControlerState<'Key>, handler) =
       {state with NotFoundHandler = handler}
