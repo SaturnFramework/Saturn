@@ -25,11 +25,12 @@ Building on top of battle-tested ASP.NET Core, and highly flexible, extendable m
 
 Saturn is made up of a number of distinct parts, each with its own purpose and role to play in building a web application.
 
- - App **[Not implemented yet]**
+ - Application
     - the start and end of the request lifecycle
     - handles all aspects of requests up until the point where the router takes over
     - provides a core set of plugs to apply to all requests
     - dispatches requests into a router
+    - enables application and hosting configuration
  -Router
     - parses incoming requests and dispatches them to the correct controller/action, passing parameters as needed
     - provides helpers to generate route paths or urls to resources

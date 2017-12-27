@@ -6,7 +6,6 @@ open Giraffe
 open Microsoft.AspNetCore
 open System
 open Microsoft.Extensions.DependencyInjection
-open Microsoft.AspNetCore.Session
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -89,3 +88,5 @@ module Application =
       }
 
   let application = ApplicationBuilder()
+
+  let run (app: IWebHost) = app.Run()

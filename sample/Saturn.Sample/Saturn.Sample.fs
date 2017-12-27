@@ -6,12 +6,9 @@ open Saturn.Pipeline
 open Saturn.Application
 
 open System
-open System.IO
-open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Hosting
-open Microsoft.Extensions.Logging
 open Giraffe
-open Microsoft.AspNetCore
+
+open Microsoft.Extensions.Logging
 
 //Saturn is using standard HttpHandlers from Giraffe
 
@@ -141,7 +138,10 @@ let topRouter = scope {
     // same with controlers
     forward "/users" userControler
 }
-///Saturn provides easy, declarative way to define application and hosting configuratiuon
+
+///Saturn provides easy, declarative way to define application and hosting configuratiuon.
+// Things like enabling in-memory cache for session handling shouldn't require changes in multiple places, and be enabled with single "feature toggle"
+// It also enables defining common set of Pipelines that will be executed for every request, before dispatching to router
 
 let errorHandler (ex : Exception) (logger : ILogger) =
     logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
@@ -158,6 +158,6 @@ let app = application {
 
 [<EntryPoint>]
 let main _ =
-    app.Run()
+    run app
     0 // return an integer exit code
 
