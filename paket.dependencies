@@ -6,3 +6,5 @@ nuget FAKE
 nuget FSharp.Core
 nuget Giraffe
 nuget Microsoft.AspNetCore
+nuget Microsoft.AspNetCore.Session
+nuget Microsoft.Extensions.Caching.Memory

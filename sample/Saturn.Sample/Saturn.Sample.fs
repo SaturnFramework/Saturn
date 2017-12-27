@@ -3,6 +3,7 @@ module Sample
 open Saturn.Controler
 open Saturn.Router
 open Saturn.Pipeline
+open Saturn.Application
 
 open System
 open System.IO
@@ -41,6 +42,12 @@ let otherHeaderPipe = pipeline {
 let headerPipe = pipeline {
     set_header "myCustomHeader" "abcd"
     set_header "myCustomHeader2" "zxcv"
+}
+
+let endpointPipe = pipeline {
+    plug fetchSession
+    plug head
+    plug requestId
 }
 
 //`scope` CE is used to declare (sub)routers (using TokenRouter). It provides custom keywords for all HTTP methods
@@ -109,7 +116,7 @@ let userControler = controler<string> {
 //I belive that aim of the Saturn should be providing a more streamlined, higher level developer experiance on top of the great
 //Giraffe's model. It's bit like Phoenix using Plug model under the hood.
 
-let router = scope {
+let topRouter = scope {
     pipe_through headerPipe
     error_handler (text "404")
 
@@ -134,29 +141,23 @@ let router = scope {
     // same with controlers
     forward "/users" userControler
 }
+///Saturn provides easy, declarative way to define application and hosting configuratiuon
 
+let errorHandler (ex : Exception) (logger : ILogger) =
+    logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
+    clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
 
+let app = application {
+    pipe_through endpointPipe
+
+    router topRouter
+    error_handler errorHandler
+    url "http://0.0.0.0:8085/"
+    memory_cache
+}
 
 [<EntryPoint>]
 let main _ =
-    let contentRoot = Directory.GetCurrentDirectory()
-    let webRoot     = Path.Combine(contentRoot, "WebRoot")
-
-    let errorHandler (ex : Exception) (logger : ILogger) =
-        logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
-        clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
-
-    let configureApp (app : IApplicationBuilder) =
-        app.UseGiraffeErrorHandler(errorHandler)
-            .UseGiraffe router
-
-
-    WebHost.CreateDefaultBuilder()
-        // .UseWebRoot(webRoot)
-        .Configure(Action<IApplicationBuilder> configureApp)
-        .UseUrls("http://0.0.0.0:8085/")
-        .Build()
-        .Run()
-
+    app.Run()
     0 // return an integer exit code
 
