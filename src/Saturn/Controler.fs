@@ -68,7 +68,9 @@ module Controler =
         POST [
           if state.Create.IsSome then yield route "/" (fun nxt ctx -> state.Create.Value(nxt,ctx))
         ]
-        //TODO: Add Patch
+        PATCH [
+          if state.Create.IsSome then yield route "/" (fun nxt ctx -> state.Create.Value(nxt,ctx))
+        ]
         PUT [
           if state.Update.IsSome then
             match typ with

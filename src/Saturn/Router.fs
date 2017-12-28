@@ -1,5 +1,6 @@
 namespace Saturn
 
+open Giraffe.HttpHandlers
 module Router =
 
   open Giraffe.HttpHandlers
@@ -78,6 +79,8 @@ module Router =
 
       let gets, getsf = generateRoutes RouteType.Get
       let posts, postsf = generateRoutes RouteType.Post
+      let pathces, patchesf = generateRoutes RouteType.Patch
+
       let puts, putsf = generateRoutes RouteType.Put
       let deletes, deletesf = generateRoutes RouteType.Put
 
@@ -104,6 +107,11 @@ module Router =
         yield POST [
           yield! posts
           yield! postsf
+          yield! forwards
+        ]
+        yield PATCH [
+          yield! pathces
+          yield! patchesf
           yield! forwards
         ]
         yield PUT [
