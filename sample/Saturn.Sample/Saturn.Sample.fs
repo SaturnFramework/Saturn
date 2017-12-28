@@ -117,7 +117,6 @@ let topRouter = scope {
     pipe_through headerPipe
     error_handler (text "404")
 
-
     get "/" helloWorld
     get "/a" helloWorld2
     getf "/name/%s" helloWorldName
@@ -154,6 +153,7 @@ let app = application {
     error_handler errorHandler
     url "http://0.0.0.0:8085/"
     memory_cache
+    use_static "static"
 }
 
 [<EntryPoint>]

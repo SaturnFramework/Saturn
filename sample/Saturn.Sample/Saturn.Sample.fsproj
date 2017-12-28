@@ -12,6 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Saturn.Sample.fs" />
+    <Content Include="static\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
