@@ -3,6 +3,16 @@ NUGET
   remote: https://www.nuget.org/api/v2
     FAKE (4.64.3)
     FSharp.Core (4.2.3)
+    Giraffe (0.1.0-beta-700)
+      FSharp.Core (>= 4.2.3)
+      Giraffe.Tasks (>= 0.1.0-beta-010)
+      Microsoft.AspNetCore.Authentication (>= 2.0.1)
+      Microsoft.AspNetCore.Diagnostics (>= 2.0.1)
+      Microsoft.AspNetCore.Hosting.Abstractions (>= 2.0.1)
+      Newtonsoft.Json (>= 10.0.3)
+      System.Text.RegularExpressions (>= 4.3)
+      System.ValueTuple (>= 4.4)
+      System.Xml.XmlSerializer (>= 4.3)
     Giraffe.Tasks (0.1.0-beta-010)
       FSharp.Core (>= 4.2.3)
       System.ValueTuple (>= 4.4)
@@ -245,14 +255,13 @@ NUGET
     System.Threading.Tasks.Extensions (4.4) - restriction: && (>= net461) (>= netstandard2.0)
     System.ValueTuple (4.4)
     System.Xml.XmlSerializer (4.3)
-  remote: ../Giraffe/src/Giraffe/bin/Release
-    Giraffe (0.1.0-beta-801)
-      FSharp.Core (>= 4.2.3)
-      Giraffe.Tasks (>= 0.1.0-beta-010)
-      Microsoft.AspNetCore.Authentication (>= 2.0.1)
-      Microsoft.AspNetCore.Diagnostics (>= 2.0.1)
-      Microsoft.AspNetCore.Hosting.Abstractions (>= 2.0.1)
-      Newtonsoft.Json (>= 10.0.3)
-      System.Text.RegularExpressions (>= 4.3)
-      System.ValueTuple (>= 4.4)
-      System.Xml.XmlSerializer (>= 4.3)
+GIT
+  remote: https://github.com/Krzysztof-Cieslak/Giraffe
+     (6671d3e1cbaae683a5ad19ab5af7e47b86beb3a3)
+      build: powershell ./build.ps1 -Release -ExcludeTests -ExcludeSamples -Pack
+      path: /src/Giraffe/bin/Release
+      os: windows
+     (6671d3e1cbaae683a5ad19ab5af7e47b86beb3a3)
+      build: ./build.sh -Release -Pack
+      path: /src/Giraffe/bin/Release
+      os: mono

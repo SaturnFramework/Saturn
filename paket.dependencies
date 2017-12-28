@@ -1,10 +1,13 @@
 source https://www.nuget.org/api/v2
-source ../Giraffe/src/Giraffe/bin/Release
 
 framework: >= net461
 nuget FAKE
 nuget FSharp.Core
-nuget Giraffe
 nuget Microsoft.AspNetCore
 nuget Microsoft.AspNetCore.Session
 nuget Microsoft.Extensions.Caching.Memory
+
+git https://github.com/Krzysztof-Cieslak/Giraffe routef_unsafe build: "powershell ./build.ps1 -Release -ExcludeTests -ExcludeSamples -Pack", OS: windows, Packages:/src/Giraffe/bin/Release
+git https://github.com/Krzysztof-Cieslak/Giraffe routef_unsafe build: "./build.sh -Release -ExcludeTests -ExcludeSamples -Pack", OS: mono, Packages:/src/Giraffe/bin/Release
+
+nuget Giraffe
