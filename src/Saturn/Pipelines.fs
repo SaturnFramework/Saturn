@@ -199,4 +199,7 @@ module Pipeline =
   let ssl : HttpHandler = succeed
 
   ///TODO: Add pipeline for hosting static files - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/static.ex#L1
-  let useStatic path : HttpHandler = succeed
+  let useStatic path (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
+    Static.call path Static.defaultConfig nxt ctx
+
+

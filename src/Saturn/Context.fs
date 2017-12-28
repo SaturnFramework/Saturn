@@ -3,6 +3,7 @@ namespace Saturn
 open Microsoft.AspNetCore.Http
 open Giraffe.HttpContextExtensions
 open Giraffe.Tasks
+open Giraffe.HttpHandlers
 module Context =
 
   [<RequireQualifiedAccess>]
@@ -94,7 +95,8 @@ module Context =
       | true, o -> Some (unbox<string> o)
       | _ -> None
 
-    //TODO: Add send download helpers - https://github.com/phoenixframework/phoenix/blob/v1.3.0/lib/phoenix/controller.ex#L851
-    let sendDownload (ctx: HttpContext) (path: string) = ()
+    let sendDownload (ctx: HttpContext) (path: string) =
+      Static.sendFile path (fun c -> task {return Some c}) ctx
 
-    let sendDownloadBinary (ctx: HttpContext) (content: byte []) = ()
+    let sendDownloadBinary (ctx: HttpContext) (content: byte []) =
+      setBody content (fun c -> task {return Some c}) ctx

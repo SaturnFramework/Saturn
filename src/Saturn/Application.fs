@@ -87,6 +87,14 @@ module Application =
           AppConfigs = (fun (app : IApplicationBuilder)-> app.UseSession())::state.AppConfigs
       }
 
+    [<CustomOperation("use_static")>]
+    member __.UseStatic(state, path : string) =
+      {state with Pipelines = (Static.call path Static.defaultConfig)::state.Pipelines}
+
+    [<CustomOperation("use_static_config")>]
+    member __.UseStaticConfig(state, config : Static.StaticConfig, path : string ) =
+      {state with Pipelines = (Static.call path config)::state.Pipelines}
+
   let application = ApplicationBuilder()
 
   let run (app: IWebHost) = app.Run()
