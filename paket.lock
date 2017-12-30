@@ -246,7 +246,7 @@ NUGET
     System.ValueTuple (4.4)
     System.Xml.XmlSerializer (4.3)
   remote: paket-files/github.com/Krzysztof-Cieslak/Giraffe/src/Giraffe/bin/Release
-    Giraffe (0.1.0-beta-800)
+    Giraffe (0.1.0-beta-801)
       FSharp.Core (>= 4.2.3)
       Giraffe.Tasks (>= 0.1.0-beta-010)
       Microsoft.AspNetCore.Authentication (>= 2.0.1)
@@ -258,11 +258,11 @@ NUGET
       System.Xml.XmlSerializer (>= 4.3)
 GIT
   remote: https://github.com/Krzysztof-Cieslak/Giraffe
-     (1e2005c00ba71ea8231a9d22ea32c856f9985be3)
+     (569432a79eb671fbc42fc33fdf0169161ff69835)
       build: powershell ./build.ps1 -Release -ExcludeTests -ExcludeSamples -Pack
       path: /src/Giraffe/bin/Release
       os: windows
-     (1e2005c00ba71ea8231a9d22ea32c856f9985be3)
+     (569432a79eb671fbc42fc33fdf0169161ff69835)
       build: ./build.sh -Release -ExcludeTests -ExcludeSamples -Pack
       path: /src/Giraffe/bin/Release
       os: mono
