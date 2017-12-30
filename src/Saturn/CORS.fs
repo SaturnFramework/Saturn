@@ -6,31 +6,31 @@ module CORS =
   open Giraffe.HttpHandlers
 
   [<Literal>]
-  let Origin = "Origin"
+  let private Origin = "Origin"
 
   [<Literal>]
-  let AccessControlRequestMethod = "Access-Control-Request-Method"
+  let private AccessControlRequestMethod = "Access-Control-Request-Method"
 
   [<Literal>]
-  let AccessControlRequestHeaders = "Access-Control-Request-Headers"
+  let private AccessControlRequestHeaders = "Access-Control-Request-Headers"
 
   [<Literal>]
-  let AccessControlAllowOrigin = "Access-Control-Allow-Origin"
+  let private AccessControlAllowOrigin = "Access-Control-Allow-Origin"
 
   [<Literal>]
-  let AccessControlAllowMethods = "Access-Control-Allow-Methods"
+  let private AccessControlAllowMethods = "Access-Control-Allow-Methods"
 
   [<Literal>]
-  let AccessControlAllowHeaders = "Access-Control-Allow-Headers"
+  let private AccessControlAllowHeaders = "Access-Control-Allow-Headers"
 
   [<Literal>]
-  let AccessControlAllowCredentials = "Access-Control-Allow-Credentials"
+  let private AccessControlAllowCredentials = "Access-Control-Allow-Credentials"
 
   [<Literal>]
-  let AccessControlExposeHeaders = "Access-Control-Expose-Headers"
+  let private AccessControlExposeHeaders = "Access-Control-Expose-Headers"
 
   [<Literal>]
-  let AccessControlMaxAge = "Access-Control-Max-Age"
+  let private AccessControlMaxAge = "Access-Control-Max-Age"
 
   /// The configuration values for CORS
   type CORSConfig =
