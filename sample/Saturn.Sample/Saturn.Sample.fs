@@ -4,6 +4,7 @@ open Saturn.Controler
 open Saturn.Router
 open Saturn.Pipeline
 open Saturn.Application
+open Saturn.Context
 
 open System
 open Giraffe
@@ -100,13 +101,13 @@ let apiRouter = scope {
 // update - update item
 // delete - delete item
 
-let userControler = controler<string> {
+let userControler = controler {
     error_handler (text "Users 404")
 
-    index (fun (_nxt, ctx) -> ctx.WriteTextAsync "Index handler")
-    add (fun (_nxt, ctx) -> ctx.WriteTextAsync "Add handler")
-    show (fun (_nxt, ctx, id) -> ctx.WriteTextAsync (sprintf "Show handler - %s" id))
-    edit (fun (_nxt, ctx, id) -> ctx.WriteTextAsync (sprintf "Edit handler - %s" id))
+    index (fun ctx -> "Index handler" |> Controler.text ctx)
+    add (fun ctx -> "Add handler" |> Controler.text ctx)
+    show (fun (ctx, id) -> (sprintf "Show handler - %s" id) |> Controler.text ctx)
+    edit (fun (ctx, id) -> (sprintf "Edit handler - %s" id) |> Controler.text ctx)
 }
 
 //Since all computation expressions produces `HttpHandler` everything can be easily composed together in nice declarative way.
