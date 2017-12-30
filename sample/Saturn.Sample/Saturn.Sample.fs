@@ -154,6 +154,7 @@ let app = application {
     url "http://0.0.0.0:8085/"
     memory_cache
     use_static "static"
+    use_gzip
 }
 
 [<EntryPoint>]

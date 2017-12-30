@@ -2,6 +2,7 @@ namespace Saturn
 
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
+open Microsoft.AspNetCore.ResponseCompression
 open Giraffe
 open Microsoft.AspNetCore
 open System
@@ -85,6 +86,19 @@ module Application =
       { state with
           ServicesConfig = serviceSet::(service::state.ServicesConfig)
           AppConfigs = (fun (app : IApplicationBuilder)-> app.UseSession())::state.AppConfigs
+      }
+
+    ///Enables gzip compression
+    [<CustomOperation("use_gzip")>]
+    member __.UseGZip(state : ApplicationState) =
+      let service (s : IServiceCollection) =
+        s.Configure<GzipCompressionProviderOptions>(fun (opts : GzipCompressionProviderOptions) -> opts.Level <- System.IO.Compression.CompressionLevel.Optimal)
+         .AddResponseCompression()
+      let middleware (app : IApplicationBuilder) = app.UseResponseCompression()
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
       }
 
     [<CustomOperation("use_static")>]

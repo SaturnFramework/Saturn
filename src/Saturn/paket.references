@@ -3,3 +3,4 @@ Giraffe
 Microsoft.AspNetCore
 Microsoft.AspNetCore.Session
 Microsoft.Extensions.Caching.Memory
+Microsoft.AspNetCore.ResponseCompression

@@ -10,8 +10,6 @@ module Static =
 
 
   type StaticConfig = {
-    // UseGZip: bool
-    // UseBrotli: bool
     Match : string
     CacheControlForVSN: string
     CacheControlForEtag: string
@@ -23,15 +21,6 @@ module Static =
   type private FileStatus =
     | Stale
     | Fresh
-
-  // If we serve gzip or brotli at any moment, we need to set the proper vary header regardless of whether we are serving gzip content right now.
-  // See: http://www.fastly.com/blog/best-practices-for-using-the-vary-header/
-  let private maybeAddVary (config : StaticConfig) =
-  // if config.UseGZip || config.UseBrotli then
-  //   setHttpHeader "vary" "Accept-Encoding"
-  // else
-        succeed
-
   let private putCacheHeader (path: string) (config : StaticConfig) (ctx : HttpContext) : (FileStatus * HttpHandler) =
     if ctx.Request.QueryString.HasValue && ctx.Request.QueryString.Value.StartsWith "vsn=" then
       Stale, (setHttpHeader "cache-control" config.CacheControlForVSN)
@@ -72,7 +61,6 @@ module Static =
       conn
       >=> setHttpHeader "content-type" contentType
       >=> setHttpHeaders config.Headers
-      >=> maybeAddVary config
       >=> setStatusCode 200
       >=> sendFile path
 
