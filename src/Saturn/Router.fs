@@ -90,7 +90,7 @@ module Router =
         |> Seq.map (fun (p, lst) ->
           let act = ((fun nxt ctx ->
             let path = ctx.Request.Path.Value
-            if path.StartsWith p then
+            if path.StartsWith p && p <> "/" && p <> "" then
               let newPath = path.Substring p.Length
               ctx.Request.Path <- PathString(newPath)
             nxt ctx)
