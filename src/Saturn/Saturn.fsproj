@@ -12,9 +12,9 @@
     <Compile Include="Common.fs" />
     <Compile Include="CORS.fs" />
     <Compile Include="Static.fs" />
-    <Compile Include="Controller.fs" />
     <Compile Include="Pipelines.fs" />
     <Compile Include="Router.fs" />
+    <Compile Include="Controller.fs" />
     <Compile Include="Application.fs" />
     <Compile Include="Context.fs" />
   </ItemGroup>

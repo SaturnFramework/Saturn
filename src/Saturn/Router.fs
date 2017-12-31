@@ -4,7 +4,7 @@ open Giraffe.HttpHandlers
 module Router =
 
   // open Giraffe.HttpHandlers
-  open Giraffe.TokenRouter
+  // open Giraffe.TokenRouter
   open System.Collections.Generic
   open Microsoft.AspNetCore.Http
 
@@ -66,7 +66,7 @@ module Router =
     member __.Run(state : ScopeState) : HttpHandler =
       let generateRoutes typ =
         let routes, routesf = state.GetRoutes typ
-        let routes = routes |> Seq.map (fun (p, lst) -> route p (choose lst))
+        let routes = routes |> Seq.map (fun (p, lst) -> route p >=> (choose lst))
         let routesf = routesf |> Seq.map (fun (p, lst) ->
           let pf = PrintfFormat<_,_,_,_,_> p
           let chooseF = fun o ->
@@ -96,36 +96,38 @@ module Router =
             nxt ctx)
             >=> choose lst )
 
-          routef (PrintfFormat<_,_,_,_,string>(p + "%s")) (fun _ -> act ))
+          subRoute p (choose lst))
 
-      let lst = [
-        yield GET [
-          yield! gets
-          yield! getsf
-          yield! forwards
-        ]
-        yield POST [
-          yield! posts
-          yield! postsf
-          yield! forwards
-        ]
-        yield PATCH [
-          yield! pathces
-          yield! patchesf
-          yield! forwards
-        ]
-        yield PUT [
-          yield! puts
-          yield! putsf
-          yield! forwards
-        ]
-        yield DELETE [
-          yield! deletes
-          yield! deletesf
-          yield! forwards
-        ]
+      let lst =
+        choose [
+          GET >=> choose [
+            yield! gets
+            yield! getsf
+            yield! forwards
+          ]
+          POST >=> choose [
+            yield! posts
+            yield! postsf
+            yield! forwards
+          ]
+          PATCH >=> choose [
+            yield! pathces
+            yield! patchesf
+            yield! forwards
+          ]
+          PUT >=> choose [
+            yield! puts
+            yield! putsf
+            yield! forwards
+          ]
+          DELETE >=> choose [
+            yield! deletes
+            yield! deletesf
+            yield! forwards
+          ]
+          state.NotFoundHandler
       ]
-      (Pipeline.fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> router state.NotFoundHandler lst
+      (Pipeline.fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
 
     ///Adds handler for `GET` request.
     [<CustomOperation("get")>]

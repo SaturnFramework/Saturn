@@ -4,7 +4,6 @@ module Controller =
 
   open Microsoft.AspNetCore.Http
   open Giraffe
-  open Giraffe.TokenRouter
 
   type ControllerState<'Key> = {
     Index: (HttpContext -> HttpFuncResult) option
@@ -42,59 +41,61 @@ module Controller =
         else
           failwithf "Couldn't create router for controller. Key type not supported."
 
-      let lst = [
-        GET [
-          if state.Index.IsSome then yield route "/" (fun _ ctx -> state.Index.Value(ctx))
-          if state.Add.IsSome then yield route "/add" (fun _ ctx -> state.Add.Value(ctx))
-          if state.Show.IsSome then
-            match typ with
-            | Bool -> yield routef "/%b" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
-            | Char -> yield routef "/%c" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
-            | String -> yield routef "/%s" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
-            | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
-            | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
-            | Float -> yield routef "/%f" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
-            | Guid -> yield routef "/%O" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
-          if state.Edit.IsSome then
-            match typ with
-            | Bool -> yield routef "/%b/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
-            | Char -> yield routef "/%c/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
-            | String -> yield routef "/%s/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
-            | Int32 -> yield routef "/%i/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
-            | Int64 -> yield routef "/%d/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
-            | Float -> yield routef "/%f/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
-            | Guid -> yield routef "/%O/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
-        ]
-        POST [
-          if state.Create.IsSome then yield route "/" (fun _ ctx -> state.Create.Value(ctx))
-        ]
-        PATCH [
-          if state.Create.IsSome then yield route "/" (fun _ ctx -> state.Create.Value(ctx))
-        ]
-        PUT [
-          if state.Update.IsSome then
-            match typ with
-            | Bool -> yield routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
-            | Char -> yield routef "/%c" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
-            | String -> yield routef "/%s" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
-            | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
-            | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
-            | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
-            | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
-        ]
-        DELETE [
-          if state.Delete.IsSome then
-            match typ with
-            | Bool -> yield routef "/%b" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
-            | Char -> yield routef "/%c" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
-            | String -> yield routef "/%s" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
-            | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
-            | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
-            | Float -> yield routef "/%f" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
-            | Guid -> yield routef "/%O" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
-        ]
+      let lst =
+        choose [
+          GET >=> choose [
+            if state.Index.IsSome then yield route "/" >=> (fun _ ctx -> state.Index.Value(ctx))
+            if state.Add.IsSome then yield route "/add" >=> (fun _ ctx -> state.Add.Value(ctx))
+            if state.Edit.IsSome then
+              match typ with
+              | Bool -> yield routef "/%b/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
+              | Char -> yield routef "/%c/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
+              | String -> yield routef "/%s/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
+              | Int32 -> yield routef "/%i/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
+              | Int64 -> yield routef "/%d/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
+              | Float -> yield routef "/%f/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
+              | Guid -> yield routef "/%O/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input) )
+            if state.Show.IsSome then
+              match typ with
+              | Bool -> yield routef "/%b" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+              | Char -> yield routef "/%c" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+              | String -> yield routef "/%s" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+              | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+              | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+              | Float -> yield routef "/%f" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+              | Guid -> yield routef "/%O" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+          ]
+          POST >=> choose [
+            if state.Create.IsSome then yield route "/" >=> (fun _ ctx -> state.Create.Value(ctx))
+          ]
+          PATCH >=> choose [
+            if state.Create.IsSome then yield route "/" >=> (fun _ ctx -> state.Create.Value(ctx))
+          ]
+          PUT >=> choose [
+            if state.Update.IsSome then
+              match typ with
+              | Bool -> yield routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Char -> yield routef "/%c" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | String -> yield routef "/%s" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+          ]
+          DELETE >=> choose [
+            if state.Delete.IsSome then
+              match typ with
+              | Bool -> yield routef "/%b" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+              | Char -> yield routef "/%c" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+              | String -> yield routef "/%s" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+              | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+              | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+              | Float -> yield routef "/%f" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+              | Guid -> yield routef "/%O" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+          ]
+          state.NotFoundHandler
       ]
-      router state.NotFoundHandler lst
+      lst
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]

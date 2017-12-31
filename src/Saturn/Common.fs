@@ -1,5 +1,6 @@
 namespace Saturn
 
+open System
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
 
@@ -27,3 +28,25 @@ module Common =
         vals |> List.iter (fun (key, value) ->
           ctx.Response.Headers.[key] <- StringValues(value))
         next ctx
+
+  [<Literal>]
+  let private RouteKey = "giraffe_route"
+
+  let private getSavedSubPath (ctx : HttpContext) =
+    let inline strOption (str : string) =
+      if String.IsNullOrEmpty str then None else Some str
+    if ctx.Items.ContainsKey RouteKey
+    then ctx.Items.Item RouteKey |> string |> strOption
+    else None
+
+  let private getPath (ctx : HttpContext) =
+    match getSavedSubPath ctx with
+    | Some p when ctx.Request.Path.Value.Contains p -> ctx.Request.Path.Value.[p.Length..]
+    | _   -> ctx.Request.Path.Value
+
+  let routefUnsafe (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        Giraffe.FormatExpressions.tryMatchInput path (getPath ctx) false
+        |> function
+            | None      -> System.Threading.Tasks.Task.FromResult None
+            | Some args -> routeHandler args next ctx
