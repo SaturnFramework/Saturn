@@ -1,79 +1,157 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script
 // --------------------------------------------------------------------------------------
+#r "./packages/build/FAKE/tools/FakeLib.dll"
+#load "paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 
-#r "./packages/FAKE/tools/FakeLib.dll"
-
+open Fake.ReleaseNotesHelper
+open Fake.AssemblyInfoFile
+open Fake.Git
 open Fake
 open System
+open Octokit
+
+// --------------------------------------------------------------------------------------
+// Information about the project to be used at NuGet and in AssemblyInfo files
+// --------------------------------------------------------------------------------------
+
+let project = "Saturn"
+
+let summary = "Opinionated, web development framework for F# which implements the server-side, functional MVC pattern"
+
+let gitOwner = "Krzysztof-Cieslak"
+let gitName = "Saturn"
+let gitHome = "https://github.com/" + gitOwner
+
 
 // --------------------------------------------------------------------------------------
 // Build variables
 // --------------------------------------------------------------------------------------
 
 let buildDir  = "./build/"
-let appReferences = !! "/**/*.fsproj"
 let dotnetcliVersion = "2.1.3"
-let mutable dotnetExePath = "dotnet"
+
+Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
+let release = parseReleaseNotes (IO.File.ReadAllLines "RELEASE_NOTES.md")
 
 // --------------------------------------------------------------------------------------
-// Helpers
-// --------------------------------------------------------------------------------------
-
-let run' timeout cmd args dir =
-    if execProcess (fun info ->
-        info.FileName <- cmd
-        if not (String.IsNullOrWhiteSpace dir) then
-            info.WorkingDirectory <- dir
-        info.Arguments <- args
-    ) timeout |> not then
-        failwithf "Error while running '%s' with args: %s" cmd args
-
-let run = run' System.TimeSpan.MaxValue
-
-let runDotnet workingDir args =
-    let result =
-        ExecProcess (fun info ->
-            info.FileName <- dotnetExePath
-            info.WorkingDirectory <- workingDir
-            info.Arguments <- args) TimeSpan.MaxValue
-    if result <> 0 then failwithf "dotnet %s failed" args
-
-// --------------------------------------------------------------------------------------
-// Targets
+// Build Targets
 // --------------------------------------------------------------------------------------
 
 Target "Clean" (fun _ ->
     CleanDirs [buildDir]
 )
 
+Target "AssemblyInfo" (fun _ ->
+    let getAssemblyInfoAttributes projectName =
+        [ Attribute.Title projectName
+          Attribute.Product project
+          Attribute.Description summary
+          Attribute.Version release.AssemblyVersion
+          Attribute.FileVersion release.AssemblyVersion ]
+
+    let getProjectDetails projectPath =
+        let projectName = System.IO.Path.GetFileNameWithoutExtension(projectPath)
+        ( projectPath,
+          projectName,
+          System.IO.Path.GetDirectoryName(projectPath),
+          (getAssemblyInfoAttributes projectName)
+        )
+
+    !! "src/**/*.??proj"
+    |> Seq.map getProjectDetails
+    |> Seq.iter (fun (projFileName, _, folderName, attributes) ->
+        match projFileName with
+        | Fsproj -> CreateFSharpAssemblyInfo (folderName </> "AssemblyInfo.fs") attributes
+        | Csproj -> CreateCSharpAssemblyInfo ((folderName </> "Properties") </> "AssemblyInfo.cs") attributes
+        | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName </> "My Project") </> "AssemblyInfo.vb") attributes
+        | Shproj -> ()
+        )
+)
+
 Target "InstallDotNetCLI" (fun _ ->
-    dotnetExePath <- DotNetCli.InstallDotNetSDK dotnetcliVersion
+    DotNetCli.InstallDotNetSDK dotnetcliVersion |> ignore
 )
 
 Target "Restore" (fun _ ->
-    appReferences
-    |> Seq.iter (fun p ->
-        let dir = System.IO.Path.GetDirectoryName p
-        runDotnet dir "restore"
-    )
+    DotNetCli.Restore id
 )
 
 Target "Build" (fun _ ->
-    appReferences
-    |> Seq.iter (fun p ->
-        let dir = System.IO.Path.GetDirectoryName p
-        runDotnet dir "build"
+    DotNetCli.Build id
+)
+
+// --------------------------------------------------------------------------------------
+// Release Targets
+// --------------------------------------------------------------------------------------
+
+Target "Pack" (fun _ ->
+    Paket.Pack (fun p ->
+        { p with
+            BuildConfig = "Release";
+            OutputPath = buildDir;
+            Version = release.NugetVersion
+            ReleaseNotes = String.concat "\n" release.Notes
+        }
     )
 )
+
+Target "ReleaseGitHub" (fun _ ->
+    let remote =
+        Git.CommandHelper.getGitResult "" "remote -v"
+        |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
+        |> Seq.tryFind (fun (s: string) -> s.Contains(gitOwner + "/" + gitName))
+        |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
+
+    Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
+    Branches.pushBranch "" remote (Information.getBranchName "")
+
+    Branches.tag "" release.NugetVersion
+    Branches.pushTag "" remote release.NugetVersion
+
+    let client =
+        let user =
+            match getBuildParam "github-user" with
+            | s when not (String.IsNullOrWhiteSpace s) -> s
+            | _ -> getUserInput "Username: "
+        let pw =
+            match getBuildParam "github-pw" with
+            | s when not (String.IsNullOrWhiteSpace s) -> s
+            | _ -> getUserPassword "Password: "
+
+        createClient user pw
+
+    // release on github
+    client
+    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    |> releaseDraft
+    |> Async.RunSynchronously
+)
+
+Target "Push" (fun _ ->
+    let key =
+        match getBuildParam "nuget-key" with
+        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | _ -> getUserPassword "NuGet Key: "
+    Paket.Push (fun p -> { p with WorkingDir = buildDir; ApiKey = key }))
 
 // --------------------------------------------------------------------------------------
 // Build order
 // --------------------------------------------------------------------------------------
+Target "Default" DoNothing
+Target "Release" DoNothing
 
 "Clean"
   ==> "InstallDotNetCLI"
+  ==> "AssemblyInfo"
   ==> "Restore"
   ==> "Build"
+  ==> "Default"
 
-RunTargetOrDefault "Build"
+"Default"
+  ==> "Pack"
+  ==> "ReleaseGitHub"
+  ==> "Push"
+  ==> "Release"
+
+RunTargetOrDefault "Default"

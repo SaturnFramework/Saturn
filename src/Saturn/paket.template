@@ -1,0 +1,15 @@
+type project
+id Saturn
+description
+  Opinionated, web development framework for F# which implements the server-side, functional MVC pattern
+authors
+  Krzysztof Cieslak
+copyright
+	Copyright 2017 LambdaFactory
+summary
+  Opinionated, web development framework for F# which implements the server-side, functional MVC pattern
+licenseurl https://github.com/Krzysztof-Cieslak/Saturn/blob/master/License.md
+projecturl https://github.com/Krzysztof-Cieslak/Saturn
+include-pdbs true
+tags
+  F#, web, framewrok, ASP.Net, Core, Http, Service, MVC, functional

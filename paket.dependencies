@@ -1,6 +1,6 @@
 source https://www.nuget.org/api/v2
 
-nuget FAKE
+
 nuget FSharp.Core
 nuget Microsoft.AspNetCore
 nuget Microsoft.AspNetCore.Session
@@ -11,3 +11,9 @@ git https://github.com/Krzysztof-Cieslak/Giraffe fixes build: "powershell ./buil
 git https://github.com/Krzysztof-Cieslak/Giraffe fixes build: "./build.sh -Release -ExcludeTests -ExcludeSamples -Pack", OS: mono, Packages:/src/Giraffe/bin/Release
 
 nuget Giraffe
+
+group Build
+  source https://www.nuget.org/api/v2
+
+  nuget FAKE
+  github fsharp/FAKE modules/Octokit/Octokit.fsx
