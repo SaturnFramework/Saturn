@@ -79,12 +79,15 @@ module Static =
         ".html", "text/html"
       ]
   }
+  let private pp = typeof<StaticConfig>.Assembly.Location
+
   let call (from : string) config (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult=
     let path = ctx.Request.Path.Value.TrimStart '/'
     if ctx.Request.Method = "GET" || ctx.Request.Method = "HEAD" then
         let m = Regex.Escape(config.Match).Replace( @"\*", ".*" ).Replace( @"\?", "." )
         if Regex.IsMatch(path, m) then
-          let p = Path.Combine(Path.GetDirectoryName(Diagnostics.Process.GetCurrentProcess().MainModule.FileName), from, path)
+          let p = Path.Combine(Path.GetDirectoryName(pp), from, path)
+          // printfn "STATIC PATH: %s" p
           if File.Exists p then
             (serveStatic p config ctx) nxt ctx
           else
