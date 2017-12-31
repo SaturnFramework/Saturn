@@ -2,7 +2,7 @@
 
 Saturn is a web development framework written in F# which implements the server-side MVC pattern. Many of its components and concepts will seem familiar to those of us with experience in other web frameworks like Ruby on Rails or Python’s Django.
 
-It's havily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
+It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 
 ## Saturn rings
 
