@@ -5,10 +5,10 @@ description
 authors
   Krzysztof Cieslak
 copyright
-	Copyright 2017 LambdaFactory
+	Copyright 2017 Lambda Factory
 summary
   Opinionated, web development framework for F# which implements the server-side, functional MVC pattern
-licenseurl https://github.com/Krzysztof-Cieslak/Saturn/blob/master/License.md
+licenseurl https://github.com/Krzysztof-Cieslak/Saturn/blob/master/LICENSE.md
 projecturl https://github.com/Krzysztof-Cieslak/Saturn
 include-pdbs true
 tags
