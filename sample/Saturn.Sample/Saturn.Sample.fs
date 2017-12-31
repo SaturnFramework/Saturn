@@ -1,6 +1,6 @@
 module Sample
 
-open Saturn.Controler
+open Saturn.Controller
 open Saturn.Router
 open Saturn.Pipeline
 open Saturn.Application
@@ -68,7 +68,7 @@ let apiRouter = scope {
     get "/a" apiHelloWorld2
 }
 
-//`controler<'Key>` CE is higher level abstraction following convention of Phoenix Controllers and `resources` macro. It will create
+//`controller<'Key>` CE is higher level abstraction following convention of Phoenix Controllers and `resources` macro. It will create
 // complex routing for predefined set of operations which looks like this:
 // [
 //     GET [
@@ -101,13 +101,13 @@ let apiRouter = scope {
 // update - update item
 // delete - delete item
 
-let userControler = controler {
+let userController = controller {
     error_handler (text "Users 404")
 
-    index (fun ctx -> "Index handler" |> Controler.text ctx)
-    add (fun ctx -> "Add handler" |> Controler.text ctx)
-    show (fun (ctx, id) -> (sprintf "Show handler - %s" id) |> Controler.text ctx)
-    edit (fun (ctx, id) -> (sprintf "Edit handler - %s" id) |> Controler.text ctx)
+    index (fun ctx -> "Index handler" |> Controller.text ctx)
+    add (fun ctx -> "Add handler" |> Controller.text ctx)
+    show (fun (ctx, id) -> (sprintf "Show handler - %s" id) |> Controller.text ctx)
+    edit (fun (ctx, id) -> (sprintf "Edit handler - %s" id) |> Controller.text ctx)
 }
 
 //Since all computation expressions produces `HttpHandler` everything can be easily composed together in nice declarative way.
@@ -135,8 +135,8 @@ let topRouter = scope {
     // or can be defined separatly and used as HttpHandler
     forward "/api" apiRouter
 
-    // same with controlers
-    forward "/users" userControler
+    // same with controllers
+    forward "/users" userController
 }
 
 ///Saturn provides easy, declarative way to define application and hosting configuratiuon.

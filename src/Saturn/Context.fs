@@ -7,7 +7,7 @@ open Giraffe.HttpHandlers
 module Context =
 
   [<RequireQualifiedAccess>]
-  module Controler =
+  module Controller =
 
     ///Returns to the client content serialized to JSON.
     let json (ctx: HttpContext) (obj: 'a)   =

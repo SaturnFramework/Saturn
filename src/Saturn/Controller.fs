@@ -1,12 +1,12 @@
 namespace Saturn
 
-module Controler =
+module Controller =
 
   open Microsoft.AspNetCore.Http
   open Giraffe
   open Giraffe.TokenRouter
 
-  type ControlerState<'Key> = {
+  type ControllerState<'Key> = {
     Index: (HttpContext -> HttpFuncResult) option
     Show: (HttpContext * 'Key -> HttpFuncResult) option
     Add: (HttpContext -> HttpFuncResult) option
@@ -26,11 +26,11 @@ module Controler =
     | Float
     | Guid
 
-  type ControlerBuilder<'Key> internal () =
-    member __.Yield(_) : ControlerState<'Key> =
+  type ControllerBuilder<'Key> internal () =
+    member __.Yield(_) : ControllerState<'Key> =
       { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = setStatusCode 404 >=> text "Not found"  }
 
-    member __.Run(state : ControlerState<'Key>) : HttpHandler =
+    member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let typ =
         if typeof<'Key> = typeof<bool> then Bool
         elif typeof<'Key> = typeof<char> then Char
@@ -40,7 +40,7 @@ module Controler =
         elif typeof<'Key> = typeof<float> then Float
         elif typeof<'Key> = typeof<System.Guid> then Guid
         else
-          failwithf "Couldn't create router for controler. Key type not supported."
+          failwithf "Couldn't create router for controller. Key type not supported."
 
       let lst = [
         GET [
@@ -96,45 +96,45 @@ module Controler =
       ]
       router state.NotFoundHandler lst
 
-    ///Operation that should render (or return in case of API controlers) list of data
+    ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
-    member __.Index (state : ControlerState<'Key>, handler) =
+    member __.Index (state : ControllerState<'Key>, handler) =
       {state with Index = Some handler}
 
-    ///Operation that should render (or return in case of API controlers) single entry of data
+    ///Operation that should render (or return in case of API controllers) single entry of data
     [<CustomOperation("show")>]
-    member __.Show (state : ControlerState<'Key>, handler) =
+    member __.Show (state : ControllerState<'Key>, handler) =
       {state with Show = Some handler}
 
     ///Operation that should render form for adding new item
     [<CustomOperation("add")>]
-    member __.Add (state : ControlerState<'Key>, handler) =
+    member __.Add (state : ControllerState<'Key>, handler) =
       {state with Add = Some handler}
 
     ///Operation that should render form for editing existing item
     [<CustomOperation("edit")>]
-    member __.Edit (state : ControlerState<'Key>, handler) =
+    member __.Edit (state : ControllerState<'Key>, handler) =
       {state with Edit = Some handler}
 
     ///Operation that creates new item
     [<CustomOperation("create")>]
-    member __.Create (state : ControlerState<'Key>, handler) =
+    member __.Create (state : ControllerState<'Key>, handler) =
       {state with Create = Some handler}
 
     ///Operation that updates existing item
     [<CustomOperation("update")>]
-    member __.Update (state : ControlerState<'Key>, handler) =
+    member __.Update (state : ControllerState<'Key>, handler) =
       {state with Update = Some handler}
 
     ///Operation that deletes existing item
     [<CustomOperation("delete")>]
-    member __.Delete (state : ControlerState<'Key>, handler) =
+    member __.Delete (state : ControllerState<'Key>, handler) =
       {state with Delete = Some handler}
 
-    ///Define error/not-found handler for the controler
+    ///Define error/not-found handler for the controller
     [<CustomOperation("error_handler")>]
-    member __.ErrprHandler(state : ControlerState<'Key>, handler) =
+    member __.ErrprHandler(state : ControllerState<'Key>, handler) =
       {state with NotFoundHandler = handler}
 
-  let controler<'Key> = ControlerBuilder<'Key> ()
+  let controller<'Key> = ControllerBuilder<'Key> ()
 
