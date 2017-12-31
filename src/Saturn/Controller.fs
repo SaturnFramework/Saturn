@@ -13,7 +13,7 @@ module Controller =
     Create: (HttpContext -> HttpFuncResult) option
     Update: (HttpContext * 'Key -> HttpFuncResult) option
     Delete: (HttpContext * 'Key -> HttpFuncResult) option
-    NotFoundHandler: HttpHandler
+    NotFoundHandler: HttpHandler option
   }
 
   type KeyType =
@@ -27,7 +27,7 @@ module Controller =
 
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = setStatusCode 404 >=> text "Not found"  }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None  }
 
     member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let typ =
@@ -43,7 +43,7 @@ module Controller =
 
       let lst =
         choose [
-          GET >=> choose [
+          yield GET >=> choose [
             if state.Index.IsSome then yield route "/" >=> (fun _ ctx -> state.Index.Value(ctx))
             if state.Add.IsSome then yield route "/add" >=> (fun _ ctx -> state.Add.Value(ctx))
             if state.Edit.IsSome then
@@ -65,13 +65,13 @@ module Controller =
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
           ]
-          POST >=> choose [
+          yield POST >=> choose [
             if state.Create.IsSome then yield route "/" >=> (fun _ ctx -> state.Create.Value(ctx))
           ]
-          PATCH >=> choose [
+          yield PATCH >=> choose [
             if state.Create.IsSome then yield route "/" >=> (fun _ ctx -> state.Create.Value(ctx))
           ]
-          PUT >=> choose [
+          yield PUT >=> choose [
             if state.Update.IsSome then
               match typ with
               | Bool -> yield routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
@@ -82,7 +82,7 @@ module Controller =
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
           ]
-          DELETE >=> choose [
+          yield DELETE >=> choose [
             if state.Delete.IsSome then
               match typ with
               | Bool -> yield routef "/%b" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
@@ -93,7 +93,7 @@ module Controller =
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
           ]
-          state.NotFoundHandler
+          if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
       ]
       lst
 
@@ -135,7 +135,7 @@ module Controller =
     ///Define error/not-found handler for the controller
     [<CustomOperation("error_handler")>]
     member __.ErrprHandler(state : ControllerState<'Key>, handler) =
-      {state with NotFoundHandler = handler}
+      {state with NotFoundHandler = Some handler}
 
   let controller<'Key> = ControllerBuilder<'Key> ()
 

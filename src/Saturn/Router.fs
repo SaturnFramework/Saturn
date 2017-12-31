@@ -21,7 +21,7 @@ module Router =
     { Routes: Dictionary<string * RouteType, HttpHandler list>
       RoutesF: Dictionary<string * RouteType, (obj -> HttpHandler) list>
 
-      NotFoundHandler: HttpHandler
+      NotFoundHandler: HttpHandler option
       Pipelines: HttpHandler list
     }
     with
@@ -61,7 +61,7 @@ module Router =
       { Routes = Dictionary()
         RoutesF = Dictionary()
         Pipelines = []
-        NotFoundHandler = setStatusCode 404 >=> text "Not found" }
+        NotFoundHandler = None }
 
     member __.Run(state : ScopeState) : HttpHandler =
       let generateRoutes typ =
@@ -88,44 +88,32 @@ module Router =
       let forwards =
         forwards
         |> Seq.map (fun (p, lst) ->
-          let act = ((fun nxt ctx ->
-            let path = ctx.Request.Path.Value
-            if path.StartsWith p && p <> "/" && p <> "" then
-              let newPath = path.Substring p.Length
-              ctx.Request.Path <- PathString(newPath)
-            nxt ctx)
-            >=> choose lst )
-
           subRoute p (choose lst))
 
       let lst =
         choose [
-          GET >=> choose [
+          yield GET >=> choose [
             yield! gets
             yield! getsf
-            yield! forwards
           ]
-          POST >=> choose [
+          yield POST >=> choose [
             yield! posts
             yield! postsf
-            yield! forwards
           ]
-          PATCH >=> choose [
+          yield PATCH >=> choose [
             yield! pathces
             yield! patchesf
-            yield! forwards
           ]
-          PUT >=> choose [
+          yield PUT >=> choose [
             yield! puts
             yield! putsf
-            yield! forwards
           ]
-          DELETE >=> choose [
+          yield DELETE >=> choose [
             yield! deletes
             yield! deletesf
-            yield! forwards
           ]
-          state.NotFoundHandler
+          yield! forwards
+          if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
       ]
       (Pipeline.fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
 
@@ -192,6 +180,6 @@ module Router =
     ///Adds error/not-found handler for current scope
     [<CustomOperation("error_handler")>]
     member __.ErrprHandler(state, handler) : ScopeState =
-      {state with NotFoundHandler = handler}
+      {state with NotFoundHandler = Some handler}
 
   let scope = ScopeBuilder()

@@ -7,6 +7,7 @@ open Giraffe
 open Microsoft.AspNetCore
 open System
 open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Logging
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -21,7 +22,12 @@ type ApplicationState = {
 module Application =
   type ApplicationBuilder internal () =
     member __.Yield(_) =
-      {Router = None; ErrorHandler = None; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = [] }
+      let errorHandler (ex : Exception) (logger : ILogger) =
+        logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
+        clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
+
+
+      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = [] }
 
     member __.Run(state: ApplicationState) : IWebHost =
       match state.Router with

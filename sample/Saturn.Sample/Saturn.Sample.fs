@@ -143,15 +143,11 @@ let topRouter = scope {
 // Things like enabling in-memory cache for session handling shouldn't require changes in multiple places, and be enabled with single "feature toggle"
 // It also enables defining common set of Pipelines that will be executed for every request, before dispatching to router
 
-let errorHandler (ex : Exception) (logger : ILogger) =
-    logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
-    clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
 
 let app = application {
     pipe_through endpointPipe
 
     router topRouter
-    error_handler errorHandler
     url "http://0.0.0.0:8085/"
     memory_cache
     use_static "static"
