@@ -79,7 +79,9 @@ module Static =
         ".html", "text/html"
       ]
   }
-  let private pp = typeof<StaticConfig>.Assembly.Location
+  let private pp =
+    let uri = System.Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)
+    Path.GetDirectoryName uri.AbsolutePath
 
   let call (from : string) config (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult=
     let path = ctx.Request.Path.Value.TrimStart '/'
