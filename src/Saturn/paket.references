@@ -2,5 +2,6 @@ FSharp.Core
 Giraffe
 Microsoft.AspNetCore
 Microsoft.AspNetCore.Session
-Microsoft.Extensions.Caching.Memory
+Microsoft.AspNetCore.StaticFiles
 Microsoft.AspNetCore.ResponseCompression
+Microsoft.Extensions.Caching.Memory

@@ -96,7 +96,8 @@ module Context =
       | _ -> None
 
     let sendDownload (ctx: HttpContext) (path: string) =
-      Static.sendFile path (fun c -> task {return Some c}) ctx
+      let cnt = System.IO.File.ReadAllBytes path
+      setBody cnt  (fun c -> task {return Some c}) ctx
 
     let sendDownloadBinary (ctx: HttpContext) (content: byte []) =
       setBody content (fun c -> task {return Some c}) ctx

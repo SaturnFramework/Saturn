@@ -5,6 +5,7 @@ nuget FSharp.Core
 nuget Microsoft.AspNetCore
 nuget Microsoft.AspNetCore.Session
 nuget Microsoft.AspNetCore.ResponseCompression
+nuget Microsoft.AspNetCore.StaticFiles
 nuget Microsoft.Extensions.Caching.Memory
 
 git https://github.com/Krzysztof-Cieslak/Giraffe fixes build: "powershell ./build.ps1 -Release -ExcludeTests -ExcludeSamples -Pack", OS: windows, Packages:/src/Giraffe/bin/Release

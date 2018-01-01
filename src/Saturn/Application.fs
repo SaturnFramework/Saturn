@@ -8,6 +8,8 @@ open Microsoft.AspNetCore
 open System
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
+open System.IO
+open System.IO
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -109,11 +111,14 @@ module Application =
 
     [<CustomOperation("use_static")>]
     member __.UseStatic(state, path : string) =
-      {state with Pipelines = (Static.call path Static.defaultConfig)::state.Pipelines}
-
-    [<CustomOperation("use_static_config")>]
-    member __.UseStaticConfig(state, config : Static.StaticConfig, path : string ) =
-      {state with Pipelines = (Static.call path config)::state.Pipelines}
+      let middleware (app : IApplicationBuilder) = app.UseStaticFiles()
+      let host (builder: IWebHostBuilder) =
+        let p = Path.Combine(Directory.GetCurrentDirectory(), path)
+        builder.UseWebRoot p
+      { state with
+          AppConfigs = middleware::state.AppConfigs
+          HostConfigs = host::state.HostConfigs
+      }
 
   let application = ApplicationBuilder()
 
