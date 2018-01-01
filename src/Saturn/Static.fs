@@ -88,7 +88,7 @@ module Static =
     if ctx.Request.Method = "GET" || ctx.Request.Method = "HEAD" then
         let m = Regex.Escape(config.Match).Replace( @"\*", ".*" ).Replace( @"\?", "." )
         if Regex.IsMatch(path, m) then
-          let p = Path.Combine(Path.GetDirectoryName(pp), from, path)
+          let p = Path.Combine(pp, from, path)
           // printfn "STATIC PATH: %s" p
           if File.Exists p then
             (serveStatic p config ctx) nxt ctx
