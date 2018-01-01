@@ -80,8 +80,7 @@ module Static =
       ]
   }
   let private pp =
-    let uri = System.Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)
-    Path.GetDirectoryName uri.AbsolutePath
+    Directory.GetCurrentDirectory()
 
   let call (from : string) config (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult=
     let path = ctx.Request.Path.Value.TrimStart '/'
