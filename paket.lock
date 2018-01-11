@@ -24,6 +24,16 @@ NUGET
       System.Threading.Thread (>= 4.0) - restriction: && (< net45) (>= netstandard1.6)
       System.Threading.ThreadPool (>= 4.0.10) - restriction: && (< net45) (>= netstandard1.6)
       System.Threading.Timer (>= 4.0.1) - restriction: && (< net45) (>= netstandard1.6)
+    Giraffe (0.1.0-beta-700)
+      FSharp.Core (>= 4.2.3) - restriction: || (>= net461) (>= netstandard2.0)
+      Giraffe.Tasks (>= 0.1.0-beta-010) - restriction: || (>= net461) (>= netstandard2.0)
+      Microsoft.AspNetCore.Authentication (>= 2.0.1) - restriction: || (>= net461) (>= netstandard2.0)
+      Microsoft.AspNetCore.Diagnostics (>= 2.0.1) - restriction: || (>= net461) (>= netstandard2.0)
+      Microsoft.AspNetCore.Hosting.Abstractions (>= 2.0.1) - restriction: || (>= net461) (>= netstandard2.0)
+      Newtonsoft.Json (>= 10.0.3) - restriction: || (>= net461) (>= netstandard2.0)
+      System.Text.RegularExpressions (>= 4.3) - restriction: || (>= net461) (>= netstandard2.0)
+      System.ValueTuple (>= 4.4) - restriction: >= net461
+      System.Xml.XmlSerializer (>= 4.3) - restriction: || (>= net461) (>= netstandard2.0)
     Giraffe.Tasks (0.1.0-beta-010) - restriction: || (>= net461) (>= netstandard2.0)
       FSharp.Core (>= 4.2.3) - restriction: || (>= net461) (>= netstandard2.0)
       System.ValueTuple (>= 4.4) - restriction: >= net461
@@ -731,7 +741,7 @@ NUGET
       Microsoft.NETCore.Targets (>= 1.1) - restriction: || (&& (< monotouch) (< net451) (>= netstandard1.2) (< win81) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net451+win81+wpa81)
       System.Runtime (>= 4.3) - restriction: || (&& (< monotouch) (< net451) (>= netstandard1.2) (< win81) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net451+win81+wpa81)
     System.ValueTuple (4.4) - restriction: >= net461
-    System.Xml.ReaderWriter (4.3) - restriction: || (&& (< net20) (>= net461)) (&& (< net20) (>= netstandard2.0)) (&& (< net45) (>= net461)) (&& (< net45) (>= netstandard2.0)) (&& (>= net461) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard2.0) (< portable-net45+win8+wp8+wpa81))
+    System.Xml.ReaderWriter (4.3.1) - restriction: || (&& (< net20) (>= net461)) (&& (< net20) (>= netstandard2.0)) (&& (< net45) (>= net461)) (&& (< net45) (>= netstandard2.0)) (&& (>= net461) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard2.0) (< portable-net45+win8+wp8+wpa81))
       System.Collections (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
       System.Diagnostics.Debug (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
       System.Globalization (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
@@ -776,27 +786,7 @@ NUGET
       System.Threading (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
       System.Xml.ReaderWriter (>= 4.3) - restriction: || (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81)) (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
       System.Xml.XmlDocument (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
-  remote: paket-files/github.com/Krzysztof-Cieslak/Giraffe/src/Giraffe/bin/Release
-    Giraffe (0.1.0-beta-801)
-      FSharp.Core (>= 4.2.3) - restriction: || (>= net461) (>= netstandard2.0)
-      Giraffe.Tasks (>= 0.1.0-beta-010) - restriction: || (>= net461) (>= netstandard2.0)
-      Microsoft.AspNetCore.Authentication (>= 2.0.1) - restriction: || (>= net461) (>= netstandard2.0)
-      Microsoft.AspNetCore.Diagnostics (>= 2.0.1) - restriction: || (>= net461) (>= netstandard2.0)
-      Microsoft.AspNetCore.Hosting.Abstractions (>= 2.0.1) - restriction: || (>= net461) (>= netstandard2.0)
-      Newtonsoft.Json (>= 10.0.3) - restriction: || (>= net461) (>= netstandard2.0)
-      System.Text.RegularExpressions (>= 4.3) - restriction: || (>= net461) (>= netstandard2.0)
-      System.ValueTuple (>= 4.4) - restriction: >= net461
-      System.Xml.XmlSerializer (>= 4.3) - restriction: || (>= net461) (>= netstandard2.0)
-GIT
-  remote: https://github.com/Krzysztof-Cieslak/Giraffe
-     (569432a79eb671fbc42fc33fdf0169161ff69835)
-      build: powershell ./build.ps1 -Release -ExcludeTests -ExcludeSamples -Pack
-      path: /src/Giraffe/bin/Release
-      os: windows
-     (569432a79eb671fbc42fc33fdf0169161ff69835)
-      build: ./build.sh -Release -ExcludeTests -ExcludeSamples -Pack
-      path: /src/Giraffe/bin/Release
-      os: mono
+
 GROUP Build
 NUGET
   remote: https://www.nuget.org/api/v2
@@ -1268,7 +1258,7 @@ NUGET
       Microsoft.NETCore.Platforms (>= 1.1) - restriction: || (&& (< monotouch) (< net451) (>= netstandard1.2) (< win81) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net451+win81+wpa81)
       Microsoft.NETCore.Targets (>= 1.1) - restriction: || (&& (< monotouch) (< net451) (>= netstandard1.2) (< win81) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net451+win81+wpa81)
       System.Runtime (>= 4.3) - restriction: || (&& (< monotouch) (< net451) (>= netstandard1.2) (< win81) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net451+win81+wpa81)
-    System.Xml.ReaderWriter (4.3) - restriction: || (&& (< monoandroid) (< net45) (>= netstandard1.2) (< netstandard1.3) (< wpa81)) (&& (< monoandroid) (< net45) (>= netstandard1.3) (< netstandard1.4) (< wpa81)) (&& (< monoandroid) (< net45) (< netstandard1.3) (>= netstandard1.4) (< win8) (< wpa81)) (&& (< monoandroid) (< net45) (< netstandard1.3) (>= netstandard1.5)) (&& (< monoandroid) (< net45) (< netstandard1.3) (>= netstandard1.6)) (&& (< monoandroid) (< net45) (>= netstandard1.4) (< netstandard1.5) (< wpa81)) (&& (< monoandroid) (< net45) (>= netstandard1.5) (< netstandard1.6)) (&& (< monotouch) (< net45) (>= netstandard1.6) (< netstandard2.0) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< net45) (>= net46) (< netstandard1.4)) (&& (< net45) (>= netstandard1.1) (< portable-net451+win81+wpa81)) (&& (< net45) (>= netstandard1.3) (< portable-net451+win81+wpa81) (< win8)) (&& (>= netstandard1.1) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.1) (< portable-net45+win8+wpa81)) (&& (>= netstandard1.2) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.3) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.3) (< portable-net45+win8+wpa81)) (&& (>= netstandard1.4) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.5) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.6) (< portable-net45+win8+wp8+wpa81)) (&& (< portable-net45+win8+wp8+wpa81) (>= uap10.0)) (&& (>= uap10.0) (< uap10.1)) (&& (>= uap10.0) (< win8) (< wpa81))
+    System.Xml.ReaderWriter (4.3.1) - restriction: || (&& (< monoandroid) (< net45) (>= netstandard1.2) (< netstandard1.3) (< wpa81)) (&& (< monoandroid) (< net45) (>= netstandard1.3) (< netstandard1.4) (< wpa81)) (&& (< monoandroid) (< net45) (< netstandard1.3) (>= netstandard1.4) (< win8) (< wpa81)) (&& (< monoandroid) (< net45) (< netstandard1.3) (>= netstandard1.5)) (&& (< monoandroid) (< net45) (< netstandard1.3) (>= netstandard1.6)) (&& (< monoandroid) (< net45) (>= netstandard1.4) (< netstandard1.5) (< wpa81)) (&& (< monoandroid) (< net45) (>= netstandard1.5) (< netstandard1.6)) (&& (< monotouch) (< net45) (>= netstandard1.6) (< netstandard2.0) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (&& (< net45) (>= net46) (< netstandard1.4)) (&& (< net45) (>= netstandard1.1) (< portable-net451+win81+wpa81)) (&& (< net45) (>= netstandard1.3) (< portable-net451+win81+wpa81) (< win8)) (&& (>= netstandard1.1) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.1) (< portable-net45+win8+wpa81)) (&& (>= netstandard1.2) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.3) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.3) (< portable-net45+win8+wpa81)) (&& (>= netstandard1.4) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.5) (< portable-net45+win8+wp8+wpa81)) (&& (>= netstandard1.6) (< portable-net45+win8+wp8+wpa81)) (&& (< portable-net45+win8+wp8+wpa81) (>= uap10.0)) (&& (>= uap10.0) (< uap10.1)) (&& (>= uap10.0) (< win8) (< wpa81))
       System.Collections (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
       System.Diagnostics.Debug (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
       System.Globalization (>= 4.3) - restriction: || (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
@@ -1299,5 +1289,5 @@ NUGET
       System.Xml.ReaderWriter (>= 4.3) - restriction: || (&& (< monoandroid) (< net45) (>= netstandard1.0) (< netstandard1.3) (< win8) (< wp8) (< wpa81)) (&& (< monotouch) (< net45) (>= netstandard1.3) (< win8) (< wpa81) (< xamarinios) (< xamarinmac) (< xamarintvos) (< xamarinwatchos)) (< portable-net45+win8+wp8+wpa81)
 GITHUB
   remote: fsharp/FAKE
-    modules/Octokit/Octokit.fsx (642a01a5e17b870f816cdd7ee09115e018b786f0)
+    modules/Octokit/Octokit.fsx (51a7cae12acc7292db4623ae0e3cc3a2ce6ca1c9)
       Octokit (>= 0.20)
