@@ -101,3 +101,6 @@ module Context =
 
     let sendDownloadBinary (ctx: HttpContext) (content: byte []) =
       setBody content (fun c -> task {return Some c}) ctx
+
+    let redirect (ctx: HttpContext) path =
+      redirectTo false path (fun c -> task {return Some c}) ctx
