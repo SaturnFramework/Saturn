@@ -67,9 +67,26 @@ module Controller =
           ]
           yield POST >=> choose [
             if state.Create.IsSome then yield route "/" >=> (fun _ ctx -> state.Create.Value(ctx))
+            if state.Update.IsSome then
+              match typ with
+              | Bool -> yield routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Char -> yield routef "/%c" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | String -> yield routef "/%s" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
           ]
           yield PATCH >=> choose [
-            if state.Create.IsSome then yield route "/" >=> (fun _ ctx -> state.Create.Value(ctx))
+            if state.Update.IsSome then
+              match typ with
+              | Bool -> yield routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Char -> yield routef "/%c" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | String -> yield routef "/%s" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Int32 -> yield routef "/%i" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+              | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
           ]
           yield PUT >=> choose [
             if state.Update.IsSome then
