@@ -26,8 +26,8 @@ module Context =
       ctx.WriteTextAsync value
 
     ///Returns to the client rendered template.
-    let render (ctx: HttpContext) template obj =
-      ctx.RenderHtmlAsync (template obj)
+    let render (ctx: HttpContext) template =
+      ctx.RenderHtmlAsync template
 
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
