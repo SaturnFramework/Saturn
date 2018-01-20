@@ -4,7 +4,10 @@ open Microsoft.AspNetCore.Http
 open Giraffe.HttpContextExtensions
 open Giraffe.Tasks
 open Giraffe.HttpHandlers
-module Context =
+open Giraffe.HttpStatusCodeHandlers
+
+[<AutoOpen>]
+module ControllerHelpers =
 
   [<RequireQualifiedAccess>]
   module Controller =
@@ -104,3 +107,71 @@ module Context =
 
     let redirect (ctx: HttpContext) path =
       redirectTo false path (fun c -> task {return Some c}) ctx
+
+  [<RequireQualifiedAccess>]
+  module Response =
+    let continue (ctx: HttpContext) =
+      Intermediate.CONTINUE (fun c -> task {return Some c}) ctx
+
+    let switchingProto (ctx: HttpContext) =
+      Intermediate.SWITCHING_PROTO (fun c -> task {return Some c}) ctx
+
+    let ok (ctx: HttpContext) res =
+      Successful.OK res (fun c -> task {return Some c}) ctx
+
+    let created (ctx: HttpContext) res =
+      Successful.CREATED res (fun c -> task {return Some c}) ctx
+
+    let accepted (ctx: HttpContext) res =
+      Successful.ACCEPTED res (fun c -> task {return Some c}) ctx
+
+    let badRequest (ctx: HttpContext) res =
+      RequestErrors.BAD_REQUEST res (fun c -> task {return Some c}) ctx
+
+    let unauthorized (ctx: HttpContext) scheme relam res =
+      RequestErrors.UNAUTHORIZED scheme relam res (fun c -> task {return Some c}) ctx
+
+    let forbidden (ctx: HttpContext) res =
+      RequestErrors.FORBIDDEN res (fun c -> task {return Some c}) ctx
+
+    let notFound (ctx: HttpContext) res =
+      RequestErrors.NOT_FOUND res (fun c -> task {return Some c}) ctx
+
+    let methodNotAllowed (ctx: HttpContext) res =
+      RequestErrors.METHOD_NOT_ALLOWED res (fun c -> task {return Some c}) ctx
+
+    let notAcceptable (ctx: HttpContext) res =
+      RequestErrors.NOT_ACCEPTABLE res (fun c -> task {return Some c}) ctx
+
+    let conflict (ctx: HttpContext) res =
+      RequestErrors.CONFLICT res (fun c -> task {return Some c}) ctx
+
+    let gone (ctx: HttpContext) res =
+      RequestErrors.GONE res (fun c -> task {return Some c}) ctx
+
+    let unuspportedMediaType (ctx: HttpContext) res =
+      RequestErrors.UNSUPPORTED_MEDIA_TYPE res (fun c -> task {return Some c}) ctx
+
+    let unprocessableEntity (ctx: HttpContext) res =
+      RequestErrors.UNPROCESSABLE_ENTITY res (fun c -> task {return Some c}) ctx
+
+    let preconditionRequired (ctx: HttpContext) res =
+      RequestErrors.PRECONDITION_REQUIRED res (fun c -> task {return Some c}) ctx
+
+    let tooManyRequests (ctx: HttpContext) res =
+      RequestErrors.TOO_MANY_REQUESTS res (fun c -> task {return Some c}) ctx
+
+    let internalError (ctx: HttpContext) res =
+      ServerErrors.INTERNAL_ERROR res (fun c -> task {return Some c}) ctx
+
+    let notImplemented (ctx: HttpContext) res =
+      ServerErrors.NOT_IMPLEMENTED res (fun c -> task {return Some c}) ctx
+
+    let badGateway (ctx: HttpContext) res =
+      ServerErrors.BAD_GATEWAY res (fun c -> task {return Some c}) ctx
+
+    let serviceUnavailable (ctx: HttpContext) res =
+      ServerErrors.SERVICE_UNAVAILABLE res (fun c -> task {return Some c}) ctx
+
+    let gatewayTimeout (ctx: HttpContext) res =
+      ServerErrors.GATEWAY_TIMEOUT res (fun c -> task {return Some c}) ctx
