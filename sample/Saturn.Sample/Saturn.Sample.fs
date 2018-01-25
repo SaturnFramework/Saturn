@@ -4,7 +4,7 @@ open Saturn.Controller
 open Saturn.Router
 open Saturn.Pipeline
 open Saturn.Application
-open Saturn.Context
+open Saturn.ControllerHelpers
 
 open System
 open Giraffe

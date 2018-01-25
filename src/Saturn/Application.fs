@@ -9,7 +9,6 @@ open System
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 open System.IO
-open System.IO
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -119,6 +118,15 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
           HostConfigs = host::state.HostConfigs
       }
+
+    [<CustomOperation("use_config")>]
+    member __.UseConfig(state, configBuilder : unit -> 'a) =
+      let x = lazy(configBuilder ())
+      let handler (nxt : HttpFunc) (ctx : Microsoft.AspNetCore.Http.HttpContext) : HttpFuncResult =
+        ctx.Items.["Configuration"] <- x.Value
+        nxt ctx
+
+      {state with Pipelines = state.Pipelines}
 
   let application = ApplicationBuilder()
 

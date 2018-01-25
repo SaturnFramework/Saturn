@@ -6,7 +6,6 @@ open Giraffe.Tasks
 open Giraffe.HttpHandlers
 open Giraffe.HttpStatusCodeHandlers
 
-[<AutoOpen>]
 module ControllerHelpers =
 
   [<RequireQualifiedAccess>]
@@ -97,6 +96,9 @@ module ControllerHelpers =
       match ctx.Items.TryGetValue "RequestUrl" with
       | true, o -> Some (unbox<string> o)
       | _ -> None
+
+    let getConfig<'a> (ctx: HttpContext) =
+      unbox<'a> ctx.Items.["Configuration"]
 
     let sendDownload (ctx: HttpContext) (path: string) =
       let cnt = System.IO.File.ReadAllBytes path
