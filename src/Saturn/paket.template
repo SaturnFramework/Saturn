@@ -10,6 +10,7 @@ summary
   Opinionated, web development framework for F# which implements the server-side, functional MVC pattern
 licenseurl https://github.com/Krzysztof-Cieslak/Saturn/blob/master/LICENSE.md
 projecturl https://github.com/Krzysztof-Cieslak/Saturn
+iconurl https://avatars0.githubusercontent.com/u/35305523?s=200&v=4
 include-pdbs true
 tags
-  F#, web, framewrok, ASP.Net, Core, Http, Service, MVC, functional
+  F#, web, framework, ASP.Net, Core, HTTP, Service, MVC, functional
