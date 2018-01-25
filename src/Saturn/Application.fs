@@ -126,7 +126,7 @@ module Application =
         ctx.Items.["Configuration"] <- x.Value
         nxt ctx
 
-      {state with Pipelines = state.Pipelines}
+      {state with Pipelines = handler::state.Pipelines}
 
   let application = ApplicationBuilder()
 
