@@ -6,10 +6,8 @@ open Saturn.Pipeline
 open Saturn.Application
 open Saturn.ControllerHelpers
 
-open System
 open Giraffe
 
-open Microsoft.Extensions.Logging
 
 //Saturn is using standard HttpHandlers from Giraffe
 
