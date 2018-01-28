@@ -44,7 +44,6 @@ module Controller =
       let lst =
         choose [
           yield GET >=> choose [
-            if state.Index.IsSome then yield route "/" >=> (fun _ ctx -> state.Index.Value(ctx))
             if state.Add.IsSome then yield route "/add" >=> (fun _ ctx -> state.Add.Value(ctx))
             if state.Edit.IsSome then
               match typ with
@@ -64,6 +63,9 @@ module Controller =
               | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+            if state.Index.IsSome then
+              yield route "" >=> (fun _ ctx -> ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx))
+              yield route "/" >=> (fun _ ctx -> state.Index.Value(ctx))
           ]
           yield POST >=> choose [
             if state.Create.IsSome then yield route "/" >=> (fun _ ctx -> state.Create.Value(ctx))
