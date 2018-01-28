@@ -4,6 +4,21 @@ Saturn is a web development framework written in F# which implements the server-
 
 It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 
+> WARNING: Saturn and its tooling are still in really early stage of development - which means that things may not work too well. Also, all suggestions about design choices are highly appriciated.
+
+## How to start in 60 seconds
+
+1. Install `dotnet` template with `dotnet new -i Saturn.Template`
+2. Create new folder and move into it - `mkdir SaturnSample & cd SaturnSample`
+3. Create new Saturn application - `dotnet new saturn`
+4. Run build process to ensure everything was scaffolded correctly and resotre dependencies - `build.cmd / build.sh`
+5. Go into subdirectory with server application - `cd src/SaturnSample`
+6. Create new controller with `dotnet saturn gen Book Books id:string title:string author:string`
+7. Run migrations that will create database and Books table (as for now, generator is using only SQLite DB) - `dotnet saturn migration`
+8. Open folder in favourite editor (VSCode) and insert suggested line (`forward "/books" Books.Controller.resource`) into `browserRouter` in `Router.fs` file
+9. Start application by running `build.cmd Run` from the root of solution. This will start application in watch mode (automatic recompilation on changes) and open browser on http://localhost:8085 which should display index page.
+10. Go to http://localhost:8085/books to see generated view. All buttons should be working, you can add new entries, remove or edit old ones.
+
 ## Saturn rings
 
 Saturn itself is top layer of a multi layer system designed to create flexible, productive environment for creating web applications.
@@ -14,10 +29,21 @@ Saturn itself is top layer of a multi layer system designed to create flexible, 
 
 > Kestrel is a cross-platform web server for ASP.NET Core based on libuv, a cross-platform asynchronous I/O library
 
-#### Giraffe
-> Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to Suave, but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. Giraffe applications are composed of so called HttpHandler functions which can be thought of a mixture of Suave's WebParts and ASP.NET Core's middleware.
+#### [Giraffe](https://github.com/giraffe-fsharp/Giraffe)
+> Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to [Suave](https://suave.io), but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. Giraffe applications are composed of so called HttpHandler functions which can be thought of a mixture of Suave's WebParts and ASP.NET Core's middleware.
 
-#### Some good data access library and I have no idea which -_-
+## Saturn moons
+
+Saturn is not only library building on top of Giraffe but also set of opinionated tooling for scaffolding whole project and then generating some boilerplate code. At the moment our template by-default are using:
+
+#### [Dapper](https://github.com/StackExchange/Dapper) 
+
+> a simple, focused on performance object mapper for .Net that you can add in to your project that will extend your `IDbConnection` interface.
+
+#### [Simple.Migrations](https://github.com/canton7/Simple.Migrations)
+
+> Simple.Migrations is a simple bare-bones migration framework for .NET Core (.NET Standard 1.2 and .NET 4.5). It doesn't provide SQL generation, or an out-of-the-box command-line tool, or other fancy features. It does however provide a set of simple, extendable, and composable tools for integrating migrations into your application.
+
 
 ## Overview
 
@@ -35,21 +61,25 @@ Saturn is made up of a number of distinct parts, each with its own purpose and r
     - parses incoming requests and dispatches them to the correct controller/action, passing parameters as needed
     - provides helpers to generate route paths or urls to resources
     - defines named pipelines through which we may pass our requests
-    - Pipelines - allow easy application of groups of plugs to a set of routes
+ - Pipelines 
+    - allow easy application of groups of plugs to a set of routes
  - Controllers
     - provide functions, called *actions*, to handle requests
     - actions:
         - prepare data and pass it into views
         - invoke rendering via views
         - perform redirects
- - Views  **[Only Giraffe functionality]**
+ - Views
     - render templates
     - act as a presentation layer
     - define helper functions, available in templates, to decorate data for presentation
  - Channels  **[Not implemented yet]**
     - manage sockets for easy realtime communication
     - are analogous to controllers except that they allow bi-directional communication with persistent connections
- - Scaffolding scripts  **[Not implemented yet]**
+ - Scaffolding scripts 
+    - `dotnet new` template providing good starting point for new applications - https://github.com/SaturnFramework/Saturn.Template
+    - `dotnet saturn` CLI tool that controls migrations and let you easily scaffold new parts of application - https://github.com/SaturnFramework/Saturn.Dotnet
+    
 
 ## How to contribute
 
