@@ -11,7 +11,7 @@ It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 1. Install `dotnet` template with `dotnet new -i Saturn.Template`
 2. Create new folder and move into it - `mkdir SaturnSample & cd SaturnSample`
 3. Create new Saturn application - `dotnet new saturn -lang F#`
-4. Run build process to ensure everything was scaffolded correctly and resotre dependencies - `build.cmd / build.sh`
+4. Run build process to ensure everything was scaffolded correctly and restore dependencies - `build.cmd / build.sh`
 5. Go into subdirectory with server application - `cd src/SaturnSample`
 6. Create new controller with `dotnet saturn gen Book Books id:string title:string author:string`
 7. Run migrations that will create database and Books table (as for now, generator is using only SQLite DB) - `dotnet saturn migration`
