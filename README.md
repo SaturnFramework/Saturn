@@ -9,7 +9,7 @@ It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 ## How to start in 60 seconds
 
 1. Install `dotnet` template with `dotnet new -i Saturn.Template`
-2. Create new folder and move into it - `mkdir SaturnSample & cd SaturnSample`
+2. Create new folder and move into it - `mkdir SaturnSample && cd SaturnSample`
 3. Create new Saturn application - `dotnet new saturn -lang F#`
 4. Run build process to ensure everything was scaffolded correctly and restore dependencies - `build.cmd / build.sh`
 5. Go into subdirectory with server application - `cd src/SaturnSample`
