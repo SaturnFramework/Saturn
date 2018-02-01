@@ -9,6 +9,7 @@ open System
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 open System.IO
+open Microsoft.AspNetCore.Rewrite
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -127,6 +128,14 @@ module Application =
         nxt ctx
 
       {state with Pipelines = handler::state.Pipelines}
+
+    [<CustomOperation("force_ssl")>]    
+    member __.ForceSSL(state : ApplicationState) = 
+      let middleware (app : IApplicationBuilder) = 
+        let opts = RewriteOptions().AddRedirectToHttps()
+        app.UseRewriter opts 
+      
+      {state with AppConfigs=middleware::state.AppConfigs} 
 
   let application = ApplicationBuilder()
 
