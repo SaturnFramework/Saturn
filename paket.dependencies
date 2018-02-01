@@ -8,6 +8,7 @@ nuget Microsoft.AspNetCore.ResponseCompression
 nuget Microsoft.AspNetCore.StaticFiles
 nuget Microsoft.Extensions.Caching.Memory
 nuget Microsoft.AspNetCore.Rewrite
+nuget Microsoft.AspNetCore.Cors
 
 nuget Giraffe
 

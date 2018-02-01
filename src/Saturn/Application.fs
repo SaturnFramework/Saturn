@@ -10,6 +10,7 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 open System.IO
 open Microsoft.AspNetCore.Rewrite
+open Microsoft.AspNetCore.Cors.Infrastructure
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -136,6 +137,18 @@ module Application =
         app.UseRewriter opts 
       
       {state with AppConfigs=middleware::state.AppConfigs} 
+
+    [<CustomOperation("use_cors")>]    
+    member __.UseCors(state: ApplicationState, policy : string, (policyConfig : CorsPolicyBuilder -> unit ) ) = 
+      let service (s : IServiceCollection) =
+        s.AddCors(fun o -> o.AddPolicy(policy, policyConfig) |> ignore) 
+      let middleware (app : IApplicationBuilder) = 
+        app.UseCors policy 
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
 
   let application = ApplicationBuilder()
 

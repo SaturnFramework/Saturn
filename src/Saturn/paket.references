@@ -6,3 +6,4 @@ Microsoft.AspNetCore.StaticFiles
 Microsoft.AspNetCore.ResponseCompression
 Microsoft.Extensions.Caching.Memory
 Microsoft.AspNetCore.Rewrite
+Microsoft.AspNetCore.Cors

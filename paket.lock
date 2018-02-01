@@ -71,6 +71,12 @@ NUGET
       Microsoft.AspNetCore.Authentication.Abstractions (>= 2.0.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Http (>= 2.0.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Http.Extensions (>= 2.0.1) - restriction: >= netstandard2.0
+    Microsoft.AspNetCore.Cors (2.0.1)
+      Microsoft.AspNetCore.Http.Extensions (>= 2.0.1) - restriction: >= netstandard2.0
+      Microsoft.Extensions.Configuration.Abstractions (>= 2.0) - restriction: >= netstandard2.0
+      Microsoft.Extensions.DependencyInjection.Abstractions (>= 2.0) - restriction: >= netstandard2.0
+      Microsoft.Extensions.Logging.Abstractions (>= 2.0) - restriction: >= netstandard2.0
+      Microsoft.Extensions.Options (>= 2.0) - restriction: >= netstandard2.0
     Microsoft.AspNetCore.Cryptography.Internal (2.0.1) - restriction: >= netstandard2.0
     Microsoft.AspNetCore.DataProtection (2.0.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Cryptography.Internal (>= 2.0.1) - restriction: >= netstandard2.0
