@@ -1,3 +1,8 @@
+### 0.3.0 - 02.02.2018
+* Add toggle for forcing SSL
+* Add toggle for forcing CORS
+* Add helpers for JWT authentication
+
 ### 0.2.0 - 25.01.2018
 
 * Initial version
