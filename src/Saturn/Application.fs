@@ -11,6 +11,8 @@ open Microsoft.Extensions.Logging
 open System.IO
 open Microsoft.AspNetCore.Rewrite
 open Microsoft.AspNetCore.Cors.Infrastructure
+open Microsoft.AspNetCore.Authentication.JwtBearer
+open Microsoft.IdentityModel.Tokens
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -149,6 +151,30 @@ module Application =
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
       }
+    [<CustomOperation("use_jwt_authentication")>]    
+    member __.UseJWTAuth(state: ApplicationState, secret: string, issuer : string) = 
+      let middleware (app : IApplicationBuilder) = 
+        app.UseAuthentication() 
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+         .AddJwtBearer(fun opt -> 
+            let tvp = TokenValidationParameters()
+            tvp.ValidateActor <- true
+            tvp.ValidateAudience <- true
+            tvp.ValidateLifetime <- true
+            tvp.ValidateIssuerSigningKey <- true
+            tvp.ValidIssuer <- issuer
+            tvp.ValidAudience <- issuer
+            tvp.IssuerSigningKey <- SymmetricSecurityKey(Text.Encoding.UTF8.GetBytes secret)
+            opt.TokenValidationParameters <- tvp
+         ) |> ignore 
+        s 
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      } 
 
   let application = ApplicationBuilder()
 

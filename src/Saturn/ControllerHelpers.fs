@@ -6,6 +6,7 @@ open Giraffe.Tasks
 open Giraffe.HttpHandlers
 open Giraffe.HttpStatusCodeHandlers
 
+
 module ControllerHelpers =
 
   [<RequireQualifiedAccess>]
@@ -177,3 +178,20 @@ module ControllerHelpers =
 
     let gatewayTimeout (ctx: HttpContext) res =
       ServerErrors.GATEWAY_TIMEOUT res (fun c -> task {return Some c}) ctx
+
+  [<RequireQualifiedAccess>]  
+  module Authentication =
+    open System
+    open System.Text
+    open Microsoft.IdentityModel.Tokens
+    open System.IdentityModel.Tokens.Jwt
+    
+
+    let generateToken (secret : string, algorithm) issuer expires claims = 
+      let expires = Nullable(expires)
+      let notBefore = Nullable(DateTime.UtcNow)
+      let securityKey = SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+      let signingCredentials = SigningCredentials(key = securityKey, algorithm = algorithm)
+
+      let token = JwtSecurityToken(issuer, issuer, claims, notBefore, expires, signingCredentials )
+      JwtSecurityTokenHandler().WriteToken token 

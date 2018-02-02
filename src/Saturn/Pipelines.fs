@@ -195,6 +195,6 @@ module Pipeline =
     ctx.Items.["RequestId"] <- reqId
     setHttpHeader "x-request-id" reqId nxt ctx
 
-  ///TODO: force SSL connections - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/ssl.ex#L1
-  let ssl : HttpHandler = succeed
-
+  ///Requires authentication with JWT token using default authentication scheme
+  let jwtAuthentication : HttpHandler = 
+    requiresAuthentication (challenge Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
