@@ -36,7 +36,7 @@ Saturn itself is top layer of a multi layer system designed to create flexible, 
 
 ## Saturn moons
 
-Saturn is not only library building on top of Giraffe but also set of opinionated tooling for scaffolding whole project and then generating some boilerplate code. At the moment our template by-default are using:
+Saturn is not only a library building on top of Giraffe, but also set of opinionated tooling for scaffolding a whole project and then generating some boilerplate code. At the moment our template is using (by default):
 
 #### [Dapper](https://github.com/StackExchange/Dapper) 
 
@@ -49,7 +49,7 @@ Saturn is not only library building on top of Giraffe but also set of opinionate
 
 ## Overview
 
-Building on top of battle-tested ASP.NET Core, and highly flexible, extendable model of Giraffe Saturn provides high level abstractions, helpers and tools to enable high developer productivity, at the same time keeping high application performance provided by Kestrel and Giraffe.
+Built on top of the battle-tested ASP.NET Core foundation, a highly flexible, extendable model of Giraffe Saturn provides high level abstractions, helpers and tools to enable high developer productivity, at the same time keeping high application performance provided by Kestrel and Giraffe.
 
 Saturn is made up of a number of distinct parts, each with its own purpose and role to play in building a web application.
 
