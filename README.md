@@ -10,9 +10,10 @@ Read more about why I've decided to create Saturn, and some of its design choice
 
 ## How to start in 60 seconds
 
-1. Install `dotnet` template with `dotnet new -i Saturn.Template`
+1. Install `dotnet` template with `dotnet new -i Saturn.Template` 
 2. Create new folder and move into it - `mkdir SaturnSample && cd SaturnSample`
 3. Create new Saturn application - `dotnet new saturn -lang F#`
+3. If you're on Linux/MacOS you need to run `chmod u+x build.sh` (see: https://github.com/SaturnFramework/Saturn/issues/15)
 4. Run build process to ensure everything was scaffolded correctly and restore dependencies - `build.cmd / build.sh`
 5. Go into subdirectory with server application - `cd src/SaturnSample`
 6. Create new controller with `dotnet saturn gen Book Books id:string title:string author:string`
