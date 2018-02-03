@@ -4,7 +4,7 @@ Saturn is a web development framework written in F# which implements the server-
 
 It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 
-> WARNING: Saturn and its tooling are still in really early stage of development - which means that things may not work too well. Also, all suggestions about design choices are highly appriciated.
+> WARNING: Saturn and its tooling are still in really early stage of development - which means that things may not work too well. Also, all suggestions about design choices are highly appreciated.
 
 Read more about why I've decided to create Saturn, and some of its design choices on my blog - http://kcieslak.io/Reinventing-MVC-for-web-programming-with-F
 
