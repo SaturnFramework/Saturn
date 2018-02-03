@@ -1,3 +1,7 @@
+### 0.3.1 - 03.02.2018
+* Fix JWT authorization
+* Set content root in `use_static`
+
 ### 0.3.0 - 02.02.2018
 * Add toggle for forcing SSL
 * Add toggle for forcing CORS
