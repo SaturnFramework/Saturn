@@ -117,7 +117,9 @@ module Application =
       let middleware (app : IApplicationBuilder) = app.UseStaticFiles()
       let host (builder: IWebHostBuilder) =
         let p = Path.Combine(Directory.GetCurrentDirectory(), path)
-        builder.UseWebRoot p
+        builder
+          .UseWebRoot(p)
+          .UseContentRoot(p)
       { state with
           AppConfigs = middleware::state.AppConfigs
           HostConfigs = host::state.HostConfigs
@@ -132,33 +134,35 @@ module Application =
 
       {state with Pipelines = handler::state.Pipelines}
 
-    [<CustomOperation("force_ssl")>]    
-    member __.ForceSSL(state : ApplicationState) = 
-      let middleware (app : IApplicationBuilder) = 
+    [<CustomOperation("force_ssl")>]
+    member __.ForceSSL(state : ApplicationState) =
+      let middleware (app : IApplicationBuilder) =
         let opts = RewriteOptions().AddRedirectToHttps()
-        app.UseRewriter opts 
-      
-      {state with AppConfigs=middleware::state.AppConfigs} 
+        app.UseRewriter opts
 
-    [<CustomOperation("use_cors")>]    
-    member __.UseCors(state: ApplicationState, policy : string, (policyConfig : CorsPolicyBuilder -> unit ) ) = 
+      {state with AppConfigs=middleware::state.AppConfigs}
+
+    [<CustomOperation("use_cors")>]
+    member __.UseCors(state: ApplicationState, policy : string, (policyConfig : CorsPolicyBuilder -> unit ) ) =
       let service (s : IServiceCollection) =
-        s.AddCors(fun o -> o.AddPolicy(policy, policyConfig) |> ignore) 
-      let middleware (app : IApplicationBuilder) = 
-        app.UseCors policy 
+        s.AddCors(fun o -> o.AddPolicy(policy, policyConfig) |> ignore)
+      let middleware (app : IApplicationBuilder) =
+        app.UseCors policy
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
       }
-    [<CustomOperation("use_jwt_authentication")>]    
-    member __.UseJWTAuth(state: ApplicationState, secret: string, issuer : string) = 
-      let middleware (app : IApplicationBuilder) = 
-        app.UseAuthentication() 
+    [<CustomOperation("use_jwt_authentication")>]
+    member __.UseJWTAuth(state: ApplicationState, secret: string, issuer : string) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
 
       let service (s : IServiceCollection) =
-        s.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-         .AddJwtBearer(fun opt -> 
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- JwtBearerDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme)
+         .AddJwtBearer(fun opt ->
             let tvp = TokenValidationParameters()
             tvp.ValidateActor <- true
             tvp.ValidateAudience <- true
@@ -168,13 +172,13 @@ module Application =
             tvp.ValidAudience <- issuer
             tvp.IssuerSigningKey <- SymmetricSecurityKey(Text.Encoding.UTF8.GetBytes secret)
             opt.TokenValidationParameters <- tvp
-         ) |> ignore 
-        s 
+         ) |> ignore
+        s
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
-      } 
+      }
 
   let application = ApplicationBuilder()
 
