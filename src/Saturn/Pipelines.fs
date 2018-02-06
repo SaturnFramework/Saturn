@@ -5,6 +5,7 @@ open Microsoft.AspNetCore.Http.Extensions
 open Giraffe.Tasks
 open Giraffe.HttpContextExtensions
 open System
+open System.Threading.Tasks
 
 module Pipeline =
 
@@ -198,3 +199,14 @@ module Pipeline =
   ///Requires authentication with JWT token using default authentication scheme
   let jwtAuthentication : HttpHandler = 
     requiresAuthentication (challenge Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+
+
+  ///Requires given value for given request header
+  let requireHeader header value : HttpHandler = 
+    fun nxt ctx -> 
+      match ctx.Request.Headers.TryGetValue header with
+      | false, _ -> Task.FromResult None
+      | true, v -> 
+        match v.ToArray() with
+        | [| v |] when v = value -> nxt ctx
+        | _ -> Task.FromResult None

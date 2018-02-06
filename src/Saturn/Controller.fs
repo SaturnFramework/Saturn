@@ -14,6 +14,7 @@ module Controller =
     Update: (HttpContext * 'Key -> HttpFuncResult) option
     Delete: (HttpContext * 'Key -> HttpFuncResult) option
     NotFoundHandler: HttpHandler option
+    Version: int option
   }
 
   type KeyType =
@@ -27,7 +28,7 @@ module Controller =
 
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None  }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None; Version = None }
 
     member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let typ =
@@ -114,7 +115,10 @@ module Controller =
           ]
           if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
       ]
-      lst
+      match state.Version with
+      | None -> lst
+      | Some v ->
+        Pipeline.requireHeader "x-controller-version" (v.ToString()) >=> lst
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
@@ -155,6 +159,11 @@ module Controller =
     [<CustomOperation("error_handler")>]
     member __.ErrprHandler(state : ControllerState<'Key>, handler) =
       {state with NotFoundHandler = Some handler}
+
+    ///Define version of controller. Adds checking of `x-controller-version` header
+    [<CustomOperation("version")>]
+    member __.Version(state, version) = 
+      {state with Version = Some version}
 
   let controller<'Key> = ControllerBuilder<'Key> ()
 
