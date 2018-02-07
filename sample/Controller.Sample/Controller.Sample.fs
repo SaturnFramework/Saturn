@@ -26,6 +26,9 @@ let userControllerVersion1 = controller {
 let userController = controller {
     subController "/comments" commentController
 
+    plug [All] (setHttpHeader "user-controller-common" "123")
+    plug [Index; Show] (setHttpHeader "user-controller-specialized" "123")
+
     index (fun ctx -> "Index handler no version" |> Controller.text ctx)
     add (fun ctx -> "Add handler no version" |> Controller.text ctx)
     show (fun (ctx, id) -> (sprintf "Show handler no version - %i" id) |> Controller.text ctx)
