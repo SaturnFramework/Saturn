@@ -14,6 +14,7 @@ module Controller =
     Update: (HttpContext * 'Key -> HttpFuncResult) option
     Delete: (HttpContext * 'Key -> HttpFuncResult) option
     NotFoundHandler: HttpHandler option
+    SubControllers : (string * ('Key -> HttpHandler)) list
     Version: int option
   }
 
@@ -28,7 +29,7 @@ module Controller =
 
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None; Version = None }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None; Version = None; SubControllers = [] }
 
     member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let typ =
@@ -64,6 +65,15 @@ module Controller =
               | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input) )
+            for (sPath, sCs) in state.SubControllers do
+              match typ with
+              | Bool -> yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Char -> yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | String -> yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int32 -> yield routef (PrintfFormat<int -> obj, obj, obj, obj, int>("/%i/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int64 -> yield routef (PrintfFormat<int64 -> obj, obj, obj, obj, int64>("/%d/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Float -> yield routef (PrintfFormat<float -> obj, obj, obj, obj, float>("/%f/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Guid -> yield routef (PrintfFormat<obj -> obj, obj, obj, obj, obj>("/%O/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
             if state.Index.IsSome then
               yield route "" >=> (fun _ ctx -> ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx))
               yield route "/" >=> (fun _ ctx -> state.Index.Value(ctx))
@@ -79,6 +89,16 @@ module Controller =
               | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+            for (sPath, sCs) in state.SubControllers do
+              match typ with
+              | Bool -> yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Char -> yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | String -> yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int32 -> yield routef (PrintfFormat<int -> obj, obj, obj, obj, int>("/%i/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int64 -> yield routef (PrintfFormat<int64 -> obj, obj, obj, obj, int64>("/%d/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Float -> yield routef (PrintfFormat<float -> obj, obj, obj, obj, float>("/%f/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Guid -> yield routef (PrintfFormat<obj -> obj, obj, obj, obj, obj>("/%O/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+            
           ]
           yield PATCH >=> choose [
             if state.Update.IsSome then
@@ -90,6 +110,16 @@ module Controller =
               | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+            for (sPath, sCs) in state.SubControllers do
+              match typ with
+              | Bool -> yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Char -> yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | String -> yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int32 -> yield routef (PrintfFormat<int -> obj, obj, obj, obj, int>("/%i/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int64 -> yield routef (PrintfFormat<int64 -> obj, obj, obj, obj, int64>("/%d/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Float -> yield routef (PrintfFormat<float -> obj, obj, obj, obj, float>("/%f/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Guid -> yield routef (PrintfFormat<obj -> obj, obj, obj, obj, obj>("/%O/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+            
           ]
           yield PUT >=> choose [
             if state.Update.IsSome then
@@ -101,6 +131,16 @@ module Controller =
               | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
+            for (sPath, sCs) in state.SubControllers do
+              match typ with
+              | Bool -> yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Char -> yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | String -> yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int32 -> yield routef (PrintfFormat<int -> obj, obj, obj, obj, int>("/%i/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int64 -> yield routef (PrintfFormat<int64 -> obj, obj, obj, obj, int64>("/%d/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Float -> yield routef (PrintfFormat<float -> obj, obj, obj, obj, float>("/%f/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Guid -> yield routef (PrintfFormat<obj -> obj, obj, obj, obj, obj>("/%O/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+            
           ]
           yield DELETE >=> choose [
             if state.Delete.IsSome then
@@ -112,6 +152,15 @@ module Controller =
               | Int64 -> yield routef "/%d" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input) )
+            for (sPath, sCs) in state.SubControllers do
+              match typ with
+              | Bool -> yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Char -> yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | String -> yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int32 -> yield routef (PrintfFormat<int -> obj, obj, obj, obj, int>("/%i/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Int64 -> yield routef (PrintfFormat<int64 -> obj, obj, obj, obj, int64>("/%d/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Float -> yield routef (PrintfFormat<float -> obj, obj, obj, obj, float>("/%f/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
+              | Guid -> yield routef (PrintfFormat<obj -> obj, obj, obj, obj, obj>("/%O/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
           ]
           if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
       ]
@@ -164,6 +213,10 @@ module Controller =
     [<CustomOperation("version")>]
     member __.Version(state, version) = 
       {state with Version = Some version}
+
+    [<CustomOperation("subController")>]
+    member __.SubController(state, path, handler) = 
+      {state with SubControllers = (path, handler)::state.SubControllers}
 
   let controller<'Key> = ControllerBuilder<'Key> ()
 
