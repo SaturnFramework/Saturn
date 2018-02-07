@@ -90,7 +90,7 @@ module Controller =
               | Float -> yield routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
               | Guid -> yield routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input) )
             for (sPath, sCs) in state.SubControllers do
-              match typ with
+              match typ with 
               | Bool -> yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
               | Char -> yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
               | String -> yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s/" + sPath)) (fun input -> sCs (unbox<'Key> input) )
