@@ -180,6 +180,14 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
+    [<CustomOperation("use_iis")>]
+    member __.UseIIS(state) =
+      let host (builder: IWebHostBuilder) =
+        builder.UseIISIntegration()
+      { state with
+          HostConfigs = host::state.HostConfigs
+      }
+
   let application = ApplicationBuilder()
 
   let run (app: IWebHost) = app.Run()
