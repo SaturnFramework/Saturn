@@ -1,14 +1,13 @@
 module JWTSample
 open System
+open Saturn
 open Saturn.Application
-open Saturn.ControllerHelpers
 open System.Security.Claims
 open System.IdentityModel.Tokens.Jwt
 open Microsoft.IdentityModel.Tokens
 open Saturn.Router
 open Giraffe
 open Microsoft.AspNetCore.Http
-open Saturn.Pipeline
 
 //Based on https://medium.com/@dsincl12/json-web-token-with-giraffe-and-f-4cebe1c3ef3b
 
@@ -28,15 +27,15 @@ type TokenResult =
         Token : string
     }
 
-let generateToken email = 
+let generateToken email =
     let claims = [|
         Claim(JwtRegisteredClaimNames.Sub, email);
-        Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) |] 
-    claims 
-    |> Authentication.generateToken (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
+        Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) |]
+    claims
+    |> Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
 
 let handleGetSecured =
-    fun (next : HttpFunc) (ctx : HttpContext) -> 
+    fun (next : HttpFunc) (ctx : HttpContext) ->
         let email = ctx.User.FindFirst ClaimTypes.NameIdentifier
         text ("User " + email.Value + " is authorized to access this resource.") next ctx
 
@@ -46,27 +45,27 @@ let handlePostToken =
             let! model = ctx.BindJsonAsync<LoginViewModel>()
 
             // authenticate user
-            
+
             let tokenResult = generateToken model.Email
 
             return! json tokenResult next ctx
 }
 
 let securedRouter = scope {
-    pipe_through jwtAuthentication
-    get "/" handleGetSecured 
+    pipe_through (Auth.requireAuthentication JWT)
+    get "/" handleGetSecured
 }
 
 let topRouter = scope {
     error_handler (setStatusCode 404 >=> text "Not Found")
-    
+
     post "/token" handlePostToken
     get "/" (text "public route")
     forward "/secured" securedRouter
 }
 
 let app = application {
-    use_jwt_authentication secret issuer  
+    use_jwt_authentication secret issuer
 
     router topRouter
     url "http://0.0.0.0:8085/"
