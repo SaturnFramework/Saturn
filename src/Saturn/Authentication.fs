@@ -16,7 +16,7 @@ module ChallengeType =
 module Auth =
   let private mapChallengeTypeToScheme = function
     | JWT -> Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme
-    | Cookies -> ""
+    | Cookies -> Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme
     | Custom s -> s
 
   ///Requires authentication and uses given challenge type if not authenticated
