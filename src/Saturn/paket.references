@@ -8,3 +8,4 @@ Microsoft.Extensions.Caching.Memory
 Microsoft.AspNetCore.Rewrite
 Microsoft.AspNetCore.Cors
 Microsoft.AspNetCore.Authentication.JwtBearer
+Microsoft.AspNetCore.Authentication.Cookies

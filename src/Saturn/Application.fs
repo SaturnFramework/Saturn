@@ -13,6 +13,7 @@ open Microsoft.AspNetCore.Rewrite
 open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Authentication.JwtBearer
 open Microsoft.IdentityModel.Tokens
+open Microsoft.AspNetCore.Authentication.Cookies
 
 type ApplicationState = {
   Router: HttpHandler option
@@ -173,6 +174,59 @@ module Application =
             tvp.IssuerSigningKey <- SymmetricSecurityKey(Text.Encoding.UTF8.GetBytes secret)
             opt.TokenValidationParameters <- tvp
          ) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
+    [<CustomOperation("use_jwt_authentication_with_config")>]
+    member __.UseJWTAuthConfig(state: ApplicationState, (config : JwtBearerOptions -> unit)) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- JwtBearerDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme)
+         .AddJwtBearer(Action<JwtBearerOptions> config) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
+    [<CustomOperation("use_cookies_authentication")>]
+    member __.UseCookiesAuth(state: ApplicationState, issuer : string) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
+         .AddCookie(fun opt ->
+          opt.ClaimsIssuer <- issuer
+         ) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
+    [<CustomOperation("use_cookies_authentication_with_config")>]
+    member __.UseCookiesAuthConfig(state: ApplicationState, (options :  CookieAuthenticationOptions -> unit) ) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
+         .AddCookie(options) |> ignore
         s
 
       { state with

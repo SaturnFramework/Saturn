@@ -10,6 +10,7 @@ nuget Microsoft.Extensions.Caching.Memory
 nuget Microsoft.AspNetCore.Rewrite
 nuget Microsoft.AspNetCore.Cors
 nuget Microsoft.AspNetCore.Authentication.JwtBearer
+nuget Microsoft.AspNetCore.Authentication.Cookies
 
 nuget Giraffe
 
