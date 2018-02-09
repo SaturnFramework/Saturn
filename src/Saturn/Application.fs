@@ -84,6 +84,11 @@ module Application =
     member __.HostConfig(state, config) =
       {state with HostConfigs = config::state.HostConfigs}
 
+    ///Adds custom service configuration step.
+    [<CustomOperation("service_config")>]
+    member __.ServiceConfig(state, config) =
+      {state with ServicesConfig = config::state.ServicesConfig}
+
     ///Adds url
     [<CustomOperation("url")>]
     member __.Url(state, url) =
