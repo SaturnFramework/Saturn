@@ -1,4 +1,5 @@
 namespace Saturn
+open System
 
 module Controller =
 
@@ -24,6 +25,7 @@ module Controller =
     Update: (HttpContext * 'Key -> HttpFuncResult) option
     Delete: (HttpContext * 'Key -> HttpFuncResult) option
     NotFoundHandler: HttpHandler option
+    ErrorHandler: (HttpContext * Exception) -> HttpFuncResult
     SubControllers : (string * ('Key -> HttpHandler)) list
     Plugs : Map<Action, HttpHandler list>
     Version: int option
@@ -40,7 +42,7 @@ module Controller =
 
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>  }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = fun (_, ex) -> raise ex }
 
     member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let typ =
@@ -59,31 +61,8 @@ module Controller =
         | Some acts -> (succeed |> List.foldBack (>=>) acts ) >=> handler
         | None -> handler
 
-      let lst =
+      let initialController =
         choose [
-          for (sPath, sCs) in state.SubControllers do
-            match typ with
-            | Bool ->
-              yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-              yield routef (PrintfFormat<bool -> string -> obj, obj, obj, obj, bool * string>("/%b" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-            | Char ->
-              yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-              yield routef (PrintfFormat<char -> string -> obj, obj, obj, obj, char * string>("/%c" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-            | String ->
-              yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-              yield routef (PrintfFormat<string -> string -> obj, obj, obj, obj, string * string>("/%s" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-            | Int32 ->
-              yield routef (PrintfFormat<int -> obj, obj, obj, obj, int>("/%i" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-              yield routef (PrintfFormat<int -> string -> obj, obj, obj, obj, int * string>("/%i" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-            | Int64 ->
-              yield routef (PrintfFormat<int64 -> obj, obj, obj, obj, int64>("/%d" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-              yield routef (PrintfFormat<int64 -> string -> obj, obj, obj, obj, int64 * string>("/%d" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-            | Float ->
-              yield routef (PrintfFormat<float -> obj, obj, obj, obj, float>("/%f" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-              yield routef (PrintfFormat<float -> string -> obj, obj, obj, obj, float * string>("/%f" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-            | Guid ->
-              yield routef (PrintfFormat<obj -> obj, obj, obj, obj, obj>("/%O" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
-              yield routef (PrintfFormat<obj -> string -> obj, obj, obj, obj, obj * string>("/%O" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
           yield GET >=> choose [
             if state.Add.IsSome then yield addPlugs Add (route "/add" >=> (fun _ ctx -> state.Add.Value(ctx)))
             if state.Edit.IsSome then
@@ -155,10 +134,47 @@ module Controller =
           ]
           if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
       ]
+
+      let controllerWithErrorHandler nxt ctx : HttpFuncResult =
+        task {
+          try
+            return! initialController nxt ctx
+          with
+          | ex -> return! state.ErrorHandler(ctx, ex)
+        }
+
+      let controllerWithSubs =
+        choose [
+          for (sPath, sCs) in state.SubControllers do
+            match typ with
+            | Bool ->
+              yield routef (PrintfFormat<bool -> obj, obj, obj, obj, bool>("/%b" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+              yield routef (PrintfFormat<bool -> string -> obj, obj, obj, obj, bool * string>("/%b" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+            | Char ->
+              yield routef (PrintfFormat<char -> obj, obj, obj, obj, char>("/%c" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+              yield routef (PrintfFormat<char -> string -> obj, obj, obj, obj, char * string>("/%c" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+            | String ->
+              yield routef (PrintfFormat<string -> obj, obj, obj, obj, string>("/%s" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+              yield routef (PrintfFormat<string -> string -> obj, obj, obj, obj, string * string>("/%s" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+            | Int32 ->
+              yield routef (PrintfFormat<int -> obj, obj, obj, obj, int>("/%i" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+              yield routef (PrintfFormat<int -> string -> obj, obj, obj, obj, int * string>("/%i" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+            | Int64 ->
+              yield routef (PrintfFormat<int64 -> obj, obj, obj, obj, int64>("/%d" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+              yield routef (PrintfFormat<int64 -> string -> obj, obj, obj, obj, int64 * string>("/%d" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+            | Float ->
+              yield routef (PrintfFormat<float -> obj, obj, obj, obj, float>("/%f" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+              yield routef (PrintfFormat<float -> string -> obj, obj, obj, obj, float * string>("/%f" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+            | Guid ->
+              yield routef (PrintfFormat<obj -> obj, obj, obj, obj, obj>("/%O" + sPath)) (fun input -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+              yield routef (PrintfFormat<obj -> string -> obj, obj, obj, obj, obj * string>("/%O" + sPath + "%s")) (fun (input, _) -> subRoute ("/" + (string input) + sPath) (sCs (unbox<'Key> input)))
+          yield controllerWithErrorHandler
+        ]
+
       match state.Version with
-      | None -> lst
+      | None -> controllerWithSubs
       | Some v ->
-        Pipeline.requireHeader "x-controller-version" (v.ToString()) >=> lst
+        Pipeline.requireHeader "x-controller-version" (v.ToString()) >=> controllerWithSubs
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
@@ -195,10 +211,15 @@ module Controller =
     member __.Delete (state : ControllerState<'Key>, handler) =
       {state with Delete = Some handler}
 
-    ///Define error/not-found handler for the controller
-    [<CustomOperation("error_handler")>]
-    member __.ErrprHandler(state : ControllerState<'Key>, handler) =
+    ///Define not-found handler for the controller
+    [<CustomOperation("not_found_handler")>]
+    member __.NotFoundHandler(state : ControllerState<'Key>, handler) =
       {state with NotFoundHandler = Some handler}
+
+    ///Define error for the controller
+    [<CustomOperation("error_handler")>]
+    member __.ErrorHandler(state : ControllerState<'Key>, handler) =
+      {state with ErrorHandler = handler}
 
     ///Define version of controller. Adds checking of `x-controller-version` header
     [<CustomOperation("version")>]
