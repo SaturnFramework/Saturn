@@ -94,6 +94,11 @@ module Application =
     member __.Url(state, url) =
       {state with Urls = url::state.Urls}
 
+    ///Adds logging configuration.
+    [<CustomOperation("logging")>]
+    member __.Logging(state, (config : ILoggingBuilder -> unit)) =
+      {state with HostConfigs = (fun (app : IWebHostBuilder)-> app.ConfigureLogging(config))::state.HostConfigs}
+
     ///Enables in-memory session cache
     [<CustomOperation("memory_cache")>]
     member __.MemoryCache(state) =
