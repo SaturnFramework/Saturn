@@ -11,12 +11,14 @@ module ChallengeType =
   type ChallengeType =
     | JWT
     | Cookies
+    | GitHub
     | Custom of string
 
 module Auth =
   let private mapChallengeTypeToScheme = function
     | JWT -> Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme
     | Cookies -> Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme
+    | GitHub -> "Github"
     | Custom s -> s
 
   ///Requires authentication and uses given challenge type if not authenticated
