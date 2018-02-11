@@ -177,9 +177,9 @@ module Router =
     member __.PipeThrough(state, pipe) : ScopeState =
       {state with Pipelines = pipe::state.Pipelines}
 
-    ///Adds error/not-found handler for current scope
-    [<CustomOperation("error_handler")>]
-    member __.ErrprHandler(state, handler) : ScopeState =
+    ///Adds not-found handler for current scope
+    [<CustomOperation("not_found_handler")>]
+    member __.NotFoundHandler(state, handler) : ScopeState =
       {state with NotFoundHandler = Some handler}
 
   let scope = ScopeBuilder()
