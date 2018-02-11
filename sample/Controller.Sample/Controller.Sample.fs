@@ -36,7 +36,7 @@ let userController = controller {
 }
 
 let topRouter = scope {
-    error_handler (setStatusCode 404 >=> text "Not Found")
+    not_found_handler (setStatusCode 404 >=> text "Not Found")
 
     forward "/users" userControllerVersion1
     forward "/users" userController

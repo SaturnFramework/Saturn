@@ -59,7 +59,7 @@ let endpointPipe = pipeline {
 
 let apiRouter = scope {
     pipe_through apiHeaderPipe
-    error_handler (text "Api 404")
+    not_found_handler (text "Api 404")
 
 
     get "/" apiHelloWorld
@@ -100,7 +100,7 @@ let apiRouter = scope {
 // delete - delete item
 
 let userController = controller {
-    error_handler (text "Users 404")
+    not_found_handler (text "Users 404")
 
     index (fun ctx -> "Index handler" |> Controller.text ctx)
     add (fun ctx -> "Add handler" |> Controller.text ctx)
@@ -114,7 +114,7 @@ let userController = controller {
 
 let topRouter = scope {
     pipe_through headerPipe
-    error_handler (text "404")
+    not_found_handler (text "404")
 
     get "/" helloWorld
     get "/a" helloWorld2
@@ -124,7 +124,7 @@ let topRouter = scope {
     //scopes can be defined inline to simulate `subRoute` combinator
     forward "/other" (scope {
         pipe_through otherHeaderPipe
-        error_handler (text "Other 404")
+        not_found_handler (text "Other 404")
 
         get "/" otherHelloWorld
         get "/a" otherHelloWorld2

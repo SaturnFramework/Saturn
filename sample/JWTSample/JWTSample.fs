@@ -57,7 +57,7 @@ let securedRouter = scope {
 }
 
 let topRouter = scope {
-    error_handler (setStatusCode 404 >=> text "Not Found")
+    not_found_handler (setStatusCode 404 >=> text "Not Found")
 
     post "/token" handlePostToken
     get "/" (text "public route")
