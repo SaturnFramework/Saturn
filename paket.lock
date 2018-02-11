@@ -76,6 +76,9 @@ NUGET
     Microsoft.AspNetCore.Authentication.JwtBearer (2.0.1)
       Microsoft.AspNetCore.Authentication (>= 2.0.1) - restriction: >= netstandard2.0
       Microsoft.IdentityModel.Protocols.OpenIdConnect (>= 2.1.4) - restriction: >= netstandard2.0
+    Microsoft.AspNetCore.Authentication.OAuth (2.0.1)
+      Microsoft.AspNetCore.Authentication (>= 2.0.1) - restriction: >= netstandard2.0
+      Newtonsoft.Json (>= 10.0.1) - restriction: >= netstandard2.0
     Microsoft.AspNetCore.Cors (2.0.1)
       Microsoft.AspNetCore.Http.Extensions (>= 2.0.1) - restriction: >= netstandard2.0
       Microsoft.Extensions.Configuration.Abstractions (>= 2.0) - restriction: >= netstandard2.0

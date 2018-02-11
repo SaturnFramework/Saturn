@@ -14,18 +14,26 @@ open Microsoft.AspNetCore.Cors.Infrastructure
 open Microsoft.AspNetCore.Authentication.JwtBearer
 open Microsoft.IdentityModel.Tokens
 open Microsoft.AspNetCore.Authentication.Cookies
+open Microsoft.AspNetCore.Http
+open Microsoft.AspNetCore.Authentication
+open Microsoft.AspNetCore.Authentication.OAuth
+open System.Net.Http
+open System.Net.Http.Headers
+open Newtonsoft.Json.Linq
+open System.Threading.Tasks
 
-type ApplicationState = {
-  Router: HttpHandler option
-  ErrorHandler: ErrorHandler option
-  Pipelines: HttpHandler list
-  Urls: string list
-  AppConfigs: (IApplicationBuilder -> IApplicationBuilder) list
-  HostConfigs: (IWebHostBuilder -> IWebHostBuilder) list
-  ServicesConfig: (IServiceCollection -> IServiceCollection) list
-}
 
 module Application =
+  type ApplicationState = {
+    Router: HttpHandler option
+    ErrorHandler: ErrorHandler option
+    Pipelines: HttpHandler list
+    Urls: string list
+    AppConfigs: (IApplicationBuilder -> IApplicationBuilder) list
+    HostConfigs: (IWebHostBuilder -> IWebHostBuilder) list
+    ServicesConfig: (IServiceCollection -> IServiceCollection) list
+  }
+
   type ApplicationBuilder internal () =
     member __.Yield(_) =
       let errorHandler (ex : Exception) (logger : ILogger) =
@@ -122,7 +130,7 @@ module Application =
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
       }
-
+    ///Enables using static file hosting.
     [<CustomOperation("use_static")>]
     member __.UseStatic(state, path : string) =
       let middleware (app : IApplicationBuilder) = app.UseStaticFiles()
@@ -145,6 +153,7 @@ module Application =
 
       {state with Pipelines = handler::state.Pipelines}
 
+    ///Redirect all HTTP request to HTTPS
     [<CustomOperation("force_ssl")>]
     member __.ForceSSL(state : ApplicationState) =
       let middleware (app : IApplicationBuilder) =
@@ -153,6 +162,7 @@ module Application =
 
       {state with AppConfigs=middleware::state.AppConfigs}
 
+    ///Enables application level CORS protection
     [<CustomOperation("use_cors")>]
     member __.UseCors(state: ApplicationState, policy : string, (policyConfig : CorsPolicyBuilder -> unit ) ) =
       let service (s : IServiceCollection) =
@@ -164,6 +174,8 @@ module Application =
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
       }
+
+    ///Enables default JWT authentication
     [<CustomOperation("use_jwt_authentication")>]
     member __.UseJWTAuth(state: ApplicationState, secret: string, issuer : string) =
       let middleware (app : IApplicationBuilder) =
@@ -191,6 +203,7 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
+    ///Enables JWT authentication with custom configuration
     [<CustomOperation("use_jwt_authentication_with_config")>]
     member __.UseJWTAuthConfig(state: ApplicationState, (config : JwtBearerOptions -> unit)) =
       let middleware (app : IApplicationBuilder) =
@@ -208,6 +221,7 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
+    ///Enables default cookies authentication
     [<CustomOperation("use_cookies_authentication")>]
     member __.UseCookiesAuth(state: ApplicationState, issuer : string) =
       let middleware (app : IApplicationBuilder) =
@@ -227,6 +241,7 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
+    ///Enables cookies authentication with custom configuration
     [<CustomOperation("use_cookies_authentication_with_config")>]
     member __.UseCookiesAuthConfig(state: ApplicationState, (options :  CookieAuthenticationOptions -> unit) ) =
       let middleware (app : IApplicationBuilder) =
@@ -244,6 +259,91 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
+    ///Enables default GitHub OAuth authentication
+    [<CustomOperation("use_github_oauth")>]
+    member __.UseGithubAuth(state: ApplicationState, clientId : string, clientSecret : string, callbackPath : string, jsonToClaimMap : (string * string) seq) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- "GitHub")
+         .AddCookie()
+         .AddOAuth("GitHub", fun (opt : Authentication.OAuth.OAuthOptions) ->
+          opt.ClientId <- clientId
+          opt.ClientSecret <- clientSecret
+          opt.CallbackPath <- PathString(callbackPath)
+          opt.AuthorizationEndpoint <-  "https://github.com/login/oauth/authorize"
+          opt.TokenEndpoint <- "https://github.com/login/oauth/access_token"
+          opt.UserInformationEndpoint <- "https://api.github.com/user"
+          jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(k,v) )
+          let ev = OAuthEvents()
+
+          ev.OnCreatingTicket <-
+            fun ctx ->
+              let tsk = task {
+                let req = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint)
+                req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue("application/json"))
+                req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", ctx.AccessToken)
+                let! (response : HttpResponseMessage) = ctx.Backchannel.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ctx.HttpContext.RequestAborted)
+                response.EnsureSuccessStatusCode () |> ignore
+                let! cnt = response.Content.ReadAsStringAsync()
+                let user = JObject.Parse cnt
+                ctx.RunClaimActions user
+              }
+              Task.Factory.StartNew(fun () -> tsk.Result)
+
+         ) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
+    ///Enables GitHub OAuth authentication with custom configuration
+    [<CustomOperation("use_github_oauth_with_config")>]
+    member __.UseGithubAuthWithConfig(state: ApplicationState, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- "GitHub")
+         .AddCookie()
+         .AddOAuth("GitHub",config) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
+    ///Enables custom OAuth authentication
+    [<CustomOperation("use_custom_oauth")>]
+    member __.UseCustomOAuth(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- name)
+         .AddCookie()
+         .AddOAuth(name,config) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
+    ///Enavles IIS integration
     [<CustomOperation("use_iis")>]
     member __.UseIIS(state) =
       let host (builder: IWebHostBuilder) =
@@ -252,6 +352,8 @@ module Application =
           HostConfigs = host::state.HostConfigs
       }
 
+  ///Comuputation expression used to configure Saturn application
   let application = ApplicationBuilder()
 
+  ///Runs Saturn application
   let run (app: IWebHost) = app.Run()
