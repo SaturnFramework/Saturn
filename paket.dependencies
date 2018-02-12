@@ -13,7 +13,7 @@ nuget Microsoft.AspNetCore.Authentication.JwtBearer
 nuget Microsoft.AspNetCore.Authentication.Cookies
 nuget Microsoft.AspNetCore.Authentication.OAuth
 
-nuget Giraffe 0.1.0-beta-700
+nuget Giraffe
 
 group Build
   source https://www.nuget.org/api/v2

@@ -2,14 +2,18 @@ namespace Saturn
 
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Http.Extensions
-open Giraffe.Tasks
-open Giraffe.HttpContextExtensions
 open System
 open System.Threading.Tasks
+open Giraffe.Core
+open Giraffe.Auth
+open Giraffe.ResponseWriters
+open Giraffe.Negotiation
+open Giraffe.Routing
+open Giraffe.ModelBinding
+open FSharp.Control.Tasks.ContextInsensitive
 
 module Pipeline =
 
-  open Giraffe.HttpHandlers
 
   type PipelineBuilder internal () =
     member __.Yield(_) : HttpHandler = succeed
@@ -28,7 +32,7 @@ module Pipeline =
 
     ///`sign_off` signs off the currently logged in user.
     [<CustomOperation("sign_off")>]
-    member __.SignOff(state, scheme) : HttpHandler  = state >=> (signOff scheme)
+    member __.SignOff(state, scheme) : HttpHandler  = state >=> (signOut scheme)
 
     ///`requires_auth_policy` validates if a user satisfies policy requirement, if not then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_auth_policy")>]
@@ -64,15 +68,11 @@ module Pipeline =
 
     ///`set_body` sets or modifies the body of the `HttpResponse`. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.
     [<CustomOperation("set_body")>]
-    member __.SetBody(state, value) : HttpHandler  = state >=> (setBodyAsString value)
+    member __.SetBody(state, value) : HttpHandler  = state >=> (setBodyFromString value)
 
     ///`text` sets or modifies the body of the `HttpResponse` by sending a plain text value to the client. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. It also sets the `Content-Type` HTTP header to `text/plain`.
     [<CustomOperation("text")>]
     member __.Text(state, cnt) : HttpHandler  = state >=> (text cnt)
-
-    ///`json` sets or modifies the body of the `HttpResponse` by sending a JSON serialized object to the client. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. It also sets the `Content-Type` HTTP header to `application/json`.
-    [<CustomOperation("json")>]
-    member __.Json(state, serializer, cnt) : HttpHandler  = state >=> (customJson serializer cnt)
 
     ///`json` sets or modifies the body of the `HttpResponse` by sending a JSON serialized object to the client. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. It also sets the `Content-Type` HTTP header to `application/json`.
     [<CustomOperation("json")>]
@@ -92,7 +92,7 @@ module Pipeline =
 
     ///`html` sets or modifies the body of the `HttpResponse` with the contents of a single string variable. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.
     [<CustomOperation("html")>]
-    member __.Html(state, cnt) : HttpHandler  = state >=> (html cnt)
+    member __.Html(state, cnt) : HttpHandler  = state >=> (htmlString cnt)
 
     ///`html_file` sets or modifies the body of the `HttpResponse` with the contents of a physical html file. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. This http handler takes a rooted path of a html file or a path which is relative to the ContentRootPath as the input parameter and sets the HTTP header `Content-Type` to `text/html`.
     [<CustomOperation("html_file")>]
@@ -100,7 +100,7 @@ module Pipeline =
 
     ///`render_html` is a more functional way of generating HTML by composing HTML elements in F# to generate a rich Model-View output.
     [<CustomOperation("render_html")>]
-    member __.RenderHtml(state, cnt) : HttpHandler  = state >=> (renderHtml cnt)
+    member __.RenderHtml(state, cnt) : HttpHandler  = state >=> (htmlView cnt)
 
     ///`redirect_to` uses a 302 or 301 (when permanent) HTTP response code to redirect the client to the specified location. It takes in two parameters, a boolean flag denoting whether the redirect should be permanent or not and the location to redirect to.
     [<CustomOperation("redirect_to")>]
@@ -159,16 +159,14 @@ module Pipeline =
 
   ///Tries to model from request and puts model into `Items.RequestModel`. If it won't be called content can be fetched using `Context.Controller` helpers.
   ///It won't crash the pipelines if fetching failed.
-  ///It optionally takes custom JSON deserializer settings, and/or culture name as arguments.
-  let fetchModel<'a> serializer culture (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
+  ///It optionally takes custom culture name as arguments.
+  let fetchModel<'a> culture (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
     let clt = culture |> Option.map System.Globalization.CultureInfo.CreateSpecificCulture
     try
       let mdl =
-        match serializer, clt with
-        | Some s, Some c -> ctx.BindModelAsync<'a>(s,c)
-        | None, Some c -> ctx.BindModelAsync<'a>(cultureInfo = c)
-        | Some s, None -> ctx.BindModelAsync<'a>(settings = s)
-        | None, None -> ctx.BindModelAsync<'a>()
+        match clt with
+        | Some c -> ctx.BindModelAsync<'a>(c)
+        | None -> ctx.BindModelAsync<'a>()
       ctx.Items.["RequestModel"] <- mdl
     with
     | _ -> ()

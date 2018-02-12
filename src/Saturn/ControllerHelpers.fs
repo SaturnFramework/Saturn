@@ -1,10 +1,11 @@
 namespace Saturn
 
 open Microsoft.AspNetCore.Http
-open Giraffe.HttpContextExtensions
-open Giraffe.Tasks
-open Giraffe.HttpHandlers
 open Giraffe.HttpStatusCodeHandlers
+open Giraffe.Core
+open Giraffe.ResponseWriters
+open Giraffe.ModelBinding
+open FSharp.Control.Tasks.ContextInsensitive
 
 
 module ControllerHelpers =
@@ -30,19 +31,15 @@ module ControllerHelpers =
 
     ///Returns to the client rendered template.
     let render (ctx: HttpContext) template =
-      ctx.RenderHtmlAsync template
+      ctx.WriteHtmlStringAsync template
 
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
-      ctx.ReturnHtmlFileAsync path
+      ctx.WriteHtmlFileAsync path
 
     ///Gets model from body as JSON.
     let getJson<'a> (ctx: HttpContext) =
       ctx.BindJsonAsync<'a>()
-
-    ///Gets model from body as JSON. Accepts custom serialization settings.
-    let getJsonCustom<'a> (ctx : HttpContext) serializer =
-      ctx.BindJsonAsync<'a>(serializer)
 
     ///Gets model from body as JSON.
     let getXml<'a> (ctx: HttpContext) =
@@ -73,14 +70,12 @@ module ControllerHelpers =
       | _ ->
         ctx.BindModelAsync<'a>()
 
-    ///Get model based on `HttpMethod` and `Content-Type` of request. Accepts custom deserialization settings, and culture.
-    let getModelCustom<'a> (ctx: HttpContext) serializer culture =
+    ///Get model based on `HttpMethod` and `Content-Type` of request. Accepts custom culture.
+    let getModelCustom<'a> (ctx: HttpContext) culture =
       let clt = culture |> Option.map System.Globalization.CultureInfo.CreateSpecificCulture
-      match serializer, clt with
-      | Some s, Some c -> ctx.BindModelAsync<'a>(s,c)
-      | None, Some c -> ctx.BindModelAsync<'a>(cultureInfo = c)
-      | Some s, None -> ctx.BindModelAsync<'a>(settings = s)
-      | None, None -> ctx.BindModelAsync<'a>()
+      match clt with
+      | Some c -> ctx.BindModelAsync<'a>(c)
+      | None -> ctx.BindModelAsync<'a>()
 
     ///Loads model populated by `fetchModel` pipeline
     let loadModel<'a> (ctx: HttpContext) =

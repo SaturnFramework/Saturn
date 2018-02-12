@@ -1,9 +1,9 @@
 namespace Saturn
+open Giraffe.Core
 
 module CORS =
 
   open Utils
-  open Giraffe.HttpHandlers
 
   [<Literal>]
   let private Origin = "Origin"
@@ -130,7 +130,7 @@ module CORS =
                 >=> setAllowCredentialsHeader config
                 >=> setAllowOriginHeader originValue
                 >=> setStatusCode 204
-                >=> setBody [||]
+                >=> Giraffe.ResponseWriters.setBody [||]
               composed nxt ctx
             else
               succeed nxt ctx

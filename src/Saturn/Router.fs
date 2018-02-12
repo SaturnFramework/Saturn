@@ -1,6 +1,7 @@
 namespace Saturn
 
-open Giraffe.HttpHandlers
+open Giraffe.Core
+open Giraffe.Routing
 module Router =
 
   open System.Collections.Generic

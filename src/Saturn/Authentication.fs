@@ -1,10 +1,11 @@
 namespace Saturn
 
-open Giraffe.HttpHandlers
+open Giraffe.Core
 open System
 open Microsoft.IdentityModel.Tokens
 open System.Text
 open System.IdentityModel.Tokens.Jwt
+open Giraffe.Auth
 
 [<AutoOpen>]
 module ChallengeType =
