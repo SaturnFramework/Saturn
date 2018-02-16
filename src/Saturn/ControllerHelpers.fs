@@ -10,7 +10,6 @@ open FSharp.Control.Tasks.ContextInsensitive
 [<AutoOpen>]
 module ControllerHelpers =
 
-  [<RequireQualifiedAccess>]
   module Controller =
 
     ///Returns to the client content serialized to JSON.
@@ -106,7 +105,6 @@ module ControllerHelpers =
     let redirect (ctx: HttpContext) path =
       redirectTo false path (fun c -> task {return Some c}) ctx
 
-  [<RequireQualifiedAccess>]
   module Response =
     let continue (ctx: HttpContext) =
       Intermediate.CONTINUE (fun c -> task {return Some c}) ctx
