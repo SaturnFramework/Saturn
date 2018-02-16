@@ -122,10 +122,12 @@ Target "ReleaseGitHub" (fun _ ->
             | _ -> getUserPassword "Password: "
 
         createClient user pw
+    let file = !! (buildDir </> "*.nupkg") |> Seq.head
 
     // release on github
     client
     |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    |> uploadFile file
     |> releaseDraft
     |> Async.RunSynchronously
 )
