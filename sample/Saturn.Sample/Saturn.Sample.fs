@@ -1,11 +1,6 @@
 module Sample
 
-open Saturn.Controller
-open Saturn.Router
-open Saturn.Pipeline
-open Saturn.Application
-open Saturn.ControllerHelpers
-
+open Saturn
 open Giraffe
 
 

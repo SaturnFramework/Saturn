@@ -1,10 +1,7 @@
 module Controller.Sample
 
-open Saturn.Controller
-open Saturn.ControllerHelpers
-open Saturn.Router
+open Saturn
 open Giraffe.Core
-open Saturn.Application
 open Giraffe.ResponseWriters
 
 let commentController userId = controller {

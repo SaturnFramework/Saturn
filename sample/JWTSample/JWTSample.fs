@@ -1,11 +1,10 @@
 module JWTSample
+
 open System
 open Saturn
-open Saturn.Application
 open System.Security.Claims
 open System.IdentityModel.Tokens.Jwt
 open Microsoft.IdentityModel.Tokens
-open Saturn.Router
 open Giraffe
 open Microsoft.AspNetCore.Http
 
