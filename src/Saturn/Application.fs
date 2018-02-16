@@ -343,7 +343,7 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
-    ///Enavles IIS integration
+    ///Enables IIS integration
     [<CustomOperation("use_iis")>]
     member __.UseIIS(state) =
       let host (builder: IWebHostBuilder) =
@@ -352,7 +352,7 @@ module Application =
           HostConfigs = host::state.HostConfigs
       }
 
-  ///Comuputation expression used to configure Saturn application
+  ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
 
   ///Runs Saturn application
