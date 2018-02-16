@@ -1,6 +1,7 @@
 namespace Saturn
 open System
 
+[<AutoOpen>]
 module Controller =
 
   open Microsoft.AspNetCore.Http
@@ -31,7 +32,7 @@ module Controller =
     Version: int option
   }
 
-  type KeyType =
+  type internal KeyType =
     | Bool
     | Char
     | String

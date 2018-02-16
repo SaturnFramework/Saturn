@@ -2,9 +2,11 @@ namespace Saturn
 
 open Giraffe.Core
 open Giraffe.Routing
+open System.Collections.Generic
+
+[<AutoOpen>]
 module Router =
 
-  open System.Collections.Generic
 
   [<RequireQualifiedAccess>]
   type RouteType =

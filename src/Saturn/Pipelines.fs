@@ -12,6 +12,7 @@ open Giraffe.Routing
 open Giraffe.ModelBinding
 open FSharp.Control.Tasks.ContextInsensitive
 
+[<AutoOpen>]
 module Pipeline =
 
 

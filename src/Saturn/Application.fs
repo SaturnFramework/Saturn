@@ -22,7 +22,7 @@ open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
 open System.Threading.Tasks
 
-
+[<AutoOpen>]
 module Application =
   type ApplicationState = {
     Router: HttpHandler option

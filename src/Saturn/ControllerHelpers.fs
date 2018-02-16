@@ -7,7 +7,7 @@ open Giraffe.ResponseWriters
 open Giraffe.ModelBinding
 open FSharp.Control.Tasks.ContextInsensitive
 
-
+[<AutoOpen>]
 module ControllerHelpers =
 
   [<RequireQualifiedAccess>]
