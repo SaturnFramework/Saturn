@@ -15,6 +15,7 @@ module Controller =
     | Create
     | Update
     | Delete
+    | DeleteAll
     | All
 
   type ControllerState<'Key> = {
@@ -25,6 +26,7 @@ module Controller =
     Create: (HttpContext -> HttpFuncResult) option
     Update: (HttpContext * 'Key -> HttpFuncResult) option
     Delete: (HttpContext * 'Key -> HttpFuncResult) option
+    DeleteAll: (HttpContext -> HttpFuncResult) option
     NotFoundHandler: HttpHandler option
     ErrorHandler: (HttpContext * Exception) -> HttpFuncResult
     SubControllers : (string * ('Key -> HttpHandler)) list
@@ -43,7 +45,7 @@ module Controller =
 
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = fun (_, ex) -> raise ex }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = fun (_, ex) -> raise ex }
 
     member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let typ =
@@ -89,7 +91,10 @@ module Controller =
               yield addPlugs Index (route "/" >=> (fun _ ctx -> state.Index.Value(ctx)))
           ]
           yield POST >=> choose [
-            if state.Create.IsSome then yield addPlugs Create (route "/" >=> (fun _ ctx -> state.Create.Value(ctx)))
+            if state.Create.IsSome then 
+              yield addPlugs Create (route "" >=> (fun _ ctx -> ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Create.Value(ctx)))
+              yield addPlugs Create (route "/" >=> (fun _ ctx -> state.Create.Value(ctx)))
+              
             if state.Update.IsSome then
               match typ with
               | Bool -> yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
@@ -123,6 +128,9 @@ module Controller =
               | Guid -> yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
           ]
           yield DELETE >=> choose [
+            if state.Delete.IsSome then
+              yield addPlugs DeleteAll (route "" >=> (fun _ ctx -> ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.DeleteAll.Value(ctx)))
+              yield addPlugs DeleteAll (route "/" >=> (fun _ ctx -> state.DeleteAll.Value(ctx)))
             if state.Delete.IsSome then
               match typ with
               | Bool -> yield addPlugs Delete (routef "/%b" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
@@ -211,6 +219,11 @@ module Controller =
     [<CustomOperation("delete")>]
     member __.Delete (state : ControllerState<'Key>, handler) =
       {state with Delete = Some handler}
+
+    ///Operation that deletes all items
+    [<CustomOperation("delete_all")>]
+    member __.DeleteAll (state : ControllerState<'Key>, handler) =
+      {state with DeleteAll = Some handler}
 
     ///Define not-found handler for the controller
     [<CustomOperation("not_found_handler")>]
