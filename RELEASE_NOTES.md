@@ -1,3 +1,7 @@
+### 0.4.1 - 19.02.2018
+* Fix `create` and `delete` actions
+* Add `delete_all` action
+
 ### 0.4.0 - 16.02.2018
 * Implement controller versioning
 * Add suport for embedding controllers
