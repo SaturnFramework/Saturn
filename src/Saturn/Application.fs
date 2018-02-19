@@ -58,6 +58,7 @@ module Application =
         app.UseGiraffe router
 
       let serviceConfigs (services : IServiceCollection) =
+        let services = services.AddGiraffe()
         state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore)
 
       let wbhst = WebHost.CreateDefaultBuilder() |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
@@ -74,12 +75,12 @@ module Application =
 
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]
-    member __.PipeThrough(state, pipe) =
+    member __.PipeThrough(state : ApplicationState, pipe) =
       {state with Pipelines = pipe::state.Pipelines}
 
     ///Adds error/not-found handler for current scope
     [<CustomOperation("error_handler")>]
-    member __.ErrprHandler(state, handler) =
+    member __.ErrprHandler(state : ApplicationState, handler) =
       {state with ErrorHandler = Some handler}
 
     ///Adds custom application configuration step.
@@ -145,7 +146,7 @@ module Application =
       }
 
     [<CustomOperation("use_config")>]
-    member __.UseConfig(state, configBuilder : unit -> 'a) =
+    member __.UseConfig(state : ApplicationState, configBuilder : unit -> 'a) =
       let x = lazy(configBuilder ())
       let handler (nxt : HttpFunc) (ctx : Microsoft.AspNetCore.Http.HttpContext) : HttpFuncResult =
         ctx.Items.["Configuration"] <- x.Value
