@@ -1,4 +1,4 @@
-### 0.4.1 - 19.02.2018
+### 0.4.2 - 19.02.2018
 * Fix `create` and `delete` actions
 * Add `delete_all` action
 
