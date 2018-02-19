@@ -29,7 +29,7 @@ let gitHome = "https://github.com/" + gitOwner
 // --------------------------------------------------------------------------------------
 
 let buildDir  = "./build/"
-let dotnetcliVersion = "2.1.3"
+let dotnetcliVersion = "2.1.4"
 
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let release = parseReleaseNotes (IO.File.ReadAllLines "RELEASE_NOTES.md")
