@@ -118,6 +118,9 @@ module Pipeline =
   ///`pipeline` computation expression is a way to create `HttpHandler` using composition of low-level helper functions.
   let pipeline = PipelineBuilder()
 
+[<AutoOpen>]
+module PipelineHelpers =
+
   ///Accepts `application/json`
   let acceptJson : HttpHandler = mustAccept ["application/json"]
 

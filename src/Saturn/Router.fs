@@ -115,7 +115,7 @@ module Router =
           yield! forwards
           if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
       ]
-      (Pipeline.fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
+      (fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
 
     ///Adds handler for `GET` request.
     [<CustomOperation("get")>]

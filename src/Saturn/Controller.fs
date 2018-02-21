@@ -183,7 +183,7 @@ module Controller =
       match state.Version with
       | None -> controllerWithSubs
       | Some v ->
-        Pipeline.requireHeader "x-controller-version" (v.ToString()) >=> controllerWithSubs
+        requireHeader "x-controller-version" (v.ToString()) >=> controllerWithSubs
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]

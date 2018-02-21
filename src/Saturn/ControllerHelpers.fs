@@ -40,7 +40,7 @@ module ControllerHelpers =
     let getJson<'a> (ctx: HttpContext) =
       ctx.BindJsonAsync<'a>()
 
-    ///Gets model from body as JSON.
+    ///Gets model from body as XML.
     let getXml<'a> (ctx: HttpContext) =
       ctx.BindXmlAsync<'a>()
 
