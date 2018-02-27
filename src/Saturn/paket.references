@@ -10,3 +10,4 @@ Microsoft.AspNetCore.Cors
 Microsoft.AspNetCore.Authentication.JwtBearer
 Microsoft.AspNetCore.Authentication.Cookies
 Microsoft.AspNetCore.Authentication.OAuth
+Microsoft.AspNetCore.Authorization
