@@ -32,6 +32,10 @@ module ControllerHelpers =
     let render (ctx: HttpContext) template =
       ctx.WriteHtmlStringAsync template
 
+    ///Returns to the client rendered xml template.
+    let renderXml (ctx: HttpContext) template =
+      ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode template)
+
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
       ctx.WriteHtmlFileAsync path
