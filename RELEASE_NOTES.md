@@ -1,3 +1,7 @@
+### 0.4.3 - 27.02.2018
+* Update to Giraffe 1.1
+* Add new renderXml to render XmlNode based templates  (by @mtnrbq)
+
 ### 0.4.2 - 19.02.2018
 * Fix `create` and `delete` actions
 * Add `delete_all` action
