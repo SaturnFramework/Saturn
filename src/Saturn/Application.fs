@@ -356,19 +356,19 @@ module Application =
 
     ///Add custom policy, taking an `AuthorizationHandlerContext -> bool`
     [<CustomOperation("use_policy")>]
-    member __.UsePolicy(state, policy, evaluator: AuthorizationHandlerContext -> bool) =      
+    member __.UsePolicy(state, policy, evaluator: AuthorizationHandlerContext -> bool) =
       let policyBuilder (opt : AuthorizationOptions) =
         opt.AddPolicy(policy,
           Action<AuthorizationPolicyBuilder>
             (fun builder -> builder.RequireAssertion evaluator |> ignore))
       let service (s : IServiceCollection) =
-        s.AddAuthorization (Action<AuthorizationOptions> policyBuilder)      
+        s.AddAuthorization (Action<AuthorizationOptions> policyBuilder)
       { state with
           ServicesConfig = service::state.ServicesConfig
       }
 
   ///Computation expression used to configure Saturn application
-  let application = ApplicationBuilder() 
+  let application = ApplicationBuilder()
 
   ///Runs Saturn application
   let run (app: IWebHost) = app.Run()

@@ -84,11 +84,21 @@ module Router =
       let puts, putsf = generateRoutes RouteType.Put
       let deletes, deletesf = generateRoutes RouteType.Put
 
-      let forwards, _ = state.GetRoutes RouteType.Forward
+      let forwards, forwardsf = state.GetRoutes RouteType.Forward
       let forwards =
         forwards
         |> Seq.map (fun (p, lst) ->
           subRoute p (choose lst))
+
+      let forwardsf =
+        forwardsf |> Seq.map (fun (p, lst) ->
+          let pf = PrintfFormat<_,_,_,_,_> p
+          let chooseF = fun o ->
+            lst
+            |> List.map (fun f -> f o)
+            |> choose
+          subRoutef pf chooseF
+        )
 
       let lst =
         choose [
@@ -113,6 +123,7 @@ module Router =
             yield! deletesf
           ]
           yield! forwards
+          yield! forwardsf
           if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
       ]
       (fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
@@ -171,6 +182,13 @@ module Router =
     [<CustomOperation("forward")>]
     member __.Forward(state, path : string, action : HttpHandler) : ScopeState =
       addRoute RouteType.Forward state path action
+
+    ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
+    [<CustomOperation("forwardf")>]
+    member __.Forwardf(state, path, action) : ScopeState =
+      addRouteF RouteType.Forward state path action
+
+
 
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]

@@ -15,6 +15,7 @@ module Common =
   | All
 
   let inline internal succeed nxt cntx  = nxt cntx
+  let internal abort : HttpFuncResult = System.Threading.Tasks.Task.FromResult None
 
   let inline internal halt _ ctx = task {return Some ctx }
 
@@ -39,6 +40,21 @@ module Common =
     then ctx.Items.Item RouteKey |> string |> strOption
     else None
 
+  let private handlerWithRootedPath (path : string) (handler : HttpHandler) : HttpHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+      task {
+          let savedSubPath = getSavedSubPath ctx
+          ctx.Items.Item RouteKey <- ((savedSubPath |> Option.defaultValue "") + path)
+          let! result = handler next ctx
+          match result with
+          | Some _ -> ()
+          | None ->
+            match savedSubPath with
+            | Some savedSubPath -> ctx.Items.Item   RouteKey <- savedSubPath
+            | None              -> ctx.Items.Remove RouteKey |> ignore
+          return result
+      }
+
   let private getPath (ctx : HttpContext) =
     match getSavedSubPath ctx with
     | Some p when ctx.Request.Path.Value.Contains p -> ctx.Request.Path.Value.[p.Length..]
@@ -50,3 +66,21 @@ module Common =
         |> function
             | None      -> System.Threading.Tasks.Task.FromResult None
             | Some args -> routeHandler args next ctx
+
+  let subRoutefUnsafe (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            let paramCount   = (path.Value.Split '/').Length
+            let subPathParts = (getPath ctx).Split '/'
+            if paramCount > subPathParts.Length then abort
+            else
+                let subPath =
+                    subPathParts
+                    |> Array.take paramCount
+                    |> Array.fold (fun state elem ->
+                        if String.IsNullOrEmpty elem
+                        then state
+                        else sprintf "%s/%s" state elem) ""
+                Giraffe.FormatExpressions.tryMatchInput path subPath false
+                |> function
+                    | None      -> abort
+                    | Some args -> handlerWithRootedPath subPath (routeHandler args) next ctx
