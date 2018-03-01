@@ -11,6 +11,7 @@ open Giraffe.Negotiation
 open Giraffe.Routing
 open Giraffe.ModelBinding
 open FSharp.Control.Tasks.ContextInsensitive
+open Microsoft.AspNetCore.Authorization
 
 [<AutoOpen>]
 module Pipeline =
@@ -39,6 +40,22 @@ module Pipeline =
     [<CustomOperation("requires_auth_policy")>]
     member __.RequiresAuthPolicy(state, check, authFailedHandler) : HttpHandler  = state >=> (requiresAuthPolicy check authFailedHandler)
 
+    ///`requires_policy` validates if a user satisfies a defined policy requirement, if not then the handler will execute the `authFailedHandler` function.
+    [<CustomOperation("requires_policy")>]
+    member __.RequiresPolicy(state, policy:string, authFailedHandler) : HttpHandler  =
+      state >=>
+        fun (next : HttpFunc) (ctx : HttpContext) ->                
+          match ctx.GetService<IAuthorizationService>() with
+          | null ->                     
+            authFailedHandler (Some >> Task.FromResult) ctx
+          | authService -> task {            
+            let! authResult = authService.AuthorizeAsync (ctx.User, policy)
+            if authResult.Succeeded then
+                return! next ctx
+            else
+                return! authFailedHandler (Some >> Task.FromResult) ctx
+            }
+            
     ///`requires_authentication` validates if a user is authenticated/logged in. If the user is not authenticated then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_authentication")>]
     member __.RequiresAuthentication (state, authFailedHandler) : HttpHandler  = state >=> (requiresAuthentication authFailedHandler)
