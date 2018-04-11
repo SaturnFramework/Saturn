@@ -4,13 +4,11 @@ Saturn is a web development framework written in F# which implements the server-
 
 It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 
-> WARNING: Saturn and its tooling are still in really early stage of development - which means that things may not work too well. Also, all suggestions about design choices are highly appreciated.
-
 Read more about why I've decided to create Saturn, and some of its design choices on my blog - http://kcieslak.io/Reinventing-MVC-for-web-programming-with-F
 
 ## How to start in 60 seconds
 
-1. Install `dotnet` template with `dotnet new -i Saturn.Template` 
+1. Install `dotnet` template with `dotnet new -i Saturn.Template`
 2. Create new folder and move into it - `mkdir SaturnSample && cd SaturnSample`
 3. Create new Saturn application - `dotnet new saturn -lang F#`
 3. Run build process to ensure everything was scaffolded correctly and restore dependencies - `build.cmd / build.sh`
@@ -38,7 +36,7 @@ Saturn itself is top layer of a multi layer system designed to create flexible, 
 
 Saturn is not only a library building on top of Giraffe, but also set of opinionated tooling for scaffolding a whole project and then generating some boilerplate code. At the moment our template is using (by default):
 
-#### [Dapper](https://github.com/StackExchange/Dapper) 
+#### [Dapper](https://github.com/StackExchange/Dapper)
 
 > a simple, focused on performance object mapper for .Net that you can add in to your project that will extend your `IDbConnection` interface.
 
@@ -58,7 +56,7 @@ Saturn is made up of a number of distinct parts, each with its own purpose and r
     - handles all aspects of requests up until the point where the router takes over
     - provides a core set of plugs to apply to all requests
     - dispatches requests into a router
-    - enables application and hosting configuration 
+    - enables application and hosting configuration
  - Router
     - parses incoming requests and dispatches them to the correct controller/action, passing parameters as needed
     - provides helpers to generate route paths or urls to resources
@@ -77,10 +75,10 @@ Saturn is made up of a number of distinct parts, each with its own purpose and r
  - Channels  **[Not implemented yet]**
     - manage sockets for easy realtime communication
     - are analogous to controllers except that they allow bi-directional communication with persistent connections
- - Scaffolding scripts 
+ - Scaffolding scripts
     - `dotnet new` template providing good starting point for new applications - https://github.com/SaturnFramework/Saturn.Template
     - `dotnet saturn` CLI tool that controls migrations and let you easily scaffold new parts of application - https://github.com/SaturnFramework/Saturn.Dotnet
-    
+
 
 ## How to contribute
 
