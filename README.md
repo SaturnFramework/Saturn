@@ -6,79 +6,9 @@ It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 
 Read more about why I've decided to create Saturn, and some of its design choices on my blog - http://kcieslak.io/Reinventing-MVC-for-web-programming-with-F
 
-## How to start in 60 seconds
+## Documentation
 
-1. Install `dotnet` template with `dotnet new -i Saturn.Template`
-2. Create new folder and move into it - `mkdir SaturnSample && cd SaturnSample`
-3. Create new Saturn application - `dotnet new saturn -lang F#`
-3. Run build process to ensure everything was scaffolded correctly and restore dependencies - `build.cmd / build.sh`
-4. Go into subdirectory with server application - `cd src/SaturnSample`
-5. Create new controller with `dotnet saturn gen Book Books id:string title:string author:string`
-6. Run migrations that will create database and Books table (as for now, generator is using only SQLite DB) - `dotnet saturn migration`
-7. Open folder in favourite editor (VSCode) and insert suggested line (`forward "/books" Books.Controller.resource`) into `browserRouter` in `Router.fs` file
-8. Start application by running `build.cmd Run` from the root of solution. This will start application in watch mode (automatic recompilation on changes) and open browser on http://localhost:8085 which should display index page.
-9. Go to http://localhost:8085/books to see generated view. All buttons should be working, you can add new entries, remove or edit old ones.
-
-## Saturn rings
-
-Saturn itself is top layer of a multi layer system designed to create flexible, productive environment for creating web applications.
-
-#### Kestrel and ASP.NET Core
-
-> ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected application
-
-> Kestrel is a cross-platform web server for ASP.NET Core based on libuv, a cross-platform asynchronous I/O library
-
-#### [Giraffe](https://github.com/giraffe-fsharp/Giraffe)
-> Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to [Suave](https://suave.io), but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. Giraffe applications are composed of so called HttpHandler functions which can be thought of a mixture of Suave's WebParts and ASP.NET Core's middleware.
-
-## Saturn moons
-
-Saturn is not only a library building on top of Giraffe, but also set of opinionated tooling for scaffolding a whole project and then generating some boilerplate code. At the moment our template is using (by default):
-
-#### [Dapper](https://github.com/StackExchange/Dapper)
-
-> a simple, focused on performance object mapper for .Net that you can add in to your project that will extend your `IDbConnection` interface.
-
-#### [Simple.Migrations](https://github.com/canton7/Simple.Migrations)
-
-> Simple.Migrations is a simple bare-bones migration framework for .NET Core (.NET Standard 1.2 and .NET 4.5). It doesn't provide SQL generation, or an out-of-the-box command-line tool, or other fancy features. It does however provide a set of simple, extendable, and composable tools for integrating migrations into your application.
-
-
-## Overview
-
-Built on top of the battle-tested ASP.NET Core foundation, a highly flexible, extendable model of Giraffe Saturn provides high level abstractions, helpers and tools to enable high developer productivity, at the same time keeping high application performance provided by Kestrel and Giraffe.
-
-Saturn is made up of a number of distinct parts, each with its own purpose and role to play in building a web application.
-
- - Application
-    - the start and end of the request lifecycle
-    - handles all aspects of requests up until the point where the router takes over
-    - provides a core set of plugs to apply to all requests
-    - dispatches requests into a router
-    - enables application and hosting configuration
- - Router
-    - parses incoming requests and dispatches them to the correct controller/action, passing parameters as needed
-    - provides helpers to generate route paths or urls to resources
-    - defines named pipelines through which we may pass our requests
-    - allow easy application of groups of plugs to a set of routes
- - Controllers
-    - provide functions, called *actions*, to handle requests
-    - actions:
-        - prepare data and pass it into views
-        - invoke rendering via views
-        - perform redirects
- - Views
-    - render templates
-    - act as a presentation layer
-    - define helper functions, available in templates, to decorate data for presentation
- - Channels  **[Not implemented yet]**
-    - manage sockets for easy realtime communication
-    - are analogous to controllers except that they allow bi-directional communication with persistent connections
- - Scaffolding scripts
-    - `dotnet new` template providing good starting point for new applications - https://github.com/SaturnFramework/Saturn.Template
-    - `dotnet saturn` CLI tool that controls migrations and let you easily scaffold new parts of application - https://github.com/SaturnFramework/Saturn.Dotnet
-
+Saturn has a nice [documentation](https://saturnframework.github.io/docs/) and I appreciate any help to improve it further by sending pull requests or just adding an issue with you think is missing.
 
 ## How to contribute
 
