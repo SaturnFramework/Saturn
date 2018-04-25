@@ -128,7 +128,7 @@ module Controller =
               | Guid -> yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
           ]
           yield DELETE >=> choose [
-            if state.Delete.IsSome then
+            if state.DeleteAll.IsSome then
               yield addPlugs DeleteAll (route "" >=> (fun _ ctx -> ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.DeleteAll.Value(ctx)))
               yield addPlugs DeleteAll (route "/" >=> (fun _ ctx -> state.DeleteAll.Value(ctx)))
             if state.Delete.IsSome then
