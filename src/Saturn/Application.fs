@@ -135,7 +135,7 @@ module Application =
     ///Enables using static file hosting.
     [<CustomOperation("use_static")>]
     member __.UseStatic(state, path : string) =
-      let middleware (app : IApplicationBuilder) = app.UseStaticFiles()
+      let middleware (app : IApplicationBuilder) = app.UseDefaultFiles().UseStaticFiles()
       let host (builder: IWebHostBuilder) =
         let p = Path.Combine(Directory.GetCurrentDirectory(), path)
         builder
