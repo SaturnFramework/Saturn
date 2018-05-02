@@ -44,7 +44,7 @@ module Application =
 
       {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = [] }
 
-    member __.Run(state: ApplicationState) : IWebHost =
+    member __.Run(state: ApplicationState) : IWebHostBuilder =
       match state.Router with
       | None -> failwith "Router needs to be defined in Saturn application"
       | Some router ->
@@ -67,7 +67,6 @@ module Application =
         .Configure(Action<IApplicationBuilder> appConfigs)
         .ConfigureServices(Action<IServiceCollection> serviceConfigs)
         .UseUrls(state.Urls |> List.toArray)
-        .Build()
 
     ///Defines top-level router used for the application
     [<CustomOperation("router")>]
@@ -371,4 +370,4 @@ module Application =
   let application = ApplicationBuilder()
 
   ///Runs Saturn application
-  let run (app: IWebHost) = app.Run()
+  let run (app: IWebHostBuilder) = app.Build().Run()
