@@ -82,7 +82,7 @@ module Router =
       let pathces, patchesf = generateRoutes RouteType.Patch
 
       let puts, putsf = generateRoutes RouteType.Put
-      let deletes, deletesf = generateRoutes RouteType.Put
+      let deletes, deletesf = generateRoutes RouteType.Delete
 
       let forwards, forwardsf = state.GetRoutes RouteType.Forward
       let forwards =
