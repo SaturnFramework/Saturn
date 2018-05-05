@@ -8,6 +8,8 @@ open Giraffe
 
 let apiHelloWorld = text "hello world from API"
 let apiHelloWorld2 = text "hello world from API 2"
+let apiDeleteExample = text "this is a delete example"
+let apiDeleteExample2 str = sprintf "Echo: %s" str |> text
 let otherHelloWorld = text "hello world from OTHER"
 let otherHelloWorld2 = text "hello world from OTHER 2"
 let helloWorld = text "hello world"
@@ -56,9 +58,10 @@ let apiRouter = scope {
     pipe_through apiHeaderPipe
     not_found_handler (text "Api 404")
 
-
     get "/" apiHelloWorld
     get "/a" apiHelloWorld2
+    delete "/del" apiDeleteExample
+    deletef "/del/%s" apiDeleteExample2
 }
 
 //`controller<'Key>` CE is higher level abstraction following convention of Phoenix Controllers and `resources` macro. It will create
