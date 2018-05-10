@@ -1,5 +1,6 @@
 namespace Saturn
 open System
+open Utils
 
 [<AutoOpen>]
 module Controller =
@@ -42,22 +43,29 @@ module Controller =
     | Int64
     | Float
     | Guid
-
+    | Obj
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
       { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = fun (_, ex) -> raise ex }
 
     member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let typ =
-        if typeof<'Key> = typeof<bool> then Bool
-        elif typeof<'Key> = typeof<char> then Char
-        elif typeof<'Key> = typeof<string> then String
-        elif typeof<'Key> = typeof<int32> then Int32
-        elif typeof<'Key> = typeof<int64> then Int64
-        elif typeof<'Key> = typeof<float> then Float
-        elif typeof<'Key> = typeof<System.Guid> then Guid
-        else
-          failwithf "Couldn't create router for controller. Key type not supported."
+        match state with
+        | { Show = None; Edit = None; Update = None; Delete = None; SubControllers = [] } -> Obj
+        | _ ->
+          match typeof<'Key> with
+          | k when k = typeof<bool> -> Bool
+          | k when k = typeof<char> -> Char
+          | k when k = typeof<string> -> String
+          | k when k = typeof<int32> -> Int32
+          | k when k = typeof<int64> -> Int64
+          | k when k = typeof<float> -> Float
+          | k when k = typeof<System.Guid> -> Guid
+          | k -> failwithf "Type %A is not a supported type for controller<'T>." k
+
+
+
+
 
       let addPlugs action handler =
         match state.Plugs.TryFind action with
@@ -91,10 +99,10 @@ module Controller =
               yield addPlugs Index (route "/" >=> (fun _ ctx -> state.Index.Value(ctx)))
           ]
           yield POST >=> choose [
-            if state.Create.IsSome then 
+            if state.Create.IsSome then
               yield addPlugs Create (route "" >=> (fun _ ctx -> ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Create.Value(ctx)))
               yield addPlugs Create (route "/" >=> (fun _ ctx -> state.Create.Value(ctx)))
-              
+
             if state.Update.IsSome then
               match typ with
               | Bool -> yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
