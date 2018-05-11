@@ -44,6 +44,7 @@ module Controller =
     | Float
     | Guid
     | Obj
+
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
       { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = fun (_, ex) -> raise ex }
@@ -62,10 +63,6 @@ module Controller =
           | k when k = typeof<float> -> Float
           | k when k = typeof<System.Guid> -> Guid
           | k -> failwithf "Type %A is not a supported type for controller<'T>." k
-
-
-
-
 
       let addPlugs action handler =
         match state.Plugs.TryFind action with
