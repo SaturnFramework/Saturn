@@ -110,7 +110,7 @@ module ControllerHelpers =
       redirectTo false path (fun c -> task {return Some c}) ctx
 
   module Response =
-    let continue (ctx: HttpContext) =
+    let ``continue`` (ctx: HttpContext) =
       Intermediate.CONTINUE (fun c -> task {return Some c}) ctx
 
     let switchingProto (ctx: HttpContext) =
