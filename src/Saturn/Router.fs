@@ -3,6 +3,7 @@ namespace Saturn
 open Giraffe.Core
 open Giraffe.Routing
 open System.Collections.Generic
+open SiteMap
 
 [<AutoOpen>]
 module Router =
@@ -64,10 +65,58 @@ module Router =
         NotFoundHandler = None }
 
     member __.Run(state : ScopeState) : HttpHandler =
+      let siteMap = HandlerMap()
+
+      let tryDummy (hndl : obj -> HttpHandler) =
+        try
+          hndl null
+        with
+        | _ ->
+        try
+          hndl (box 0)
+        with
+        | _ ->
+        try
+          hndl (box 0L)
+        with
+        | _ ->
+        try
+          hndl (box 0.)
+        with
+        | _ ->
+        try
+          hndl (box false)
+        with
+        | _ ->
+        try
+          hndl (box ' ')
+        with
+        | _ ->
+        try
+          hndl (box System.Guid.Empty)
+        with
+        | _ ->
+          failwith "Couldn't evaluate handler"
+
       let generateRoutes typ =
+        let v =
+          match typ with
+          | RouteType.Get -> "GET"
+          | RouteType.Post -> "POST"
+          | RouteType.Put -> "PUT"
+          | RouteType.Patch -> "PATCH"
+          | RouteType.Delete -> "DELETE"
+          | RouteType.Forward -> ""
         let routes, routesf = state.GetRoutes typ
-        let routes = routes |> Seq.map (fun (p, lst) -> route p >=> (choose lst))
+        let routes = routes |> Seq.map (fun (p, lst) ->
+          lst |> Seq.iter (fun l -> siteMap.Forward p v l)
+          route p >=> (choose lst))
         let routesf = routesf |> Seq.map (fun (p, lst) ->
+          lst |> Seq.iter (fun l ->
+            try
+              siteMap.Forward p v (tryDummy l)
+            with
+            | _ -> ())
           let pf = PrintfFormat<_,_,_,_,_> p
           let chooseF = fun o ->
             lst
@@ -88,16 +137,22 @@ module Router =
       let forwards =
         forwards
         |> Seq.map (fun (p, lst) ->
+          lst |> Seq.iter (fun l -> siteMap.Forward p "" l)
           subRoute p (choose lst))
 
       let forwardsf =
         forwardsf |> Seq.map (fun (p, lst) ->
+          lst |> Seq.iter (fun l ->
+            try
+              siteMap.Forward p "" ( tryDummy l)
+            with
+            | _ -> ())
           let pf = PrintfFormat<_,_,_,_,_> p
           let chooseF = fun o ->
             lst
             |> List.map (fun f -> f o)
             |> choose
-          subRoutef pf chooseF
+          subRoutefUnsafe pf chooseF
         )
 
       let lst =
@@ -124,9 +179,14 @@ module Router =
           ]
           yield! forwards
           yield! forwardsf
-          if state.NotFoundHandler.IsSome then yield state.NotFoundHandler.Value
+          if state.NotFoundHandler.IsSome then
+            siteMap.NotFound ()
+            yield state.NotFoundHandler.Value
       ]
-      (fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
+      let res = (fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
+      siteMap.SetKey res
+      SiteMap.add siteMap
+      res
 
     ///Adds handler for `GET` request.
     [<CustomOperation("get")>]

@@ -370,4 +370,6 @@ module Application =
   let application = ApplicationBuilder()
 
   ///Runs Saturn application
-  let run (app: IWebHostBuilder) = app.Build().Run()
+  let run (app: IWebHostBuilder) =
+    SiteMap.generate ()
+    app.Build().Run()
