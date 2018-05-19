@@ -33,11 +33,17 @@ let userController = controller {
     edit (fun (ctx, id) -> (sprintf "Edit handler no version - %i" id) |> Controller.text ctx)
 }
 
-let topRouter = scope {
+let otherRouter = scope {
+    get "/dsa" (text "")
+    getf "/dsa/%s" (text)
+    forwardf "/ddd/%s" (fun (a : string) -> userControllerVersion1)
     not_found_handler (setStatusCode 404 >=> text "Not Found")
+}
 
+let topRouter = scope {
     forward "/users" userControllerVersion1
     forward "/users" userController
+    forwardf "/%s/%s/abc" (fun (a : string * string) -> otherRouter)
 }
 
 let app = application {
