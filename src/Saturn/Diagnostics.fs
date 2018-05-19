@@ -2,7 +2,7 @@ namespace Saturn
 open System.IO
 
 module SiteMap =
-    let mutable private isDebug = true //Somehow detect if Saturn is used by application compiled in debug or release
+    let mutable internal isDebug = true //Somehow detect if Saturn is used by application compiled in debug or release
 
     type internal PathRegistrationEvent =
         | Path of path: string * verb: string

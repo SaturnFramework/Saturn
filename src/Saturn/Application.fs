@@ -366,10 +366,16 @@ module Application =
           ServicesConfig = service::state.ServicesConfig
       }
 
+    ///Disables generation of diagnostic files that can be used by Saturn tooling.
+    [<CustomOperation("disable_diagnostics")>]
+    member __.DisableDiagnostics (state) =
+      SiteMap.isDebug <- false
+      state
+
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
 
   ///Runs Saturn application
   let run (app: IWebHostBuilder) =
-    SiteMap.generate ()
+    if SiteMap.isDebug then SiteMap.generate ()
     app.Build().Run()
