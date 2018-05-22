@@ -1,3 +1,15 @@
+### 0.5.0 - 22.05.2018
+* Authorization helper (by @Nhowka)
+* Add forwardf
+* Generate documentation XML file (by @alfonsogarciacaro)
+* Fixed Controller DELETE to prevent NRE (by @rusanov-vladimir)
+* Update Application.fs - `use_static` changes (by @isaacabraham)
+* expose IWebHostBuilder from application CE (by @mexx)
+* Fix bug with `delete` routing (by @WalternativE)
+* Allow for creation of controller without typed actions (by @jeremyabbott)
+* Implementation of site map generator
+* Fix `set_body` overload
+
 ### 0.4.3 - 27.02.2018
 * Update to Giraffe 1.1
 * Add new renderXml to render XmlNode based templates  (by @mtnrbq)
