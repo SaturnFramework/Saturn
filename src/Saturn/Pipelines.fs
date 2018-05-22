@@ -44,18 +44,18 @@ module Pipeline =
     [<CustomOperation("requires_policy")>]
     member __.RequiresPolicy(state, policy:string, authFailedHandler) : HttpHandler  =
       state >=>
-        fun (next : HttpFunc) (ctx : HttpContext) ->                
+        fun (next : HttpFunc) (ctx : HttpContext) ->
           match ctx.GetService<IAuthorizationService>() with
-          | null ->                     
+          | null ->
             authFailedHandler (Some >> Task.FromResult) ctx
-          | authService -> task {            
+          | authService -> task {
             let! authResult = authService.AuthorizeAsync (ctx.User, policy)
             if authResult.Succeeded then
                 return! next ctx
             else
                 return! authFailedHandler (Some >> Task.FromResult) ctx
             }
-            
+
     ///`requires_authentication` validates if a user is authenticated/logged in. If the user is not authenticated then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_authentication")>]
     member __.RequiresAuthentication (state, authFailedHandler) : HttpHandler  = state >=> (requiresAuthentication authFailedHandler)
@@ -84,9 +84,9 @@ module Pipeline =
     [<CustomOperation("set_body")>]
     member __.SetBody(state, value) : HttpHandler  = state >=> (setBody value)
 
-    ///`set_body` sets or modifies the body of the `HttpResponse`. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.
-    [<CustomOperation("set_body")>]
-    member __.SetBody(state, value) : HttpHandler  = state >=> (setBodyFromString value)
+    ///`set_body_from_string` sets or modifies the body of the `HttpResponse`. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.
+    [<CustomOperation("set_body_from_string")>]
+    member __.SetBodyFromString(state, value) : HttpHandler  = state >=> (setBodyFromString value)
 
     ///`text` sets or modifies the body of the `HttpResponse` by sending a plain text value to the client. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. It also sets the `Content-Type` HTTP header to `text/plain`.
     [<CustomOperation("text")>]
