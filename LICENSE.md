@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2018 Lambda Factroy
+Copyright (c) 2018 Lambda Factory
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
