@@ -372,6 +372,20 @@ module Application =
       SiteMap.isDebug <- false
       state
 
+    [<CustomOperation("use_antiforgery")>]
+    member __.UseAntiforgery (state) =
+      let antiforgeryService (s: IServiceCollection) =
+        s.AddAntiforgery()
+      { state with
+          ServicesConfig = antiforgeryService :: state.ServicesConfig }
+
+    [<CustomOperation("use_antiforgery_with_config")>]
+    member __.UseAntiforgery (state, configFn) =
+      let antiforgeryService (s: IServiceCollection) =
+        s.AddAntiforgery(configFn)
+      { state with
+          ServicesConfig = antiforgeryService :: state.ServicesConfig }
+
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
 
