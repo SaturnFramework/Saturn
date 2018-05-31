@@ -2,6 +2,7 @@ module Sample
 
 open Saturn
 open Giraffe
+open Microsoft.AspNetCore.Http
 
 
 //Saturn is using standard HttpHandlers from Giraffe
@@ -106,12 +107,21 @@ let userController = controller {
     edit (fun (ctx, id) -> (sprintf "Edit handler - %s" id) |> Controller.text ctx)
 }
 
+let dumpSession (session: ISession) =
+  session.Keys
+  |> Seq.map (fun k ->
+    sprintf "%s:%A" k (session.Get(k))
+  )
+  |> String.concat "\n"
+
 //Since all computation expressions produces `HttpHandler` everything can be easily composed together in nice declarative way.
 //I belive that aim of the Saturn should be providing a more streamlined, higher level developer experiance on top of the great
 //Giraffe's model. It's bit like Phoenix using Plug model under the hood.
 
 let topRouter = scope {
     pipe_through headerPipe
+    pipe_through fetchSession
+
     not_found_handler (text "404")
 
     get "/" helloWorld

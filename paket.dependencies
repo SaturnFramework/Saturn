@@ -13,6 +13,7 @@ nuget Microsoft.AspNetCore.Authentication.JwtBearer
 nuget Microsoft.AspNetCore.Authentication.Cookies
 nuget Microsoft.AspNetCore.Authentication.OAuth
 nuget Microsoft.AspNetCore.Authorization
+nuget Microsoft.AspNetCore.Antiforgery
 
 nuget Giraffe
 

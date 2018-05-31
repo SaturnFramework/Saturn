@@ -166,7 +166,7 @@ module PipelineHelpers =
   }
 
   ///TODO: csrf protection - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/csrf_protection.ex
-  let protectFromForgery : HttpHandler = succeed
+  let protectFromForgery : HttpHandler = CSRF.csrf
 
   ///Enables CORS pretection using provided config. Use `CORS.defaultCORSConfig` for default configuration.
   let enableCors config : HttpHandler = CORS.cors config
@@ -174,6 +174,7 @@ module PipelineHelpers =
   ///Fetches session from session provider. If it won't be called session will be synchronusly fetched on first usage.
   let fetchSession (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
     task {
+      // TODO: this call may throw, how to handle?
       do! ctx.Session.LoadAsync()
       return! nxt ctx
     }
