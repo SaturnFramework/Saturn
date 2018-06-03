@@ -165,7 +165,9 @@ module PipelineHelpers =
       set_header "x-permitted-cross-domain-policies" "none"
   }
 
-  ///TODO: csrf protection - https://github.com/elixir-plug/plug/blob/v1.4.3/lib/plug/csrf_protection.ex
+  ///Enables CSRF protection using the (required) `Antiforgery` feature.
+  ///This feature can be set up via the `use_antiforgery` or `use_antiforgery_with_config` operations on the `application` builder.
+  ///This feature _requires_ that one of those be used (or some other mechanism of initializing the Antiforgery/Data Protection subsystems has been performed out-of-band)
   let protectFromForgery : HttpHandler = CSRF.csrf
 
   ///Enables CORS pretection using provided config. Use `CORS.defaultCORSConfig` for default configuration.

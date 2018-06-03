@@ -372,6 +372,7 @@ module Application =
       SiteMap.isDebug <- false
       state
 
+    ///Enables use of the `protectFromForgery` `pipeline` component and the `CSRF` features in general.
     [<CustomOperation("use_antiforgery")>]
     member __.UseAntiforgery (state) =
       let antiforgeryService (s: IServiceCollection) =
@@ -379,10 +380,12 @@ module Application =
       { state with
           ServicesConfig = antiforgeryService :: state.ServicesConfig }
 
+    ///Enables use of the `protectFromForgery` `pipeline` component and the `CSRF` features in general.
+    ///This overload allows for custom configuration of the subsystem, for more information see the `AntiforgeryOptions` class at https://github.com/aspnet/Antiforgery/blob/dev/src/Microsoft.AspNetCore.Antiforgery/AntiforgeryOptions.cs
     [<CustomOperation("use_antiforgery_with_config")>]
-    member __.UseAntiforgery (state, configFn) =
+    member __.UseAntiforgeryWithConfig (state, configFn) =
       let antiforgeryService (s: IServiceCollection) =
-        s.AddAntiforgery(configFn)
+        s.AddAntiforgery(Action<_>configFn)
       { state with
           ServicesConfig = antiforgeryService :: state.ServicesConfig }
 
