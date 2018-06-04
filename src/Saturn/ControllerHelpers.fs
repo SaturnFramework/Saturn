@@ -96,82 +96,88 @@ module ControllerHelpers =
       | true, o -> Some (unbox<string> o)
       | _ -> None
 
+    ///Gets the contents of the `Configuration` key in the HttpContext dictionary, unboxed as the given type.
     let getConfig<'a> (ctx: HttpContext) =
       unbox<'a> ctx.Items.["Configuration"]
 
+    ///Sends the contents of a file as the body of the response. Does not set a Content-Type.
     let sendDownload (ctx: HttpContext) (path: string) =
       let cnt = System.IO.File.ReadAllBytes path
-      setBody cnt  (fun c -> task {return Some c}) ctx
+      setBody cnt  Common.halt ctx
 
+    ///Send bytes as the body of the response. Does not set a Content-Type.
     let sendDownloadBinary (ctx: HttpContext) (content: byte []) =
-      setBody content (fun c -> task {return Some c}) ctx
+      setBody content Common.halt ctx
 
+    ///Perform a temporary redirect to the provided location.
     let redirect (ctx: HttpContext) path =
-      redirectTo false path (fun c -> task {return Some c}) ctx
+      redirectTo false path Common.halt ctx
 
+  /// This module wraps Giraffe responses (ie setting HTTP status codes) for easy chaining in the Saturn model.
+  /// All of the functions set the status code and halt further processing.
   module Response =
     let ``continue`` (ctx: HttpContext) =
-      Intermediate.CONTINUE (fun c -> task {return Some c}) ctx
+      Intermediate.CONTINUE Common.halt ctx
 
     let switchingProto (ctx: HttpContext) =
-      Intermediate.SWITCHING_PROTO (fun c -> task {return Some c}) ctx
+      Intermediate.SWITCHING_PROTO Common.halt ctx
 
     let ok (ctx: HttpContext) res =
-      Successful.OK res (fun c -> task {return Some c}) ctx
+      Successful.OK res Common.halt ctx
 
     let created (ctx: HttpContext) res =
-      Successful.CREATED res (fun c -> task {return Some c}) ctx
+      Successful.CREATED res Common.halt ctx
 
     let accepted (ctx: HttpContext) res =
-      Successful.ACCEPTED res (fun c -> task {return Some c}) ctx
+      Successful.ACCEPTED res Common.halt ctx
 
     let badRequest (ctx: HttpContext) res =
-      RequestErrors.BAD_REQUEST res (fun c -> task {return Some c}) ctx
+      RequestErrors.BAD_REQUEST res Common.halt ctx
 
-    let unauthorized (ctx: HttpContext) scheme relam res =
-      RequestErrors.UNAUTHORIZED scheme relam res (fun c -> task {return Some c}) ctx
+    let unauthorized (ctx: HttpContext) scheme realm res =
+      RequestErrors.UNAUTHORIZED scheme realm res Common.halt ctx
 
     let forbidden (ctx: HttpContext) res =
-      RequestErrors.FORBIDDEN res (fun c -> task {return Some c}) ctx
+      RequestErrors.FORBIDDEN res Common.halt ctx
 
     let notFound (ctx: HttpContext) res =
-      RequestErrors.NOT_FOUND res (fun c -> task {return Some c}) ctx
+      RequestErrors.NOT_FOUND res Common.halt ctx
 
     let methodNotAllowed (ctx: HttpContext) res =
-      RequestErrors.METHOD_NOT_ALLOWED res (fun c -> task {return Some c}) ctx
+      RequestErrors.METHOD_NOT_ALLOWED res Common.halt ctx
 
     let notAcceptable (ctx: HttpContext) res =
-      RequestErrors.NOT_ACCEPTABLE res (fun c -> task {return Some c}) ctx
+      RequestErrors.NOT_ACCEPTABLE res Common.halt ctx
 
     let conflict (ctx: HttpContext) res =
-      RequestErrors.CONFLICT res (fun c -> task {return Some c}) ctx
+      RequestErrors.CONFLICT res Common.halt ctx
 
     let gone (ctx: HttpContext) res =
-      RequestErrors.GONE res (fun c -> task {return Some c}) ctx
+      RequestErrors.GONE res Common.halt ctx
 
     let unuspportedMediaType (ctx: HttpContext) res =
-      RequestErrors.UNSUPPORTED_MEDIA_TYPE res (fun c -> task {return Some c}) ctx
+      RequestErrors.UNSUPPORTED_MEDIA_TYPE res Common.halt ctx
 
     let unprocessableEntity (ctx: HttpContext) res =
-      RequestErrors.UNPROCESSABLE_ENTITY res (fun c -> task {return Some c}) ctx
+      RequestErrors.UNPROCESSABLE_ENTITY res Common.halt ctx
 
     let preconditionRequired (ctx: HttpContext) res =
-      RequestErrors.PRECONDITION_REQUIRED res (fun c -> task {return Some c}) ctx
+      RequestErrors.PRECONDITION_REQUIRED res Common.halt ctx
 
     let tooManyRequests (ctx: HttpContext) res =
-      RequestErrors.TOO_MANY_REQUESTS res (fun c -> task {return Some c}) ctx
+      RequestErrors.TOO_MANY_REQUESTS res Common.halt ctx
 
     let internalError (ctx: HttpContext) res =
-      ServerErrors.INTERNAL_ERROR res (fun c -> task {return Some c}) ctx
+      ServerErrors.INTERNAL_ERROR res Common.halt ctx
 
     let notImplemented (ctx: HttpContext) res =
-      ServerErrors.NOT_IMPLEMENTED res (fun c -> task {return Some c}) ctx
+      ServerErrors.NOT_IMPLEMENTED res Common.halt ctx
 
     let badGateway (ctx: HttpContext) res =
-      ServerErrors.BAD_GATEWAY res (fun c -> task {return Some c}) ctx
+      ServerErrors.BAD_GATEWAY res Common.halt ctx
 
     let serviceUnavailable (ctx: HttpContext) res =
-      ServerErrors.SERVICE_UNAVAILABLE res (fun c -> task {return Some c}) ctx
+      ServerErrors.SERVICE_UNAVAILABLE res Common.halt ctx
 
     let gatewayTimeout (ctx: HttpContext) res =
-      ServerErrors.GATEWAY_TIMEOUT res (fun c -> task {return Some c}) ctx
+      ServerErrors.GATEWAY_TIMEOUT res Common.halt ctx
