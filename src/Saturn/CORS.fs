@@ -104,6 +104,7 @@ module CORS =
       let header = hs |> String.concat(", ")
       setHttpHeader AccessControlExposeHeaders header
 
+  ///Check the incoming request against the provided `CORSConfig`.
   let cors (config : CORSConfig) : HttpHandler =
     fun (nxt) (ctx) ->
       let req = ctx.Request

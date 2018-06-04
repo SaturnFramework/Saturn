@@ -248,8 +248,6 @@ module Router =
     member __.Forwardf(state, path, action) : ScopeState =
       addRouteF RouteType.Forward state path action
 
-
-
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]
     member __.PipeThrough(state, pipe) : ScopeState =

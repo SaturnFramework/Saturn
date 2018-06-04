@@ -378,11 +378,13 @@ module Controller =
     [<CustomOperation("version")>]
     member __.Version(state, version) =
       {state with Version = Some version}
-
+    
+    ///Inject a controller into the routing table rooted at a given path. All of that controller's actions will be anchored off of the path as a prefix.
     [<CustomOperation("subController")>]
     member __.SubController(state, path, handler) =
       {state with SubControllers = (path, handler)::state.SubControllers}
 
+    ///Add a plug that will be run on each of the provided actions.
     [<CustomOperation("plug")>]
     member __.Plug(state, actions, handler) =
       let addPlug state action handler =

@@ -17,7 +17,7 @@ module Common =
   let inline internal succeed nxt cntx  = nxt cntx
   let internal abort : HttpFuncResult = System.Threading.Tasks.Task.FromResult None
 
-  let inline internal halt _ ctx = task {return Some ctx }
+  let inline internal halt ctx = task { return Some ctx }
 
   let internal get<'a> v (ctx : HttpContext) =
     match ctx.Items.TryGetValue v with
