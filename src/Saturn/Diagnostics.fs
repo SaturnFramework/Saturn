@@ -14,7 +14,7 @@ module SiteMap =
     type HandlerMap () =
         let paths = ResizeArray<PathRegistrationEvent>()
         let mutable key : obj = null
-        member val Version : int option = None with get, set
+        member val Version : string option = None with get, set
 
         member __.AddPath p v = paths.Add(Path(p,v))
 

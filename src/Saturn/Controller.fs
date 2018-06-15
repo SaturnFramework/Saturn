@@ -44,7 +44,7 @@ module Controller =
     ErrorHandler: HttpContext -> Exception -> HttpFuncResult
     SubControllers : (string * ('Key -> HttpHandler)) list
     Plugs : Map<Action, HttpHandler list>
-    Version: int option
+    Version: string option
   }
 
   type internal KeyType =
