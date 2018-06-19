@@ -33,6 +33,7 @@ module Application =
     AppConfigs: (IApplicationBuilder -> IApplicationBuilder) list
     HostConfigs: (IWebHostBuilder -> IWebHostBuilder) list
     ServicesConfig: (IServiceCollection -> IServiceCollection) list
+    CliArguments: string array option
   }
 
   type ApplicationBuilder internal () =
@@ -42,7 +43,7 @@ module Application =
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
 
 
-      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = [] }
+      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None }
 
     member __.Run(state: ApplicationState) : IWebHostBuilder =
       match state.Router with
@@ -62,7 +63,10 @@ module Application =
         let services = services.AddGiraffe()
         state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore)
 
-      let wbhst = WebHost.CreateDefaultBuilder() |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
+      let wbhst =
+        // Explicit null removes unnecessary handlers.
+        WebHost.CreateDefaultBuilder(Option.toObj state.CliArguments)
+        |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
       wbhst
         .Configure(Action<IApplicationBuilder> appConfigs)
         .ConfigureServices(Action<IServiceCollection> serviceConfigs)
@@ -388,6 +392,13 @@ module Application =
         s.AddAntiforgery(Action<_>configFn)
       { state with
           ServicesConfig = antiforgeryService :: state.ServicesConfig }
+
+    ///Sets the cli arguments for the `IWebHostBuilder` to enable default command line configuration and functionality.
+    [<CustomOperation("cli_arguments")>]
+    member __.CliArguments (state, args) =
+      { state with
+          CliArguments = Some args
+      }
 
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
