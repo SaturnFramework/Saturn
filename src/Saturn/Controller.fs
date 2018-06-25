@@ -22,15 +22,15 @@ module Controller =
 
   type ControllerState<'Key> = {
     Index: (HttpContext -> HttpFuncResult) option
-    Show: (HttpContext * 'Key -> HttpFuncResult) option
+    Show: (HttpContext -> 'Key -> HttpFuncResult) option
     Add: (HttpContext -> HttpFuncResult) option
-    Edit: (HttpContext * 'Key -> HttpFuncResult) option
+    Edit: (HttpContext -> 'Key -> HttpFuncResult) option
     Create: (HttpContext -> HttpFuncResult) option
-    Update: (HttpContext * 'Key -> HttpFuncResult) option
-    Delete: (HttpContext * 'Key -> HttpFuncResult) option
+    Update: (HttpContext -> 'Key -> HttpFuncResult) option
+    Delete: (HttpContext -> 'Key -> HttpFuncResult) option
     DeleteAll: (HttpContext -> HttpFuncResult) option
     NotFoundHandler: HttpHandler option
-    ErrorHandler: (HttpContext * Exception) -> HttpFuncResult
+    ErrorHandler: HttpContext -> Exception -> HttpFuncResult
     SubControllers : (string * ('Key -> HttpHandler)) list
     Plugs : Map<Action, HttpHandler list>
     Version: int option
@@ -47,7 +47,7 @@ module Controller =
 
   type ControllerBuilder<'Key> internal () =
     member __.Yield(_) : ControllerState<'Key> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = fun (_, ex) -> raise ex }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex) }
 
     member __.Run(state : ControllerState<'Key>) : HttpHandler =
       let siteMap = HandlerMap()
@@ -85,25 +85,25 @@ module Controller =
                 match k with
                 | Bool ->
                   siteMap.AddPath "/%b/edit" "GET"
-                  yield addPlugs Edit (routef "/%b/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Edit (routef "/%b/edit" (fun input _ ctx -> state.Edit.Value ctx (unbox<'Key> input)))
                 | Char ->
                   siteMap.AddPath "/%c/edit" "GET"
-                  yield addPlugs Edit (routef "/%c/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Edit (routef "/%c/edit" (fun input _ ctx -> state.Edit.Value ctx (unbox<'Key> input)))
                 | String ->
                   siteMap.AddPath "/%s/edit" "GET"
-                  yield addPlugs Edit (routef "/%s/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Edit (routef "/%s/edit" (fun input _ ctx -> state.Edit.Value ctx (unbox<'Key> input)))
                 | Int32 ->
                   siteMap.AddPath "/%i/edit" "GET"
-                  yield addPlugs Edit (routef "/%i/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Edit (routef "/%i/edit" (fun input _ ctx -> state.Edit.Value ctx (unbox<'Key> input)))
                 | Int64 ->
                   siteMap.AddPath "/%d/edit" "GET"
-                  yield addPlugs Edit (routef "/%d/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Edit (routef "/%d/edit" (fun input _ ctx -> state.Edit.Value ctx (unbox<'Key> input)))
                 | Float ->
                   siteMap.AddPath "/%f/edit" "GET"
-                  yield addPlugs Edit (routef "/%f/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Edit (routef "/%f/edit" (fun input _ ctx -> state.Edit.Value ctx (unbox<'Key> input)))
                 | Guid ->
                   siteMap.AddPath "/%O/edit" "GET"
-                  yield addPlugs Edit (routef "/%O/edit" (fun input _ ctx -> state.Edit.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Edit (routef "/%O/edit" (fun input _ ctx -> state.Edit.Value ctx (unbox<'Key> input)))
             if state.Show.IsSome then
               match typ with
               | None -> ()
@@ -111,25 +111,25 @@ module Controller =
                 match k with
                 | Bool ->
                   siteMap.AddPath "/%b" "GET"
-                  yield addPlugs Show (routef "/%b" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Show (routef "/%b" (fun input _ ctx -> state.Show.Value ctx (unbox<'Key> input)))
                 | Char ->
                   siteMap.AddPath "/%c" "GET"
-                  yield addPlugs Show (routef "/%c" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Show (routef "/%c" (fun input _ ctx -> state.Show.Value ctx (unbox<'Key> input)))
                 | String ->
                   siteMap.AddPath "/%s" "GET"
-                  yield addPlugs Show (routef "/%s" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Show (routef "/%s" (fun input _ ctx -> state.Show.Value ctx (unbox<'Key> input)))
                 | Int32 ->
                   siteMap.AddPath "/%i" "GET"
-                  yield addPlugs Show (routef "/%i" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Show (routef "/%i" (fun input _ ctx -> state.Show.Value ctx (unbox<'Key> input)))
                 | Int64 ->
                   siteMap.AddPath "/%d" "GET"
-                  yield addPlugs Show (routef "/%d" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Show (routef "/%d" (fun input _ ctx -> state.Show.Value ctx (unbox<'Key> input)))
                 | Float ->
                   siteMap.AddPath "/%f" "GET"
-                  yield addPlugs Show (routef "/%f" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Show (routef "/%f" (fun input _ ctx -> state.Show.Value ctx (unbox<'Key> input)))
                 | Guid ->
                   siteMap.AddPath "/%O" "GET"
-                  yield addPlugs Show (routef "/%O" (fun input _ ctx -> state.Show.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Show (routef "/%O" (fun input _ ctx -> state.Show.Value ctx (unbox<'Key> input)))
             if state.Index.IsSome then
               siteMap.AddPath "/" "GET"
               yield addPlugs Index (route "" >=> (fun _ ctx -> ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx)))
@@ -148,25 +148,25 @@ module Controller =
                 match k with
                 | Bool ->
                   siteMap.AddPath "/%b" "POST"
-                  yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Char ->
                   siteMap.AddPath "/%c" "POST"
-                  yield addPlugs Update (routef "/%c" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%c" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | String ->
                   siteMap.AddPath "/%s" "POST"
-                  yield addPlugs Update (routef "/%s" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%s" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Int32 ->
                   siteMap.AddPath "/%i" "POST"
-                  yield addPlugs Update (routef "/%i" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%i" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Int64 ->
                   siteMap.AddPath "/%d" "POST"
-                  yield addPlugs Update (routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%d" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Float ->
                   siteMap.AddPath "/%f" "POST"
-                  yield addPlugs Update (routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%f" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Guid ->
                   siteMap.AddPath "/%O" "POST"
-                  yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
           ]
           yield PATCH >=> choose [
             if state.Update.IsSome then
@@ -176,25 +176,25 @@ module Controller =
                 match k with
                 | Bool ->
                   siteMap.AddPath "/%b" "PATCH"
-                  yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Char ->
                   siteMap.AddPath "/%c" "PATCH"
-                  yield addPlugs Update (routef "/%c" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%c" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | String ->
                   siteMap.AddPath "/%s" "PATCH"
-                  yield addPlugs Update (routef "/%s" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%s" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Int32 ->
                   siteMap.AddPath "/%i" "PATCH"
-                  yield addPlugs Update (routef "/%i" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%i" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Int64 ->
                   siteMap.AddPath "/%d" "PATCH"
-                  yield addPlugs Update (routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%d" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Float ->
                   siteMap.AddPath "/%f" "PATCH"
-                  yield addPlugs Update (routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%f" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Guid ->
                   siteMap.AddPath "/%O" "PATCH"
-                  yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
           ]
           yield PUT >=> choose [
             if state.Update.IsSome then
@@ -204,25 +204,25 @@ module Controller =
                 match k with
                 | Bool ->
                   siteMap.AddPath "/%b" "PUT"
-                  yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%b" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Char ->
                   siteMap.AddPath "/%c" "PUT"
-                  yield addPlugs Update (routef "/%c" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%c" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | String ->
                   siteMap.AddPath "/%s" "PUT"
-                  yield addPlugs Update (routef "/%s" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%s" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Int32 ->
                   siteMap.AddPath "/%i" "PUT"
-                  yield addPlugs Update (routef "/%i" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%i" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Int64 ->
                   siteMap.AddPath "/%d" "PUT"
-                  yield addPlugs Update (routef "/%d" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%d" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Float ->
                   siteMap.AddPath "/%f" "PUT"
-                  yield addPlugs Update (routef "/%f" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%f" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
                 | Guid ->
                   siteMap.AddPath "/%O" "PUT"
-                  yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Update (routef "/%O" (fun input _ ctx -> state.Update.Value ctx (unbox<'Key> input)))
           ]
           yield DELETE >=> choose [
             if state.DeleteAll.IsSome then
@@ -236,25 +236,25 @@ module Controller =
                 match k with
                 | Bool ->
                   siteMap.AddPath "/%b" "DELETE"
-                  yield addPlugs Delete (routef "/%b" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Delete (routef "/%b" (fun input _ ctx -> state.Delete.Value ctx (unbox<'Key> input)))
                 | Char ->
                   siteMap.AddPath "/%c" "DELETE"
-                  yield addPlugs Delete (routef "/%c" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Delete (routef "/%c" (fun input _ ctx -> state.Delete.Value ctx (unbox<'Key> input)))
                 | String ->
                   siteMap.AddPath "/%s" "DELETE"
-                  yield addPlugs Delete (routef "/%s" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Delete (routef "/%s" (fun input _ ctx -> state.Delete.Value ctx (unbox<'Key> input)))
                 | Int32 ->
                   siteMap.AddPath "/%i" "DELETE"
-                  yield addPlugs Delete (routef "/%i" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Delete (routef "/%i" (fun input _ ctx -> state.Delete.Value ctx (unbox<'Key> input)))
                 | Int64 ->
                   siteMap.AddPath "/%d" "DELETE"
-                  yield addPlugs Delete (routef "/%d" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Delete (routef "/%d" (fun input _ ctx -> state.Delete.Value ctx (unbox<'Key> input)))
                 | Float ->
                   siteMap.AddPath "/%f" "DELETE"
-                  yield addPlugs Delete (routef "/%f" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Delete (routef "/%f" (fun input _ ctx -> state.Delete.Value ctx (unbox<'Key> input)))
                 | Guid ->
                   siteMap.AddPath "/%O" "DELETE"
-                  yield addPlugs Delete (routef "/%O" (fun input _ ctx -> state.Delete.Value(ctx, unbox<'Key> input)))
+                  yield addPlugs Delete (routef "/%O" (fun input _ ctx -> state.Delete.Value ctx (unbox<'Key> input)))
           ]
           if state.NotFoundHandler.IsSome then
             siteMap.NotFound ()
@@ -266,7 +266,7 @@ module Controller =
           try
             return! initialController nxt ctx
           with
-          | ex -> return! state.ErrorHandler(ctx, ex)
+          | ex -> return! state.ErrorHandler ctx ex
         }
 
       let controllerWithSubs =

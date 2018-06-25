@@ -102,8 +102,8 @@ let userController = controller {
 
     index (fun ctx -> "Index handler" |> Controller.text ctx)
     add (fun ctx -> "Add handler" |> Controller.text ctx)
-    show (fun (ctx, id) -> (sprintf "Show handler - %s" id) |> Controller.text ctx)
-    edit (fun (ctx, id) -> (sprintf "Edit handler - %s" id) |> Controller.text ctx)
+    show (fun ctx id -> (sprintf "Show handler - %s" id) |> Controller.text ctx)
+    edit (fun ctx id -> (sprintf "Edit handler - %s" id) |> Controller.text ctx)
 }
 
 //Since all computation expressions produces `HttpHandler` everything can be easily composed together in nice declarative way.
