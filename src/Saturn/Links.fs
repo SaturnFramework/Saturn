@@ -1,6 +1,7 @@
 namespace Saturn
 
 open Microsoft.AspNetCore.Http
+open System.Net
 
 ///Convention-based links to other actions to perform on the current request model.
 module Links =
@@ -21,8 +22,8 @@ module Links =
 
   ///Returns a link to the `withId` action for a particular resource of the same type as the current request.
   let withId (ctx: HttpContext) id =
-    index ctx + id
+    index ctx + WebUtility.UrlEncode(id.ToString())
 
   ///Returns a link to the `edit` action for a particular resource of the same type as the current request.
   let edit (ctx: HttpContext) id =
-    index ctx + id + "/edit"
+    withId ctx id + "/edit"
