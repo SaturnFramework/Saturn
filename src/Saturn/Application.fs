@@ -49,7 +49,7 @@ module Application =
       match state.Router with
       | None -> failwith "Router needs to be defined in Saturn application"
       | Some router ->
-      let router = (succeed |> List.foldBack (>=>) state.Pipelines) >=> router
+      let router = (succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> router
 
       let appConfigs (app: IApplicationBuilder) =
         let app = app |> List.foldBack(fun e acc -> e acc) state.AppConfigs

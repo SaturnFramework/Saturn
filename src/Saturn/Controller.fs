@@ -69,7 +69,7 @@ module Controller =
 
       let addPlugs action handler =
         match state.Plugs.TryFind action with
-        | Some acts -> (succeed |> List.foldBack (>=>) acts ) >=> handler
+        | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> handler
         | None -> handler
 
       let initialController =
@@ -378,7 +378,7 @@ module Controller =
     [<CustomOperation("version")>]
     member __.Version(state, version) =
       {state with Version = Some version}
-    
+
     ///Inject a controller into the routing table rooted at a given path. All of that controller's actions will be anchored off of the path as a prefix.
     [<CustomOperation("subController")>]
     member __.SubController(state, path, handler) =

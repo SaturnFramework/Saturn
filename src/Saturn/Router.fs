@@ -183,7 +183,7 @@ module Router =
             siteMap.NotFound ()
             yield state.NotFoundHandler.Value
       ]
-      let res = (fetchUrl |> List.foldBack (>=>) state.Pipelines ) >=> lst
+      let res = (fetchUrl |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> lst
       siteMap.SetKey res
       SiteMap.add siteMap
       res
