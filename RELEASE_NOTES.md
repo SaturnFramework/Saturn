@@ -1,3 +1,12 @@
+### 0.6.0 - 03.07.2018
+* Implement CSRF token protection using `Microsoft.AspNetCore.Antiforgery` (by @baronfel)
+* Await before adding result to `Items.["RequestModel"]` (by @NinoFloris)
+* Make IDs with # in them URL-quoted (by @NinoFloris)
+* Fix unintuitive ordering of plugs (by @NinoFloris)
+* Replace tupled controller args with curried args (by @rusanov-vladimir)
+* Add `cli_arguments` operation to the Application CE to
+flow into `CreateDefaultBuilder(args)` (by @NinoFloris)
+
 ### 0.5.0 - 22.05.2018
 * Authorization helper (by @Nhowka)
 * Add forwardf
