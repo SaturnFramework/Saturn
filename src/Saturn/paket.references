@@ -9,6 +9,7 @@ Microsoft.AspNetCore.Rewrite
 Microsoft.AspNetCore.Cors
 Microsoft.AspNetCore.Authentication.JwtBearer
 Microsoft.AspNetCore.Authentication.Cookies
+Microsoft.AspNetCore.Authentication.Google
 Microsoft.AspNetCore.Authentication.OAuth
 Microsoft.AspNetCore.Authorization
 Microsoft.AspNetCore.Antiforgery
