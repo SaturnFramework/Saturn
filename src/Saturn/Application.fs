@@ -348,6 +348,7 @@ module Application =
           opt.ClientSecret <- clientSecret
           opt.CallbackPath <- PathString(callbackPath)
           jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(v,k) )
+          opt.ClaimActions.MapJsonSubKey("urn:google:image:url", "image", "url")
           let ev = opt.Events
 
           ev.OnCreatingTicket <-
