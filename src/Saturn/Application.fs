@@ -372,6 +372,26 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
+    ///Enables Google OAuth authentication with custom configuration
+    [<CustomOperation("use_google_oauth_with_config")>]
+    member __.UseGoogleAuthWithConfig(state: ApplicationState, (config : Authentication.Google.GoogleOptions -> unit) ) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- "Google")
+         .AddCookie()
+         .AddGoogle(Action<GoogleOptions> config) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
     ///Enables custom OAuth authentication
     [<CustomOperation("use_custom_oauth")>]
     member __.UseCustomOAuth(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
