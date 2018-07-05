@@ -43,7 +43,7 @@ module ControllerHelpers =
       ctx.WriteHtmlFileAsync path
 
     ///Returns to the client response according to accepted content type (`Accept` header, and if it's not present `Content-Type` header)
-    let resposne (ctx: HttpContext) (output: 'a) =
+    let response (ctx: HttpContext) (output: 'a) =
       let jsonMediaType = MediaTypeHeaderValue.Parse (StringSegment "application/json")
       let xmlMediaType = MediaTypeHeaderValue.Parse (StringSegment "application/xml")
       let plainMediaType = MediaTypeHeaderValue.Parse (StringSegment "text/plain")
@@ -60,7 +60,7 @@ module ControllerHelpers =
           ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
         | _ ->
           if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteXmlAsync(output)
           else failwithf "Couldn't recognize any known Accept type"
       | _ ->
       match ctx.Request.Headers.TryGetValue "Content-Type" with
@@ -73,7 +73,7 @@ module ControllerHelpers =
           ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
         | _ ->
           if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteXmlAsync(output)
           else failwithf "Couldn't recognize any known Content-Type type"
       | _ ->
         match typeof<'a> with
