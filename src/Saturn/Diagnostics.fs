@@ -52,7 +52,9 @@ module SiteMap =
 
     let add hm = state.Add(hm)
     let generate () =
-        let s = state |> Seq.last
+        match state |> Seq.tryLast with
+        | None -> ()
+        | Some s ->
         let z = s.CollectPaths "" None state
         let typ = typeof<HandlerMap>
         let asm = typ.Assembly.Location
