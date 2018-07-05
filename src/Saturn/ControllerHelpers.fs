@@ -6,6 +6,8 @@ open Giraffe.Core
 open Giraffe.ResponseWriters
 open Giraffe.ModelBinding
 open FSharp.Control.Tasks.ContextInsensitive
+open Microsoft.Net.Http.Headers
+open Microsoft.Extensions.Primitives
 
 [<AutoOpen>]
 module ControllerHelpers =
@@ -39,6 +41,46 @@ module ControllerHelpers =
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
       ctx.WriteHtmlFileAsync path
+
+    ///Returns to the client response according to accepted content type (`Accept` header, and if it's not present `Content-Type` header)
+    let resposne (ctx: HttpContext) (output: 'a) =
+      let jsonMediaType = MediaTypeHeaderValue.Parse (StringSegment "application/json")
+      let xmlMediaType = MediaTypeHeaderValue.Parse (StringSegment "application/xml")
+      let plainMediaType = MediaTypeHeaderValue.Parse (StringSegment "text/plain")
+      let htmlMediaType = MediaTypeHeaderValue.Parse (StringSegment "text/html")
+
+      match ctx.Request.Headers.TryGetValue "Accept" with
+      | true, header ->
+        let mediaTypes = MediaTypeHeaderValue.ParseList header
+        if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+        elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+        else
+          match typeof<'a> with
+          | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
+          | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
+          | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+            ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+          | _ -> failwithf "Couldn't recognize any known Accept type"
+      | _ ->
+      match ctx.Request.Headers.TryGetValue "Content-Type" with
+      | true, header ->
+        let mediaTypes = MediaTypeHeaderValue.ParseList header
+        if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+        elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+        else
+          match typeof<'a> with
+          | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
+          | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
+          | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+            ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+          | _ -> failwithf "Couldn't recognize any known Content-Type type"
+      | _ ->
+        match typeof<'a> with
+        | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> ->
+          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+        | k when k = typeof<string>  -> ctx.WriteTextAsync(unbox<string> output)
+        | _ -> ctx.WriteJsonAsync(output)
+
 
     ///Gets model from body as JSON.
     let getJson<'a> (ctx: HttpContext) =
