@@ -264,7 +264,9 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
-    ///Enables default GitHub OAuth authentication
+    ///Enables default GitHub OAuth authentication.
+    ///`jsonToClaimMap` should contain sequance of tupples where first element is a name of the of the key in JSON object and second element is a name of the claim.
+    ///For example: `["login", "githubUsername"; "name", "fullName"]` where `login` and `name` are names of fields in GitHub JSON response (https://developer.github.com/v3/users/#get-the-authenticated-user).
     [<CustomOperation("use_github_oauth")>]
     member __.UseGithubAuth(state: ApplicationState, clientId : string, clientSecret : string, callbackPath : string, jsonToClaimMap : (string * string) seq) =
       let middleware (app : IApplicationBuilder) =
@@ -283,7 +285,7 @@ module Application =
           opt.AuthorizationEndpoint <-  "https://github.com/login/oauth/authorize"
           opt.TokenEndpoint <- "https://github.com/login/oauth/access_token"
           opt.UserInformationEndpoint <- "https://api.github.com/user"
-          jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(k,v) )
+          jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(v,k) )
           let ev = opt.Events
 
           ev.OnCreatingTicket <-
