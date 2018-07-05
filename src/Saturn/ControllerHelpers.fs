@@ -52,28 +52,29 @@ module ControllerHelpers =
       match ctx.Request.Headers.TryGetValue "Accept" with
       | true, header ->
         let mediaTypes = MediaTypeHeaderValue.ParseList header
-        if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-        elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-        else
-          match typeof<'a> with
-          | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
-          | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
-          | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
-            ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
-          | _ -> failwithf "Couldn't recognize any known Accept type"
+
+        match typeof<'a> with
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
+        | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+        | _ ->
+          if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+          else failwithf "Couldn't recognize any known Accept type"
       | _ ->
       match ctx.Request.Headers.TryGetValue "Content-Type" with
       | true, header ->
         let mediaTypes = MediaTypeHeaderValue.ParseList header
-        if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-        elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-        else
-          match typeof<'a> with
-          | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
-          | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
-          | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
-            ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
-          | _ -> failwithf "Couldn't recognize any known Content-Type type"
+        match typeof<'a> with
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
+        | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+        | _ ->
+          if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+          else failwithf "Couldn't recognize any known Content-Type type"
       | _ ->
         match typeof<'a> with
         | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> ->
