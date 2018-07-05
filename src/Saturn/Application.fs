@@ -143,7 +143,6 @@ module Application =
         let p = Path.Combine(Directory.GetCurrentDirectory(), path)
         builder
           .UseWebRoot(p)
-          .UseContentRoot(p)
       { state with
           AppConfigs = middleware::state.AppConfigs
           HostConfigs = host::state.HostConfigs
