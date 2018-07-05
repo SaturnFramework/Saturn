@@ -4,6 +4,7 @@ open Giraffe.Core
 open Giraffe.Routing
 open System.Collections.Generic
 open SiteMap
+open System
 
 [<AutoOpen>]
 module Router =
@@ -18,7 +19,7 @@ module Router =
     | Patch
     | Forward
 
-  type ScopeState =
+  type RouterState =
     { Routes: Dictionary<string * RouteType, HttpHandler list>
       RoutesF: Dictionary<string * RouteType, (obj -> HttpHandler) list>
 
@@ -39,9 +40,9 @@ module Router =
           |> Seq.map (fun ((p, _), (acts)) -> (p, acts |> List.rev))
         rts,rtsf
 
-  type ScopeBuilder internal () =
+  type RouterBuilder internal () =
 
-    let addRoute typ state path action : ScopeState =
+    let addRoute typ state path action : RouterState =
       let lst =
         match state.Routes.TryGetValue((path, typ)) with
         | false, _ -> []
@@ -49,7 +50,7 @@ module Router =
       state.Routes.[(path, typ)] <-  action::lst
       state
 
-    let addRouteF typ state (path: PrintfFormat<_,_,_,_,'f>) action : ScopeState =
+    let addRouteF typ state (path: PrintfFormat<_,_,_,_,'f>) action : RouterState =
       let r = fun (o : obj) -> o |> unbox<'f> |> action
       let lst =
         match state.RoutesF.TryGetValue((path.Value, typ)) with
@@ -58,13 +59,13 @@ module Router =
       state.RoutesF.[(path.Value, typ)] <- r::lst
       state
 
-    member __.Yield(_) : ScopeState =
+    member __.Yield(_) : RouterState =
       { Routes = Dictionary()
         RoutesF = Dictionary()
         Pipelines = []
         NotFoundHandler = None }
 
-    member __.Run(state : ScopeState) : HttpHandler =
+    member __.Run(state : RouterState) : HttpHandler =
       let siteMap = HandlerMap()
 
       let tryDummy (hndl : obj -> HttpHandler) =
@@ -190,72 +191,75 @@ module Router =
 
     ///Adds handler for `GET` request.
     [<CustomOperation("get")>]
-    member __.Get(state, path : string, action: HttpHandler) : ScopeState =
+    member __.Get(state, path : string, action: HttpHandler) : RouterState =
       addRoute RouteType.Get state path action
 
     ///Adds handler for `GET` request.
     [<CustomOperation("getf")>]
-    member __.GetF(state, path : PrintfFormat<_,_,_,_,'f>, action) : ScopeState =
+    member __.GetF(state, path : PrintfFormat<_,_,_,_,'f>, action) : RouterState =
       addRouteF RouteType.Get state path action
 
     ///Adds handler for `POST` request.
     [<CustomOperation("post")>]
-    member __.Post(state, path : string, action: HttpHandler) : ScopeState =
+    member __.Post(state, path : string, action: HttpHandler) : RouterState =
       addRoute RouteType.Post state path action
 
     ///Adds handler for `POST` request.
     [<CustomOperation("postf")>]
-    member __.PostF(state, path, action) : ScopeState =
+    member __.PostF(state, path, action) : RouterState =
       addRouteF RouteType.Post state path action
 
     ///Adds handler for `PUT` request.
     [<CustomOperation("put")>]
-    member __.Put(state, path : string, action: HttpHandler) : ScopeState =
+    member __.Put(state, path : string, action: HttpHandler) : RouterState =
       addRoute RouteType.Put state path action
 
     ///Adds handler for `PUT` request.
     [<CustomOperation("putf")>]
-    member __.PutF(state, path, action) : ScopeState =
+    member __.PutF(state, path, action) : RouterState =
       addRouteF RouteType.Put state path action
 
     ///Adds handler for `DELETE` request.
     [<CustomOperation("delete")>]
-    member __.Delete(state, path : string, action: HttpHandler) : ScopeState =
+    member __.Delete(state, path : string, action: HttpHandler) : RouterState =
       addRoute RouteType.Delete state path action
 
     ///Adds handler for `DELETE` request.
     [<CustomOperation("deletef")>]
-    member __.DeleteF(state, path, action) : ScopeState =
+    member __.DeleteF(state, path, action) : RouterState =
       addRouteF RouteType.Delete state path action
 
     ///Adds handler for `PATCH` request.
     [<CustomOperation("patch")>]
-    member __.Patch(state, path : string, action: HttpHandler) : ScopeState =
+    member __.Patch(state, path : string, action: HttpHandler) : RouterState =
       addRoute RouteType.Patch state path action
 
     ///Adds handler for `PATCH` request.
     [<CustomOperation("patchf")>]
-    member __.PatchF(state, path, action) : ScopeState =
+    member __.PatchF(state, path, action) : RouterState =
       addRouteF RouteType.Patch state path action
 
     ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
     [<CustomOperation("forward")>]
-    member __.Forward(state, path : string, action : HttpHandler) : ScopeState =
+    member __.Forward(state, path : string, action : HttpHandler) : RouterState =
       addRoute RouteType.Forward state path action
 
     ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
     [<CustomOperation("forwardf")>]
-    member __.Forwardf(state, path, action) : ScopeState =
+    member __.Forwardf(state, path, action) : RouterState =
       addRouteF RouteType.Forward state path action
 
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]
-    member __.PipeThrough(state, pipe) : ScopeState =
+    member __.PipeThrough(state, pipe) : RouterState =
       {state with Pipelines = pipe::state.Pipelines}
 
     ///Adds not-found handler for current scope
     [<CustomOperation("not_found_handler")>]
-    member __.NotFoundHandler(state, handler) : ScopeState =
+    member __.NotFoundHandler(state, handler) : RouterState =
       {state with NotFoundHandler = Some handler}
 
-  let scope = ScopeBuilder()
+  [<ObsoleteAttribute("This construct is obsolete, use router instead")>]
+  let scope = RouterBuilder()
+
+  let router = RouterBuilder()
