@@ -3,6 +3,8 @@ module Controller.Sample
 open Saturn
 open Giraffe.Core
 open Giraffe.ResponseWriters
+open Giraffe
+open System
 
 let commentController userId = controller {
     index (fun ctx -> (sprintf "Comment Index handler for user %i" userId ) |> Controller.text ctx)
@@ -37,6 +39,26 @@ let userController = controller {
     error_handler (fun ctx ex -> sprintf "Error handler no version - %s" ex.Message |> Controller.text ctx)
 }
 
+type Response = {
+    a: string
+    b: string
+}
+
+type DifferentResponse = {
+    c: int
+    d: DateTime
+}
+
+let typedController = controller {
+    index (fun _ -> task {
+        return {a = "hello"; b = "world"}
+    })
+
+    add (fun _ -> task {
+        return {c = 123; d = DateTime.Now}
+    })
+}
+
 let otherRouter = scope {
     get "/dsa" (text "")
     getf "/dsa/%s" (text)
@@ -47,6 +69,7 @@ let otherRouter = scope {
 let topRouter = scope {
     forward "/users" userControllerVersion1
     forward "/users" userController
+    forward "/typed" typedController
     forwardf "/%s/%s/abc" (fun (a : string * string) -> otherRouter)
 }
 
