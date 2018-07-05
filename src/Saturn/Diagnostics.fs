@@ -50,8 +50,8 @@ module SiteMap =
             )
     let private state = ResizeArray<HandlerMap> ()
 
-    let add hm = state.Add(hm)
-    let generate () =
+    let internal add hm = state.Add(hm)
+    let internal generate () =
         match state |> Seq.tryLast with
         | None -> ()
         | Some s ->

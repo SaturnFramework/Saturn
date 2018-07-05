@@ -34,10 +34,11 @@ module Auth =
   let requireRoleOf challengeType roles : HttpHandler =
     requiresRoleOf roles (challenge (mapChallengeTypeToScheme challengeType))
 
-  //Requires claim of given type with given value and uses given challenge type if not authenticated
+  ///Requires claim of given type with given value and uses given challenge type if not authenticated
   let requireClaim challengeType claimKey claimValue : HttpHandler =
     requiresAuthPolicy (fun c -> c.HasClaim(claimKey, claimValue)) (challenge (mapChallengeTypeToScheme challengeType))
 
+  ///Helper function to generate JWT token using `Microsoft.IdentityModel.Tokens` and `System.IdentityModel.Tokens.Jwt`
   let generateJWT (secret : string, algorithm) issuer expires claims =
     let expires = Nullable(expires)
     let notBefore = Nullable(DateTime.UtcNow)

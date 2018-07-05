@@ -17,7 +17,6 @@ open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Authentication
 open Microsoft.AspNetCore.Authorization
-open Microsoft.AspNetCore.Authentication.OAuth
 open System.Net.Http
 open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
