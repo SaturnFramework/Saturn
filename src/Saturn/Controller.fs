@@ -50,7 +50,7 @@ module Controller =
   let inline response<'a> ctx (input : System.Threading.Tasks.Task<'a>) =
       task {
         let! i = input
-        return! Controller.resposne ctx i
+        return! Controller.response ctx i
       }
 
   type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
