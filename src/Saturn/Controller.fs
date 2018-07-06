@@ -17,17 +17,19 @@ module Controller =
     | Edit
     | Create
     | Update
+    | Patch
     | Delete
     | DeleteAll
     | All
 
-  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'DeleteOutput, 'DeleteAllOutput> = {
+  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = {
     Index: (HttpContext -> Task<'IndexOutput>) option
     Show: (HttpContext -> 'Key -> Task<'ShowOutput>) option
     Add: (HttpContext -> Task<'AddOutput>) option
     Edit: (HttpContext -> 'Key -> Task<'EditOutput>) option
     Create: (HttpContext -> Task<'CreateOutput>) option
     Update: (HttpContext -> 'Key -> Task<'UpdateOutput>) option
+    Patch: (HttpContext -> 'Key -> Task<'PatchOutput>) option
     Delete: (HttpContext -> 'Key -> Task<'DeleteOutput>) option
     DeleteAll: (HttpContext -> Task<'DeleteAllOutput>) option
 
@@ -53,10 +55,10 @@ module Controller =
         return! Controller.response ctx i
       }
 
-  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
+  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
 
-    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'DeleteOutput, 'DeleteAllOutput> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex) }
+    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex) }
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
@@ -88,6 +90,11 @@ module Controller =
     member __.Update (state, handler) =
       {state with Update = Some handler}
 
+    ///Operation that patches existing item
+    [<CustomOperation("patch")>]
+    member __.Patch (state, handler) =
+      {state with Patch = Some handler}
+
     ///Operation that deletes existing item
     [<CustomOperation("delete")>]
     member __.Delete (state, handler) =
@@ -100,7 +107,7 @@ module Controller =
 
     ///Define not-found handler for the controller
     [<CustomOperation("not_found_handler")>]
-    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_>, handler) =
+    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_,_>, handler) =
       {state with NotFoundHandler = Some handler}
 
     ///Define error for the controller
@@ -158,7 +165,7 @@ module Controller =
       | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route handler
       | None -> route handler
 
-    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
+    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
       let siteMap = HandlerMap()
       let addToSiteMap v p = siteMap.AddPath p v
       let keyFormat =
@@ -231,10 +238,10 @@ module Controller =
             let addToSiteMap = addToSiteMap "PATCH"
 
             if keyFormat.IsSome then
-              if state.Update.IsSome then
+              if state.Patch.IsSome then
                 let path = keyFormat.Value
                 addToSiteMap path
-                yield this.AddKeyHandler state Update state.Update.Value path
+                yield this.AddKeyHandler state Patch state.Patch.Value path
           ]
           yield PUT >=> choose [
             let addToSiteMap = addToSiteMap "PUT"
@@ -302,5 +309,5 @@ module Controller =
       res
 
 
-  let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'DeleteOutput, 'DeleteAllOutput> ()
+  let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
 
