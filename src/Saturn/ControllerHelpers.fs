@@ -6,6 +6,8 @@ open Giraffe.Core
 open Giraffe.ResponseWriters
 open Giraffe.ModelBinding
 open FSharp.Control.Tasks.ContextInsensitive
+open Microsoft.Net.Http.Headers
+open Microsoft.Extensions.Primitives
 
 [<AutoOpen>]
 module ControllerHelpers =
@@ -39,6 +41,66 @@ module ControllerHelpers =
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
       ctx.WriteHtmlFileAsync path
+
+    ///Returns to the client response according to accepted content type (`Accept` header, and if it's not present `Content-Type` header)
+    let response (ctx: HttpContext) (output: 'a) =
+      let jsonMediaType = MediaTypeHeaderValue.Parse (StringSegment "application/json")
+      let xmlMediaType = MediaTypeHeaderValue.Parse (StringSegment "application/xml")
+      let plainMediaType = MediaTypeHeaderValue.Parse (StringSegment "text/plain")
+      let htmlMediaType = MediaTypeHeaderValue.Parse (StringSegment "text/html")
+
+      match ctx.Request.Headers.TryGetValue "Accept" with
+      | true, header ->
+        //1. Filter media types so only the ones we support are in the list
+        //2. Order media types by quality, decrementing, giving increased priority to `application/json` and `text/html` and decreased priority to `*\*` in case of same quality
+        let mediaTypes =
+          MediaTypeHeaderValue.ParseList header
+          |> Seq.filter (fun s -> jsonMediaType.IsSubsetOf s || xmlMediaType.IsSubsetOf s || plainMediaType.IsSubsetOf s || htmlMediaType.IsSubsetOf s)
+          |> Seq.sortWith(fun n1 n2 ->
+            let q1 = if n1.Quality.HasValue then n1.Quality.Value else 1.
+            let q2 = if n2.Quality.HasValue then n2.Quality.Value else 1.
+            if q1 = q2 then
+              if n1.MediaType.ToString() = "application/json" || n1.MediaType.ToString() = "text/html" then 1
+              elif n1.MediaType.ToString() = "*/*" then -1
+              elif n2.MediaType.ToString() = "application/json" || n2.MediaType.ToString() = "text/html" then -1
+              elif n2.MediaType.ToString() = "*/*" then 1
+              else 0
+            else
+              - q1.CompareTo(q2))
+
+        let stringType = mediaTypes |> Seq.tryFind (fun n -> plainMediaType.IsSubsetOf n || htmlMediaType.IsSubsetOf n)
+
+        match typeof<'a>, stringType with
+        | k, Some s when k = typeof<string> && htmlMediaType.IsSubsetOf s -> ctx.WriteHtmlStringAsync(unbox<string> output)
+        | k, Some s when k = typeof<string> && plainMediaType.IsSubsetOf s -> ctx.WriteTextAsync(unbox<string> output)
+        | k, _ when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+        | _ ->
+          let contentType = mediaTypes |> Seq.tryFind (fun n -> jsonMediaType.IsSubsetOf n || xmlMediaType.IsSubsetOf n)
+          match contentType with
+          | Some s when jsonMediaType.IsSubsetOf s -> ctx.WriteJsonAsync(output)
+          | Some s when xmlMediaType.IsSubsetOf s -> ctx.WriteXmlAsync(output)
+          | _ -> failwithf "Couldn't recognize any known Accept type"
+      | _ ->
+      match ctx.Request.Headers.TryGetValue "Content-Type" with
+      | true, header ->
+        let mediaTypes = MediaTypeHeaderValue.ParseList header
+        match typeof<'a> with
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
+        | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+        | _ ->
+          if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
+          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteXmlAsync(output)
+          else failwithf "Couldn't recognize any known Content-Type type"
+      | _ ->
+        match typeof<'a> with
+        | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> ->
+          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+        | k when k = typeof<string>  -> ctx.WriteTextAsync(unbox<string> output)
+        | _ -> ctx.WriteJsonAsync(output)
+
 
     ///Gets model from body as JSON.
     let getJson<'a> (ctx: HttpContext) =
