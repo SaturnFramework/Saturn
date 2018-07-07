@@ -75,6 +75,8 @@ NUGET
       Microsoft.AspNetCore.Authentication.Abstractions (>= 2.1.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Http (>= 2.1.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Http.Extensions (>= 2.1.1) - restriction: >= netstandard2.0
+    Microsoft.AspNetCore.Authentication.Google (2.1.1)
+      Microsoft.AspNetCore.Authentication.OAuth (>= 2.1.1) - restriction: >= netstandard2.0
     Microsoft.AspNetCore.Authentication.JwtBearer (2.1.1)
       Microsoft.AspNetCore.Authentication (>= 2.1.1) - restriction: >= netstandard2.0
       Microsoft.IdentityModel.Protocols.OpenIdConnect (>= 5.2) - restriction: >= netstandard2.0
@@ -180,6 +182,12 @@ NUGET
       Microsoft.Extensions.Options (>= 2.1.1) - restriction: >= netstandard2.0
     Microsoft.AspNetCore.Routing.Abstractions (2.1.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Http.Abstractions (>= 2.1.1) - restriction: >= netstandard2.0
+    Microsoft.AspNetCore.Server.HttpSys (2.1.1)
+      Microsoft.AspNetCore.Authentication.Core (>= 2.1.1) - restriction: >= netstandard2.0
+      Microsoft.AspNetCore.Hosting (>= 2.1.1) - restriction: >= netstandard2.0
+      Microsoft.Net.Http.Headers (>= 2.1.1) - restriction: >= netstandard2.0
+      Microsoft.Win32.Registry (>= 4.5) - restriction: >= netstandard2.0
+      System.Security.Principal.Windows (>= 4.5) - restriction: >= netstandard2.0
     Microsoft.AspNetCore.Server.IISIntegration (2.1.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Authentication.Core (>= 2.1.1) - restriction: >= netstandard2.0
       Microsoft.AspNetCore.Hosting.Abstractions (>= 2.1.1) - restriction: >= netstandard2.0
