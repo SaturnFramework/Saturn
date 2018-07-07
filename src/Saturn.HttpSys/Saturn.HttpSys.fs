@@ -15,10 +15,10 @@ type ApplicationBuilder with
             HostConfigs = host::state.HostConfigs
         }
 
-    [<CustomOperation("use_httpsys_with_args")>]
-    member __.UseHttpSysWithArgs(state, args) =
+    [<CustomOperation("use_httpsys_with_config")>]
+    member __.UseHttpSysWithConfig(state, config) =
         let host (builder: IWebHostBuilder) =
-            builder.UseHttpSys args
+            builder.UseHttpSys config
         { state with
             HostConfigs = host::state.HostConfigs
         }
