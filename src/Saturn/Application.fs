@@ -15,12 +15,7 @@ open Microsoft.AspNetCore.Authentication.JwtBearer
 open Microsoft.IdentityModel.Tokens
 open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Http
-open Microsoft.AspNetCore.Authentication
 open Microsoft.AspNetCore.Authorization
-open System.Net.Http
-open System.Net.Http.Headers
-open Newtonsoft.Json.Linq
-open System.Threading.Tasks
 
 [<AutoOpen>]
 module Application =
@@ -333,6 +328,38 @@ module Application =
       { state with
           CliArguments = Some args
       }
+
+    ///Configures built in JSON.Net (de)serializer with custom settings.
+    [<CustomOperation("use_json_settings")>]
+    member __.ConfigJSONSerializer (state, settings) =
+      let jsonSettingsService (s: IServiceCollection) =
+        s.AddSingleton<Giraffe.Serialization.Json.IJsonSerializer>(Giraffe.Serialization.Json.NewtonsoftJsonSerializer settings)
+      { state with
+          ServicesConfig = jsonSettingsService :: state.ServicesConfig }
+
+    ///Replaces built in JSON.Net (de)serializer with custom serializer
+    [<CustomOperation("use_json_serializer")>]
+    member __.UseCustomJSONSerializer (state, serializer : #Giraffe.Serialization.Json.IJsonSerializer ) =
+      let jsonService (s: IServiceCollection) =
+        s.AddSingleton<Giraffe.Serialization.Json.IJsonSerializer>(serializer)
+      { state with
+          ServicesConfig = jsonService :: state.ServicesConfig }
+
+    ///Configures built in XML (de)serializer with custom settings.
+    [<CustomOperation("use_xml_settings")>]
+    member __.ConfigXMLSerializer (state, settings) =
+      let xmlService (s: IServiceCollection) =
+        s.AddSingleton<Giraffe.Serialization.Xml.IXmlSerializer>(Giraffe.Serialization.Xml.DefaultXmlSerializer settings)
+      { state with
+          ServicesConfig = xmlService :: state.ServicesConfig }
+
+    ///Replaces built in XML (de)serializer with custom serializer
+    [<CustomOperation("use_xml_serializer")>]
+    member __.UseCustomXMLSerializer (state, serializer : #Giraffe.Serialization.Xml.IXmlSerializer ) =
+      let xmlService (s: IServiceCollection) =
+        s.AddSingleton<Giraffe.Serialization.Xml.IXmlSerializer>(serializer)
+      { state with
+          ServicesConfig = xmlService :: state.ServicesConfig }
 
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
