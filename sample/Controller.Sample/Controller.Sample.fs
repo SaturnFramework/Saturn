@@ -14,7 +14,7 @@ let commentController userId = controller {
 }
 
 let userControllerVersion1 = controller {
-    version 1
+    version "1"
     subController "/comments" commentController
 
     index (fun ctx -> "Index handler version 1" |> Controller.text ctx)
@@ -59,14 +59,14 @@ let typedController = controller {
     })
 }
 
-let otherRouter = scope {
+let otherRouter = router {
     get "/dsa" (text "")
     getf "/dsa/%s" (text)
     forwardf "/ddd/%s" (fun (a : string) -> userControllerVersion1)
     not_found_handler (setStatusCode 404 >=> text "Not Found")
 }
 
-let topRouter = scope {
+let topRouter = router {
     forward "/users" userControllerVersion1
     forward "/users" userController
     forward "/typed" typedController
