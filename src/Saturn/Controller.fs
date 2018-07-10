@@ -23,8 +23,11 @@ module Controller =
     | All
 
   let except (actions: Action list) =
-    let allSet = Set [Index;Show;Add;Edit;Create;Update;Patch;Delete;DeleteAll]
-    allSet - Set actions |> Set.toList
+    let inputSet = Set actions
+    if inputSet |> Set.contains All then []
+    else
+      let allSet = Set [Index;Show;Add;Edit;Create;Update;Patch;Delete;DeleteAll]
+      allSet - inputSet |> Set.toList
 
   type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = {
     Index: (HttpContext -> Task<'IndexOutput>) option
