@@ -28,6 +28,7 @@ module Application =
     HostConfigs: (IWebHostBuilder -> IWebHostBuilder) list
     ServicesConfig: (IServiceCollection -> IServiceCollection) list
     CliArguments: string array option
+    CookiesAlreadyAdded: bool
   }
 
   type ApplicationBuilder internal () =
@@ -37,7 +38,7 @@ module Application =
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
 
 
-      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None }
+      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false }
 
     member __.Run(state: ApplicationState) : IWebHostBuilder =
       match state.Router with
@@ -222,59 +223,72 @@ module Application =
     ///Enables default cookies authentication
     [<CustomOperation("use_cookies_authentication")>]
     member __.UseCookiesAuth(state: ApplicationState, issuer : string) =
+      let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
       let service (s : IServiceCollection) =
-        s.AddAuthentication(fun cfg ->
+        let c = s.AddAuthentication(fun cfg ->
           cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
-         .AddCookie(fun opt ->
-          opt.ClaimsIssuer <- issuer
-         ) |> ignore
+        if not flag then
+          flag <- true
+          c.AddCookie(fun opt ->
+            opt.ClaimsIssuer <- issuer
+          ) |> ignore
         s
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = flag
       }
 
     ///Enables cookies authentication with custom configuration
     [<CustomOperation("use_cookies_authentication_with_config")>]
     member __.UseCookiesAuthConfig(state: ApplicationState, (options :  CookieAuthenticationOptions -> unit) ) =
+      let mutable flag = state.CookiesAlreadyAdded
+
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
       let service (s : IServiceCollection) =
-        s.AddAuthentication(fun cfg ->
+        let c = s.AddAuthentication(fun cfg ->
           cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
-         .AddCookie(options) |> ignore
+        if not flag then
+          flag <- true
+          c.AddCookie(options) |> ignore
         s
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = flag
       }
 
     ///Enables custom OAuth authentication
     [<CustomOperation("use_custom_oauth")>]
     member __.UseCustomOAuth(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
       let service (s : IServiceCollection) =
-        s.AddAuthentication(fun cfg ->
+        let c = s.AddAuthentication(fun cfg ->
           cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- name)
-         .AddCookie()
-         .AddOAuth(name,config) |> ignore
+        if not flag then
+          flag <- true
+          c.AddCookie() |> ignore
+        c.AddOAuth(name,config) |> ignore
         s
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = flag
       }
 
     ///Enables IIS integration
