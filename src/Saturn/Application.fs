@@ -68,7 +68,15 @@ module Application =
         .UseUrls(state.Urls |> List.toArray)
 
     ///Defines top-level router used for the application
+    ///This construct is obsolete, use `use_router` instead
     [<CustomOperation("router")>]
+    [<ObsoleteAttribute("This construct is obsolete, use use_router instead")>]
+    member __.RouterOld(state, handler) =
+      {state with Router = Some handler}
+
+    ///Defines top-level router used for the application
+    [<CustomOperation("use_router")>]
+    [<ObsoleteAttribute("This construct is obsolete, use use_router instead")>]
     member __.Router(state, handler) =
       {state with Router = Some handler}
 
