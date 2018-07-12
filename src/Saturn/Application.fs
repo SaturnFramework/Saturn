@@ -16,6 +16,7 @@ open Microsoft.IdentityModel.Tokens
 open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Authorization
+open Microsoft.AspNetCore.StaticFiles
 
 [<AutoOpen>]
 module Application =
@@ -24,6 +25,7 @@ module Application =
     ErrorHandler: ErrorHandler option
     Pipelines: HttpHandler list
     Urls: string list
+    MimeTypes: (string*string) list
     AppConfigs: (IApplicationBuilder -> IApplicationBuilder) list
     HostConfigs: (IWebHostBuilder -> IWebHostBuilder) list
     ServicesConfig: (IServiceCollection -> IServiceCollection) list
@@ -38,7 +40,7 @@ module Application =
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
 
 
-      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false }
+      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false }
 
     member __.Run(state: ApplicationState) : IWebHostBuilder =
       match state.Router with
@@ -110,6 +112,12 @@ module Application =
     member __.Url(state, url) =
       {state with Urls = url::state.Urls}
 
+    ///Adds MIME types definitions as a list of (extension, mime)
+    [<CustomOperation("use_mime_types")>]
+    member __.AddMimeTypes(state, mimeList) =
+      {state with MimeTypes = mimeList}
+
+
     ///Adds logging configuration.
     [<CustomOperation("logging")>]
     member __.Logging(state, (config : ILoggingBuilder -> unit)) =
@@ -141,7 +149,13 @@ module Application =
     ///Enables using static file hosting.
     [<CustomOperation("use_static")>]
     member __.UseStatic(state, path : string) =
-      let middleware (app : IApplicationBuilder) = app.UseDefaultFiles().UseStaticFiles()
+      let middleware (app : IApplicationBuilder) =
+        match app.UseDefaultFiles(), state.MimeTypes with
+        |app, [] -> app.UseStaticFiles()
+        |app, mimes ->
+            let provider = FileExtensionContentTypeProvider()
+            mimes |> List.iter (fun (extension, mime) -> provider.Mappings.[extension] <- mime)
+            app.UseStaticFiles(StaticFileOptions(ContentTypeProvider=provider))
       let host (builder: IWebHostBuilder) =
         let p = Path.Combine(Directory.GetCurrentDirectory(), path)
         builder
