@@ -129,7 +129,7 @@ module ControllerHelpers =
     ///Get model based on `HttpMethod` and `Content-Type` of request.
     let getModel<'a> (ctx: HttpContext) =
       match ctx.Items.TryGetValue "RequestModel" with
-      | true, o -> task { return unbox<'a> o }
+      | true, o when not (isNull o)  -> task { return unbox<'a> o }
       | _ ->
         ctx.BindModelAsync<'a>()
 
