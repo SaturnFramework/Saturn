@@ -2,7 +2,7 @@
 namespace System
 open System.Reflection
 
-[<assembly: AssemblyTitleAttribute("Saturn")>]
+[<assembly: AssemblyTitleAttribute("Saturn.Extensions.Authorization")>]
 [<assembly: AssemblyProductAttribute("Saturn")>]
 [<assembly: AssemblyDescriptionAttribute("Opinionated, web development framework for F# which implements the server-side, functional MVC pattern")>]
 [<assembly: AssemblyVersionAttribute("0.7.0")>]
@@ -10,7 +10,7 @@ open System.Reflection
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] AssemblyTitle = "Saturn"
+    let [<Literal>] AssemblyTitle = "Saturn.Extensions.Authorization"
     let [<Literal>] AssemblyProduct = "Saturn"
     let [<Literal>] AssemblyDescription = "Opinionated, web development framework for F# which implements the server-side, functional MVC pattern"
     let [<Literal>] AssemblyVersion = "0.7.0"
