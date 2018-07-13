@@ -182,18 +182,14 @@ module PipelineHelpers =
     }
 
   ///Tries to model from request and puts model into `Items.RequestModel`. If it won't be called content can be fetched using `Context.Controller` helpers.
-  ///It won't crash the pipelines if fetching failed.
   ///It optionally takes custom culture name as arguments.
   let fetchModel<'a> culture (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult = task {
     let clt = culture |> Option.map System.Globalization.CultureInfo.CreateSpecificCulture
-    try
-      let! mdl =
-        match clt with
-        | Some c -> ctx.BindModelAsync<'a>(c)
-        | None -> ctx.BindModelAsync<'a>()
-      ctx.Items.["RequestModel"] <- mdl
-    with
-    | _ -> ()
+    let! mdl =
+      match clt with
+      | Some c -> ctx.BindModelAsync<'a>(c)
+      | None -> ctx.BindModelAsync<'a>()
+    ctx.Items.["RequestModel"] <- mdl
     return! nxt ctx
   }
 
