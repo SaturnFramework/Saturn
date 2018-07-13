@@ -186,14 +186,11 @@ module PipelineHelpers =
   ///It optionally takes custom culture name as arguments.
   let fetchModel<'a> culture (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult = task {
     let clt = culture |> Option.map System.Globalization.CultureInfo.CreateSpecificCulture
-    try
-      let! mdl =
-        match clt with
-        | Some c -> ctx.BindModelAsync<'a>(c)
-        | None -> ctx.BindModelAsync<'a>()
-      ctx.Items.["RequestModel"] <- mdl
-    with
-    | _ -> ()
+    let! mdl =
+      match clt with
+      | Some c -> ctx.BindModelAsync<'a>(c)
+      | None -> ctx.BindModelAsync<'a>()
+    ctx.Items.["RequestModel"] <- mdl
     return! nxt ctx
   }
 

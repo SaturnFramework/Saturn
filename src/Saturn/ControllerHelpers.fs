@@ -143,7 +143,8 @@ module ControllerHelpers =
     ///Loads model populated by `fetchModel` pipeline
     let loadModel<'a> (ctx: HttpContext) =
       match ctx.Items.TryGetValue "RequestModel" with
-      | true, o -> Some (unbox<'a> o)
+      | true, o when not (isNull o) -> Some(o |> unbox<'a>)
+      | false, _ -> invalidOp "Tried to load model but model wasn't set, did you forget to run fetchModel in your action plug?"
       | _ -> None
 
     ///Gets path of the request - it's relative to current `scope`
