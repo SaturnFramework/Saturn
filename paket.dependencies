@@ -1,23 +1,23 @@
 source https://www.nuget.org/api/v2
 
 
-nuget FSharp.Core 4.2.3
-nuget Microsoft.AspNetCore
-nuget Microsoft.AspNetCore.Session
-nuget Microsoft.AspNetCore.ResponseCompression
-nuget Microsoft.AspNetCore.StaticFiles
-nuget Microsoft.Extensions.Caching.Memory
-nuget Microsoft.AspNetCore.Rewrite
-nuget Microsoft.AspNetCore.Cors
-nuget Microsoft.AspNetCore.Authentication.JwtBearer
-nuget Microsoft.AspNetCore.Authentication.Cookies
-nuget Microsoft.AspNetCore.Authentication.Google
-nuget Microsoft.AspNetCore.Authentication.OAuth
-nuget Microsoft.AspNetCore.Authorization
-nuget Microsoft.AspNetCore.Antiforgery
-nuget Microsoft.AspNetCore.Server.HttpSys
+nuget FSharp.Core >= 4.2.3
+nuget Microsoft.AspNetCore >= 2.1
+nuget Microsoft.AspNetCore.Session >= 2.1
+nuget Microsoft.AspNetCore.ResponseCompression >= 2.1
+nuget Microsoft.AspNetCore.StaticFiles >= 2.1
+nuget Microsoft.Extensions.Caching.Memory >= 2.1
+nuget Microsoft.AspNetCore.Rewrite >= 2.1
+nuget Microsoft.AspNetCore.Cors >= 2.1
+nuget Microsoft.AspNetCore.Authentication.JwtBearer >= 2.1
+nuget Microsoft.AspNetCore.Authentication.Cookies >= 2.1
+nuget Microsoft.AspNetCore.Authentication.Google >= 2.1
+nuget Microsoft.AspNetCore.Authentication.OAuth >= 2.1
+nuget Microsoft.AspNetCore.Authorization >= 2.1
+nuget Microsoft.AspNetCore.Antiforgery >= 2.1
+nuget Microsoft.AspNetCore.Server.HttpSys >= 2.1
 
-nuget Giraffe
+nuget Giraffe >= 1.1
 
 group Build
   source https://www.nuget.org/api/v2

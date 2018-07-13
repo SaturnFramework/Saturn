@@ -92,7 +92,7 @@ Target "Pack" (fun _ ->
             OutputPath = buildDir;
             Version = release.NugetVersion
             ReleaseNotes = String.concat "\n" release.Notes
-            MinimumFromLockFile = true
+            MinimumFromLockFile = false
         }
     )
 )
