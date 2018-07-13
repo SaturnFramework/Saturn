@@ -1,3 +1,6 @@
+### 0.7.1 - 14.07.2018
+* Use earlier FSharp.Core version (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
 ### 0.7.0 - 13.07.2018
 * Fix GitHub OAuth (by [@rmunn](https://github.com/rmunn))
 * Rename `scope` to `router` (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
