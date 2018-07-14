@@ -78,7 +78,6 @@ module Application =
 
     ///Defines top-level router used for the application
     [<CustomOperation("use_router")>]
-    [<ObsoleteAttribute("This construct is obsolete, use use_router instead")>]
     member __.Router(state, handler) =
       {state with Router = Some handler}
 
