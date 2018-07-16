@@ -213,7 +213,7 @@ module Controller =
               let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx)
               addToSiteMap path
               yield this.AddHandler state Index handler ""
-              yield this.AddHandler state Index handler path
+              yield this.AddHandler state Index state.Index.Value path
 
             if keyFormat.IsSome then
               if state.Edit.IsSome then
@@ -233,7 +233,7 @@ module Controller =
               let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Create.Value(ctx)
               addToSiteMap path
               yield this.AddHandler state Create handler ""
-              yield this.AddHandler state Create handler path
+              yield this.AddHandler state Create state.Create.Value path
 
             if keyFormat.IsSome then
               if state.Update.IsSome then
@@ -267,7 +267,7 @@ module Controller =
               let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.DeleteAll.Value(ctx)
               addToSiteMap path
               yield this.AddHandler state DeleteAll handler ""
-              yield this.AddHandler state DeleteAll handler path
+              yield this.AddHandler state DeleteAll state.DeleteAll.Value path
 
             if keyFormat.IsSome then
               if state.Delete.IsSome then
