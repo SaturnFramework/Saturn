@@ -15,13 +15,14 @@ open System.Net.Http
 open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
 
+let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
+
 type ApplicationBuilder with
     ///Enables default Google OAuth authentication.
     ///`jsonToClaimMap` should contain sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
     ///For example: `["id", ClaimTypes.NameIdentifier; "displayName", ClaimTypes.Name]` where `id` and `displayName` are names of fields in the Google JSON response (https://developers.google.com/+/web/api/rest/latest/people#resource).
     [<CustomOperation("use_google_oauth")>]
     member __.UseGoogleAuth(state: ApplicationState, clientId : string, clientSecret : string, callbackPath : string, jsonToClaimMap : (string * string) seq) =
-      let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
@@ -30,9 +31,7 @@ type ApplicationBuilder with
           cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- "Google")
-        if not flag then
-          flag <- true
-          c.AddCookie() |> ignore
+        addCookie state c
         c.AddGoogle(fun opt ->
         opt.ClientId <- clientId
         opt.ClientSecret <- clientSecret
@@ -61,13 +60,12 @@ type ApplicationBuilder with
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
-          CookiesAlreadyAdded = flag
+          CookiesAlreadyAdded = true
       }
 
     ///Enables Google OAuth authentication with custom configuration
     [<CustomOperation("use_google_oauth_with_config")>]
     member __.UseGoogleAuthWithConfig(state: ApplicationState, (config : Authentication.Google.GoogleOptions -> unit) ) =
-      let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
@@ -76,16 +74,14 @@ type ApplicationBuilder with
           cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- "Google")
-        if not flag then
-          flag <- true
-          c.AddCookie() |> ignore
+        addCookie state c
         c.AddGoogle(Action<GoogleOptions> config) |> ignore
         s
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
-          CookiesAlreadyAdded = flag
+          CookiesAlreadyAdded = true
       }
 
     ///Enables default GitHub OAuth authentication.
@@ -93,7 +89,6 @@ type ApplicationBuilder with
     ///For example: `["login", "githubUsername"; "name", "fullName"]` where `login` and `name` are names of fields in GitHub JSON response (https://developer.github.com/v3/users/#get-the-authenticated-user).
     [<CustomOperation("use_github_oauth")>]
     member __.UseGithubAuth(state: ApplicationState, clientId : string, clientSecret : string, callbackPath : string, jsonToClaimMap : (string * string) seq) =
-      let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
@@ -102,9 +97,7 @@ type ApplicationBuilder with
           cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- "GitHub")
-        if not flag then
-          flag <- true
-          c.AddCookie() |> ignore
+        addCookie state c
         c.AddOAuth("GitHub", fun (opt : Authentication.OAuth.OAuthOptions) ->
           opt.ClientId <- clientId
           opt.ClientSecret <- clientSecret
@@ -135,13 +128,12 @@ type ApplicationBuilder with
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
-          CookiesAlreadyAdded = flag
+          CookiesAlreadyAdded = true
       }
 
     ///Enables GitHub OAuth authentication with custom configuration
     [<CustomOperation("use_github_oauth_with_config")>]
     member __.UseGithubAuthWithConfig(state: ApplicationState, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
-      let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
@@ -150,15 +142,12 @@ type ApplicationBuilder with
           cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- "GitHub")
-        if not flag then
-          flag <- true
-          c.AddCookie() |> ignore
+        addCookie state c
         c.AddOAuth("GitHub",config) |> ignore
         s
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
-          CookiesAlreadyAdded = flag
+          CookiesAlreadyAdded = true
       }
-
