@@ -35,6 +35,18 @@ Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let release = parseReleaseNotes (IO.File.ReadAllLines "RELEASE_NOTES.md")
 
 // --------------------------------------------------------------------------------------
+// Helpers
+// --------------------------------------------------------------------------------------
+let exec cmd args dir =
+    if execProcess( fun info ->
+        info.FileName <- cmd
+        if not( String.IsNullOrWhiteSpace dir) then
+            info.WorkingDirectory <- dir
+        info.Arguments <- args
+    ) System.TimeSpan.MaxValue = false then
+    failwithf "Error while running '%s' with args: %s" cmd args
+
+// --------------------------------------------------------------------------------------
 // Build Targets
 // --------------------------------------------------------------------------------------
 
@@ -79,6 +91,10 @@ Target "Restore" (fun _ ->
 
 Target "Build" (fun _ ->
     DotNetCli.Build id
+)
+
+Target "Test" (fun _ ->
+    exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj" "."
 )
 
 // --------------------------------------------------------------------------------------
@@ -150,6 +166,7 @@ Target "Release" DoNothing
   ==> "AssemblyInfo"
   ==> "Restore"
   ==> "Build"
+  ==> "Test"
   ==> "Default"
 
 "Default"

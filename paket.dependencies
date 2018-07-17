@@ -18,6 +18,9 @@ nuget Microsoft.AspNetCore.Antiforgery >= 2.1
 nuget Microsoft.AspNetCore.Server.HttpSys >= 2.1
 
 nuget Giraffe >= 1.1
+nuget NSubstitute
+nuget Expecto
+
 
 group Build
   source https://www.nuget.org/api/v2
