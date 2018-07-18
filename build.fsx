@@ -2,12 +2,17 @@
 // FAKE build script
 // --------------------------------------------------------------------------------------
 #r "./packages/build/FAKE/tools/FakeLib.dll"
+open Fake.Core
 #load "paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
 
-open Fake.ReleaseNotesHelper
-open Fake.AssemblyInfoFile
-open Fake.Git
-open Fake
+
+
+
+open Fake.Core
+open Fake.DotNet
+open Fake.Tools
+open Fake.IO
+open Fake.IO.Globbing.Operators
 open System
 open Octokit
 
@@ -29,38 +34,44 @@ let gitHome = "https://github.com/" + gitOwner
 // --------------------------------------------------------------------------------------
 
 let buildDir  = "./build/"
-let dotnetcliVersion = DotNetCli.GetDotNetSDKVersionFromGlobalJson()
+let dotnetcliVersion = DotNet.getSDKVersionFromGlobalJson()
 
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = parseReleaseNotes (IO.File.ReadAllLines "RELEASE_NOTES.md")
+let release = ReleaseNotes.parse (IO.File.ReadAllLines "RELEASE_NOTES.md")
 
 // --------------------------------------------------------------------------------------
 // Helpers
 // --------------------------------------------------------------------------------------
 let exec cmd args dir =
-    if execProcess( fun info ->
-        info.FileName <- cmd
-        if not( String.IsNullOrWhiteSpace dir) then
-            info.WorkingDirectory <- dir
-        info.Arguments <- args
-    ) System.TimeSpan.MaxValue = false then
-    failwithf "Error while running '%s' with args: %s" cmd args
+    if Process.execSimple( fun info ->
 
+        { info with
+            FileName = cmd
+            WorkingDirectory =
+                if String.IsNullOrWhiteSpace dir then info.WorkingDirectory
+                else dir
+            Arguments = args
+            }
+    ) System.TimeSpan.MaxValue <> 0 then
+        failwithf "Error while running '%s' with args: %s" cmd args
+let getBuildParam = Environment.environVar
+
+let getUserInput =
 // --------------------------------------------------------------------------------------
 // Build Targets
 // --------------------------------------------------------------------------------------
 
-Target "Clean" (fun _ ->
-    CleanDirs [buildDir]
+Target.create "Clean" (fun _ ->
+    File.deleteAll [buildDir]
 )
 
-Target "AssemblyInfo" (fun _ ->
+Target.create "AssemblyInfo" (fun _ ->
     let getAssemblyInfoAttributes projectName =
-        [ Attribute.Title projectName
-          Attribute.Product project
-          Attribute.Description summary
-          Attribute.Version release.AssemblyVersion
-          Attribute.FileVersion release.AssemblyVersion ]
+        [ AssemblyInfo.Title projectName
+          AssemblyInfo.Product project
+          AssemblyInfo.Description summary
+          AssemblyInfo.Version release.AssemblyVersion
+          AssemblyInfo.FileVersion release.AssemblyVersion ]
 
     let getProjectDetails projectPath =
         let projectName = System.IO.Path.GetFileNameWithoutExtension(projectPath)
@@ -81,19 +92,21 @@ Target "AssemblyInfo" (fun _ ->
         )
 )
 
-Target "InstallDotNetCLI" (fun _ ->
-    DotNetCli.InstallDotNetSDK dotnetcliVersion |> ignore
+Target.create "InstallDotNetCLI" (fun _ ->
+    let version = DotNet.CliVersion.Version dotnetcliVersion
+    let options = DotNet.Options.Create()
+    DotNet.install (fun opts -> { opts with Version = version }) options |> ignore
 )
 
-Target "Restore" (fun _ ->
-    DotNetCli.Restore id
+Target.create "Restore" (fun _ ->
+    DotNet.restore id ""
 )
 
-Target "Build" (fun _ ->
-    DotNetCli.Build id
+Target.create "Build" (fun _ ->
+    DotNet.build id ""
 )
 
-Target "Test" (fun _ ->
+Target.create "Test" (fun _ ->
     exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj" "."
 )
 
@@ -101,8 +114,8 @@ Target "Test" (fun _ ->
 // Release Targets
 // --------------------------------------------------------------------------------------
 
-Target "Pack" (fun _ ->
-    Paket.Pack (fun p ->
+Target.create "Pack" (fun _ ->
+    Paket.pack (fun p ->
         { p with
             BuildConfig = "Release";
             OutputPath = buildDir;
@@ -113,19 +126,20 @@ Target "Pack" (fun _ ->
     )
 )
 
-Target "ReleaseGitHub" (fun _ ->
+Target.create "ReleaseGitHub" (fun _ ->
     let remote =
         Git.CommandHelper.getGitResult "" "remote -v"
         |> Seq.filter (fun (s: string) -> s.EndsWith("(push)"))
         |> Seq.tryFind (fun (s: string) -> s.Contains(gitOwner + "/" + gitName))
         |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
 
-    StageAll ""
-    Git.Commit.Commit "" (sprintf "Bump version to %s" release.NugetVersion)
-    Branches.pushBranch "" remote (Information.getBranchName "")
+    Git.Staging.stageAll ""
+    Git.Commit.exec "" (sprintf "Bump version to %s" release.NugetVersion)
+    Git.Branches.pushBranch "" remote (Git.Information.getBranchName "")
 
-    Branches.tag "" release.NugetVersion
-    Branches.pushTag "" remote release.NugetVersion
+
+    Git.Branches.tag "" release.NugetVersion
+    Git.Branches.pushTag "" remote release.NugetVersion
 
     let client =
         let user =
