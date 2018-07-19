@@ -300,7 +300,7 @@ module Controller =
                       (fun input -> subRoute ("/" + (input.ToString()) + sPath) (sCs (unbox<'Key> input)))
 
               yield routef (PrintfFormat<'Key -> string -> obj,_,_,_,'Key * string> (path + sPath + "%s"))
-                      (fun input -> subRoute ("/" + (input.ToString()) + sPath) (sCs (unbox<'Key> input)))
+                      (fun (input,_) -> subRoute ("/" + (input.ToString()) + sPath) (sCs (unbox<'Key> input)))
 
           yield controllerWithErrorHandler
         ]
