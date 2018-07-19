@@ -3,7 +3,6 @@ module Sample
 open Saturn
 open Giraffe
 
-
 //Saturn is using standard HttpHandlers from Giraffe
 
 let apiHelloWorld = text "hello world from API"
@@ -54,7 +53,7 @@ let endpointPipe = pipeline {
 // on the TokenRouter matching we will create single `route "/"` call, but the HttpHandler passed to it will be `choose` build
 // from all registed handlers for this route.
 
-let apiRouter = scope {
+let apiRouter = router {
     pipe_through apiHeaderPipe
     not_found_handler (text "Api 404")
 
@@ -110,7 +109,7 @@ let userController = controller {
 //I belive that aim of the Saturn should be providing a more streamlined, higher level developer experiance on top of the great
 //Giraffe's model. It's bit like Phoenix using Plug model under the hood.
 
-let topRouter = scope {
+let topRouter = router {
     pipe_through headerPipe
     not_found_handler (text "404")
 
@@ -119,8 +118,7 @@ let topRouter = scope {
     getf "/name/%s" helloWorldName
     getf "/name/%s/%i" helloWorldNameAge
 
-    //scopes can be defined inline to simulate `subRoute` combinator
-    forward "/other" (scope {
+    forward "/other" (router {
         pipe_through otherHeaderPipe
         not_found_handler (text "Other 404")
 
@@ -143,7 +141,7 @@ let topRouter = scope {
 let app = application {
     pipe_through endpointPipe
 
-    router topRouter
+    use_router topRouter
     url "http://0.0.0.0:8085/"
     memory_cache
     use_static "static"

@@ -50,12 +50,12 @@ let handlePostToken =
             return! json tokenResult next ctx
 }
 
-let securedRouter = scope {
+let securedRouter = router {
     pipe_through (Auth.requireAuthentication JWT)
     get "/" handleGetSecured
 }
 
-let topRouter = scope {
+let topRouter = router {
     not_found_handler (setStatusCode 404 >=> text "Not Found")
 
     post "/token" handlePostToken
@@ -66,7 +66,7 @@ let topRouter = scope {
 let app = application {
     use_jwt_authentication secret issuer
 
-    router topRouter
+    use_router topRouter
     url "http://0.0.0.0:8085/"
 }
 

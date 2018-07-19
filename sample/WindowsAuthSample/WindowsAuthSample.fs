@@ -4,7 +4,7 @@ open Saturn
 open Giraffe.ResponseWriters
 
 let app = application {
-    router (fun f c ->
+    use_router (fun f c ->
                 let message = sprintf "hello %s!" c.User.Identity.Name
                 text message f c)
     url "http://localhost:8085/"
