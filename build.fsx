@@ -1,8 +1,8 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script
 // --------------------------------------------------------------------------------------
-#r "paket: groupref Build //"
-#load "./.fake/build.fsx/intellisense.fsx"
+#r "paket: groupref build //"
+#load ".fake/build.fsx/intellisense.fsx"
 
 open Fake.Core
 open Fake.DotNet
@@ -11,7 +11,7 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
-open System
+open Fake.Api
 
 // --------------------------------------------------------------------------------------
 // Information about the project to be used at NuGet and in AssemblyInfo files
@@ -25,7 +25,6 @@ let gitOwner = "Krzysztof-Cieslak"
 let gitName = "Saturn"
 let gitHome = "https://github.com/" + gitOwner
 
-
 // --------------------------------------------------------------------------------------
 // Build variables
 // --------------------------------------------------------------------------------------
@@ -33,32 +32,34 @@ let gitHome = "https://github.com/" + gitOwner
 let buildDir  = "./build/"
 let dotnetcliVersion = DotNet.getSDKVersionFromGlobalJson()
 
-Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = ReleaseNotes.parse (IO.File.ReadAllLines "RELEASE_NOTES.md")
+System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
+let release = ReleaseNotes.parse (System.IO.File.ReadAllLines "RELEASE_NOTES.md")
 
 // --------------------------------------------------------------------------------------
 // Helpers
 // --------------------------------------------------------------------------------------
+let isNullOrWhiteSpace = System.String.IsNullOrWhiteSpace
 let exec cmd args dir =
     if Process.execSimple( fun info ->
 
         { info with
             FileName = cmd
             WorkingDirectory =
-                if String.IsNullOrWhiteSpace dir then info.WorkingDirectory
+                if (isNullOrWhiteSpace dir) then info.WorkingDirectory
                 else dir
             Arguments = args
             }
     ) System.TimeSpan.MaxValue <> 0 then
         failwithf "Error while running '%s' with args: %s" cmd args
 let getBuildParam = Environment.environVar
+
 let DoNothing = ignore
 // --------------------------------------------------------------------------------------
 // Build Targets
 // --------------------------------------------------------------------------------------
 
 Target.create "Clean" (fun _ ->
-    File.deleteAll [buildDir]
+    Shell.cleanDirs [buildDir]
 )
 
 Target.create "AssemblyInfo" (fun _ ->
@@ -140,28 +141,29 @@ Target.create "ReleaseGitHub" (fun _ ->
     let client =
         let user =
             match getBuildParam "github-user" with
-            | s when not (String.IsNullOrWhiteSpace s) -> s
+            | s when not (isNullOrWhiteSpace s) -> s
             | _ -> UserInput.getUserInput "Username: "
         let pw =
             match getBuildParam "github-pw" with
-            | s when not (String.IsNullOrWhiteSpace s) -> s
+            | s when not (isNullOrWhiteSpace s) -> s
             | _ -> UserInput.getUserPassword "Password: "
 
-        createClient user pw
+        // Git.createClient user pw
+        GitHub.createClient user pw
     let file = !! (buildDir </> "*.nupkg") |> Seq.head
 
     // release on github
     client
-    |> createDraft gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
-    |> uploadFile file
-    |> releaseDraft
+    |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    |> GitHub.uploadFile file
+    |> GitHub.publishDraft//releaseDraft
     |> Async.RunSynchronously
 )
 
 Target.create "Push" (fun _ ->
     let key =
         match getBuildParam "nuget-key" with
-        | s when not (String.IsNullOrWhiteSpace s) -> s
+        | s when not (isNullOrWhiteSpace s) -> s
         | _ -> UserInput.getUserPassword "NuGet Key: "
     Paket.push (fun p -> { p with WorkingDir = buildDir; ApiKey = key }))
 
@@ -184,3 +186,5 @@ Target.create "Release" DoNothing
   ==> "ReleaseGitHub"
   ==> "Push"
   ==> "Release"
+
+Target.runOrDefault "Default"

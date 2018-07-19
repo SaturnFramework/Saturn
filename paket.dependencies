@@ -36,3 +36,4 @@ group Build
   nuget Fake.Core.UserInput
   nuget Fake.IO.FileSystem
   nuget Fake.DotNet.MsBuild
+  nuget Fake.Api.GitHub
