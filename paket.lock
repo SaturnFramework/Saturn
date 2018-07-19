@@ -1120,8 +1120,6 @@ NUGET
 GROUP Build
 NUGET
   remote: https://www.nuget.org/api/v2
-    FAKE (5.2)
-    FAKE.Core (5.2)
     Fake.Core.CommandLineParsing (5.2) - restriction: || (>= net46) (>= netstandard2.0)
       FParsec (>= 1.0.3) - restriction: || (>= net46) (>= netstandard1.6)
       FSharp.Core (>= 4.3.4) - restriction: || (>= net46) (>= netstandard1.6)
@@ -1189,6 +1187,14 @@ NUGET
       FSharp.Core (>= 4.3.4) - restriction: || (>= net46) (>= netstandard1.6)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net46) (>= netstandard1.6) (< netstandard2.0)
       Newtonsoft.Json (>= 11.0.2) - restriction: || (>= net46) (>= netstandard1.6)
+    Fake.DotNet.MSBuild (5.2)
+      Fake.Core.Environment (>= 5.2) - restriction: || (>= net46) (>= netstandard1.6)
+      Fake.Core.Process (>= 5.2) - restriction: || (>= net46) (>= netstandard1.6)
+      Fake.Core.String (>= 5.2) - restriction: || (>= net46) (>= netstandard1.6)
+      Fake.Core.Trace (>= 5.2) - restriction: || (>= net46) (>= netstandard1.6)
+      Fake.IO.FileSystem (>= 5.2) - restriction: || (>= net46) (>= netstandard1.6)
+      FSharp.Core (>= 4.3.4) - restriction: || (>= net46) (>= netstandard1.6)
+      NETStandard.Library (>= 1.6.1) - restriction: && (< net46) (>= netstandard1.6) (< netstandard2.0)
     Fake.DotNet.Paket (5.2)
       Fake.Core.Process (>= 5.2) - restriction: || (>= net46) (>= netstandard1.6)
       Fake.Core.String (>= 5.2) - restriction: || (>= net46) (>= netstandard1.6)

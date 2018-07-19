@@ -25,8 +25,6 @@ nuget Expecto
 group Build
   source https://www.nuget.org/api/v2
 
-  nuget FAKE
-  nuget Fake.Core
   nuget Fake.Core.Target
   nuget Fake.Core.Process
   nuget Fake.DotNet.Cli
@@ -37,4 +35,4 @@ group Build
   nuget Fake.Core.Environment
   nuget Fake.Core.UserInput
   nuget Fake.IO.FileSystem
-  github fsharp/FAKE modules/Octokit/Octokit.fsx
+  nuget Fake.DotNet.MsBuild

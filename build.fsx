@@ -1,20 +1,17 @@
 // --------------------------------------------------------------------------------------
 // FAKE build script
 // --------------------------------------------------------------------------------------
-#r "./packages/build/FAKE/tools/FakeLib.dll"
-open Fake.Core
-#load "paket-files/build/fsharp/FAKE/modules/Octokit/Octokit.fsx"
-
-
-
+#r "paket: groupref Build //"
+#load "./.fake/build.fsx/intellisense.fsx"
 
 open Fake.Core
 open Fake.DotNet
 open Fake.Tools
 open Fake.IO
+open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
+open Fake.Core.TargetOperators
 open System
-open Octokit
 
 // --------------------------------------------------------------------------------------
 // Information about the project to be used at NuGet and in AssemblyInfo files
@@ -55,8 +52,7 @@ let exec cmd args dir =
     ) System.TimeSpan.MaxValue <> 0 then
         failwithf "Error while running '%s' with args: %s" cmd args
 let getBuildParam = Environment.environVar
-
-let getUserInput =
+let DoNothing = ignore
 // --------------------------------------------------------------------------------------
 // Build Targets
 // --------------------------------------------------------------------------------------
@@ -85,10 +81,10 @@ Target.create "AssemblyInfo" (fun _ ->
     |> Seq.map getProjectDetails
     |> Seq.iter (fun (projFileName, _, folderName, attributes) ->
         match projFileName with
-        | Fsproj -> CreateFSharpAssemblyInfo (folderName </> "AssemblyInfo.fs") attributes
-        | Csproj -> CreateCSharpAssemblyInfo ((folderName </> "Properties") </> "AssemblyInfo.cs") attributes
-        | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName </> "My Project") </> "AssemblyInfo.vb") attributes
-        | Shproj -> ()
+        | proj when proj.EndsWith("fsproj") -> AssemblyInfoFile.createFSharp (folderName </> "AssemblyInfo.fs") attributes
+        | proj when proj.EndsWith("csproj") -> AssemblyInfoFile.createCSharp ((folderName </> "Properties") </> "AssemblyInfo.cs") attributes
+        | proj when proj.EndsWith("vbproj") -> AssemblyInfoFile.createVisualBasic ((folderName </> "My Project") </> "AssemblyInfo.vb") attributes
+        | _ -> ()
         )
 )
 
@@ -96,7 +92,7 @@ Target.create "InstallDotNetCLI" (fun _ ->
     let version = DotNet.CliVersion.Version dotnetcliVersion
     let options = DotNet.Options.Create()
     DotNet.install (fun opts -> { opts with Version = version }) options |> ignore
-)
+    )
 
 Target.create "Restore" (fun _ ->
     DotNet.restore id ""
@@ -145,11 +141,11 @@ Target.create "ReleaseGitHub" (fun _ ->
         let user =
             match getBuildParam "github-user" with
             | s when not (String.IsNullOrWhiteSpace s) -> s
-            | _ -> getUserInput "Username: "
+            | _ -> UserInput.getUserInput "Username: "
         let pw =
             match getBuildParam "github-pw" with
             | s when not (String.IsNullOrWhiteSpace s) -> s
-            | _ -> getUserPassword "Password: "
+            | _ -> UserInput.getUserPassword "Password: "
 
         createClient user pw
     let file = !! (buildDir </> "*.nupkg") |> Seq.head
@@ -162,18 +158,18 @@ Target.create "ReleaseGitHub" (fun _ ->
     |> Async.RunSynchronously
 )
 
-Target "Push" (fun _ ->
+Target.create "Push" (fun _ ->
     let key =
         match getBuildParam "nuget-key" with
         | s when not (String.IsNullOrWhiteSpace s) -> s
-        | _ -> getUserPassword "NuGet Key: "
-    Paket.Push (fun p -> { p with WorkingDir = buildDir; ApiKey = key }))
+        | _ -> UserInput.getUserPassword "NuGet Key: "
+    Paket.push (fun p -> { p with WorkingDir = buildDir; ApiKey = key }))
 
 // --------------------------------------------------------------------------------------
 // Build order
 // --------------------------------------------------------------------------------------
-Target "Default" DoNothing
-Target "Release" DoNothing
+Target.create "Default" DoNothing
+Target.create "Release" DoNothing
 
 "Clean"
   ==> "InstallDotNetCLI"
@@ -188,5 +184,3 @@ Target "Release" DoNothing
   ==> "ReleaseGitHub"
   ==> "Push"
   ==> "Release"
-
-RunTargetOrDefault "Default"
