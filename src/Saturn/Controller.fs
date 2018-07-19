@@ -47,15 +47,6 @@ module Controller =
     Version: string option
   }
 
-  type internal KeyType =
-    | Bool
-    | Char
-    | String
-    | Int32
-    | Int64
-    | Float
-    | Guid
-
   let inline response<'a> ctx (input : Task<'a>) =
       task {
         let! i = input
@@ -175,29 +166,22 @@ module Controller =
     member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
       let siteMap = HandlerMap()
       let addToSiteMap v p = siteMap.AddPath p v
-      let keyFormat =
+      let keyFormat, stringConvert =
         match state with
-        | { Show = None; Edit = None; Update = None; Delete = None; SubControllers = [] } -> None
+        | { Show = None; Edit = None; Update = None; Delete = None; SubControllers = [] } -> None, None
         | _ ->
+          // Parameterizing `string` here so we don't constrain 'Key to SRTP ^Key when we would have used it later on
           match typeof<'Key> with
-          | k when k = typeof<bool> -> Bool
-          | k when k = typeof<char> -> Char
-          | k when k = typeof<string> -> String
-          | k when k = typeof<int32> -> Int32
-          | k when k = typeof<int64> -> Int64
-          | k when k = typeof<float> -> Float
-          | k when k = typeof<System.Guid> -> Guid
+          | k when k = typeof<bool> -> "/%b", string<bool> :> obj
+          | k when k = typeof<char> -> "/%c", string<char> :> obj
+          | k when k = typeof<string> -> "/%s", string<string> :> obj
+          | k when k = typeof<int32> -> "/%i", string<int32> :> obj
+          | k when k = typeof<int64> -> "/%d", string<int64> :> obj
+          | k when k = typeof<float> -> "/%f", string<float> :> obj
+          | k when k = typeof<Guid> -> "/%O", string<Guid> :> obj
           | k -> failwithf
                   "Type %A is not a supported type for controller<'T>. Supported types include bool, char, float, guid int32, int64, and string" k
-          |> function
-              | Bool -> "/%b"
-              | Char -> "/%c"
-              | String -> "/%s"
-              | Int32 -> "/%i"
-              | Int64 -> "/%d"
-              | Float -> "/%f"
-              | Guid -> "/%O"
-          |> Some
+          |> fun (keyFormat, stringConvert) -> (Some keyFormat, Some (unbox<'Key -> string> stringConvert))
 
       let initialController =
         choose [
@@ -291,16 +275,17 @@ module Controller =
       let controllerWithSubs =
         choose [
           if keyFormat.IsSome then
+            let stringConvert = stringConvert.Value
             for (sPath, sCs) in state.SubControllers do
               let path = keyFormat.Value
               let dummy = sCs (unbox<'Key> Unchecked.defaultof<'Key>)
               siteMap.Forward (path + sPath) "" dummy
 
               yield routef (PrintfFormat<'Key -> obj,_,_,_,'Key> (path + sPath))
-                      (fun input -> subRoute ("/" + (input.ToString()) + sPath) (sCs (unbox<'Key> input)))
+                      (fun input -> subRoute ("/" + (stringConvert input) + sPath) (sCs (unbox<'Key> input)))
 
               yield routef (PrintfFormat<'Key -> string -> obj,_,_,_,'Key * string> (path + sPath + "%s"))
-                      (fun (input,_) -> subRoute ("/" + (input.ToString()) + sPath) (sCs (unbox<'Key> input)))
+                      (fun (input, _) -> subRoute ("/" + (stringConvert input) + sPath) (sCs (unbox<'Key> input)))
 
           yield controllerWithErrorHandler
         ]
