@@ -277,6 +277,9 @@ module Controller =
           if keyFormat.IsSome then
             let stringConvert = stringConvert.Value
             for (sPath, sCs) in state.SubControllers do
+              if not (sPath.StartsWith("/")) then
+                failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." sPath)
+
               let path = keyFormat.Value
               let dummy = sCs (unbox<'Key> Unchecked.defaultof<'Key>)
               siteMap.Forward (path + sPath) "" dummy
