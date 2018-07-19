@@ -30,7 +30,6 @@ let otherHeaderPipe = pipeline {
     set_header "myCustomHeaderOther" "other"
 }
 
-
 let headerPipe = pipeline {
     set_header "myCustomHeader" "abcd"
     set_header "myCustomHeader2" "zxcv"
@@ -42,7 +41,7 @@ let endpointPipe = pipeline {
     plug requestId
 }
 
-//`scope` CE is used to declare (sub)routers (using TokenRouter). It provides custom keywords for all HTTP methods
+//`route` CE is used to declare routers/subrouters (using TokenRouter). It provides custom keywords for all HTTP methods
 // supported by TokenRouter which supports type-safe formatting of routes. It's composed together with pipelines
 // with `pipe_through` method which means that all handlers registed in router will be piped through given pipeline
 // It enables composition with other routers (and any HttpHandlers) with `forward` keyword - it will behave
