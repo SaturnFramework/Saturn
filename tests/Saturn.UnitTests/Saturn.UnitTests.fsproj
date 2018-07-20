@@ -10,6 +10,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers.fs" />
+    <Compile Include="ControllerTests.fs" />
     <Compile Include="SampleTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
