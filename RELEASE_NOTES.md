@@ -1,3 +1,10 @@
+### 0.7.4 - 20.07.2018
+* Fix adding multiple auth sources (by [@BohdanZhmud](https://github.com/BohdanZhmud))
+* Fix controller nesting bug (by [@TWith2Sugars](https://github.com/TWith2Sugars))
+* Reworks 'Key to string conversion as just using ToString was not the best way to tackle the SRTP constraint, `string` decides per type to do invariant conversions and format specializations if needed (by [@NinoFloris](https://github.com/NinoFloris))
+* Add protection against subcontroller routes that don't start with a forward slash, which lead to unwanted behavior (by [@NinoFloris](https://github.com/NinoFloris))
+* Use fake 5 api (by [@jeremyabbott](https://github.com/jeremyabbott))
+
 ### 0.7.3 - 14.07.2018
 * Use earlier FSharp.Core version (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
 * Remove unnecessary ObsoleteAttribute from `use_router` (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
