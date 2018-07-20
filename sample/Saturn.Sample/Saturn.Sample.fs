@@ -3,7 +3,6 @@ module Sample
 open Saturn
 open Giraffe
 
-
 //Saturn is using standard HttpHandlers from Giraffe
 
 let apiHelloWorld = text "hello world from API"
@@ -31,7 +30,6 @@ let otherHeaderPipe = pipeline {
     set_header "myCustomHeaderOther" "other"
 }
 
-
 let headerPipe = pipeline {
     set_header "myCustomHeader" "abcd"
     set_header "myCustomHeader2" "zxcv"
@@ -43,7 +41,7 @@ let endpointPipe = pipeline {
     plug requestId
 }
 
-//`scope` CE is used to declare (sub)routers (using TokenRouter). It provides custom keywords for all HTTP methods
+//`route` CE is used to declare routers/subrouters (using TokenRouter). It provides custom keywords for all HTTP methods
 // supported by TokenRouter which supports type-safe formatting of routes. It's composed together with pipelines
 // with `pipe_through` method which means that all handlers registed in router will be piped through given pipeline
 // It enables composition with other routers (and any HttpHandlers) with `forward` keyword - it will behave
@@ -54,7 +52,7 @@ let endpointPipe = pipeline {
 // on the TokenRouter matching we will create single `route "/"` call, but the HttpHandler passed to it will be `choose` build
 // from all registed handlers for this route.
 
-let apiRouter = scope {
+let apiRouter = router {
     pipe_through apiHeaderPipe
     not_found_handler (text "Api 404")
 
@@ -110,7 +108,7 @@ let userController = controller {
 //I belive that aim of the Saturn should be providing a more streamlined, higher level developer experiance on top of the great
 //Giraffe's model. It's bit like Phoenix using Plug model under the hood.
 
-let topRouter = scope {
+let topRouter = router {
     pipe_through headerPipe
     not_found_handler (text "404")
 
@@ -119,8 +117,7 @@ let topRouter = scope {
     getf "/name/%s" helloWorldName
     getf "/name/%s/%i" helloWorldNameAge
 
-    //scopes can be defined inline to simulate `subRoute` combinator
-    forward "/other" (scope {
+    forward "/other" (router {
         pipe_through otherHeaderPipe
         not_found_handler (text "Other 404")
 
@@ -143,7 +140,7 @@ let topRouter = scope {
 let app = application {
     pipe_through endpointPipe
 
-    router topRouter
+    use_router topRouter
     url "http://0.0.0.0:8085/"
     memory_cache
     use_static "static"

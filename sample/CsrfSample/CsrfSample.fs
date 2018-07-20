@@ -20,8 +20,8 @@ module Views =
     ]
 
 /// There are two routes on this router: one retrieves the token(s) and tells you the form fields/request headers to send the request token on.
-/// The other requires that token to be present before returning a success message to you.
-let appRouter = scope {
+/// The other requires the token to be present before returning a success message to you.
+let appRouter = router {
   pipe_through protectFromForgery
 
   get "/" (fun next ctx -> htmlView (Views.index ctx) next ctx)
@@ -41,7 +41,7 @@ let app = application {
   pipe_through pipeline
   use_antiforgery
 
-  router appRouter
+  use_router appRouter
   url "http://0.0.0.0:8085/"
   memory_cache
   use_gzip

@@ -62,7 +62,7 @@ let typedController = controller {
 let otherRouter = router {
     get "/dsa" (text "")
     getf "/dsa/%s" (text)
-    forwardf "/ddd/%s" (fun (a : string) -> userControllerVersion1)
+    forwardf "/ddd/%s" (fun (_ : string) -> userControllerVersion1)
     not_found_handler (setStatusCode 404 >=> text "Not Found")
 }
 
@@ -70,11 +70,11 @@ let topRouter = router {
     forward "/users" userControllerVersion1
     forward "/users" userController
     forward "/typed" typedController
-    forwardf "/%s/%s/abc" (fun (a : string * string) -> otherRouter)
+    forwardf "/%s/%s/abc" (fun (_ : string * string) -> otherRouter)
 }
 
 let app = application {
-    router topRouter
+    use_router topRouter
     url "http://0.0.0.0:8085/"
 }
 

@@ -9,6 +9,8 @@ Debug
 obj
 bin
 
+### fake ###
+build.fsx.lock
 
 ### Linux ###
 *~
