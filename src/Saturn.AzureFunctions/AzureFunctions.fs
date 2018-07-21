@@ -37,7 +37,7 @@ module AzureFunctions =
           | Some r -> r
           | None -> failwith "Router needs to be defined"
         let r = router {
-          pipe_through (fun nxt ctx -> state.Logger |> Option.iter (fun log -> ctx.Items.["TraceWriter"] <- log); Task.FromResult (Some ctx))
+          pipe_through (fun nxt ctx -> state.Logger |> Option.iter (fun log -> ctx.Items.["TraceWriter"] <- log); nxt ctx)
           forward state.HostPrefix r
         }
         task {
