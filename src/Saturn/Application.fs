@@ -66,8 +66,10 @@ module Application =
         |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
       wbhst
         .Configure(Action<IApplicationBuilder> appConfigs)
-        .ConfigureServices(Action<IServiceCollection> serviceConfigs)
-        .UseUrls(state.Urls |> List.toArray)
+        .ConfigureServices(Action<IServiceCollection> serviceConfigs)  |> ignore
+      if not (state.Urls |> List.isEmpty) then
+        wbhst.UseUrls(state.Urls |> List.toArray)
+      else wbhst
 
     ///Defines top-level router used for the application
     ///This construct is obsolete, use `use_router` instead
