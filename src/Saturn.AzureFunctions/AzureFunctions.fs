@@ -47,7 +47,7 @@ module AzureFunctions =
 
       let next : HttpContext -> Task<HttpContext option> = Some >> Task.FromResult
       fun req ->
-        req.HttpContext.RequestServices <- wrapGiraffeServices request.HttpContext.RequestServices
+        req.HttpContext.RequestServices <- wrapGiraffeServices req.HttpContext.RequestServices
         let r =
           match state.Router with
           | Some r -> r
@@ -99,6 +99,30 @@ module AzureFunctions =
     member __.HostPrefix(state : FunctionState, prefix) =
       {state with HostPrefix = prefix}
 
+        ///Configures built in JSON.Net (de)serializer with custom settings.
+    [<CustomOperation("use_json_settings")>]
+    member __.ConfigJSONSerializer (state, settings) =
+      { state with JsonSerializer = NewtonsoftJsonSerializer settings }
+
+    ///Replaces built in JSON.Net (de)serializer with custom serializer
+    [<CustomOperation("use_json_serializer")>]
+    member __.UseCustomJSONSerializer (state, serializer : #Giraffe.Serialization.Json.IJsonSerializer ) =
+      { state with JsonSerializer = serializer }
+
+    ///Configures built in XML (de)serializer with custom settings.
+    [<CustomOperation("use_xml_settings")>]
+    member __.ConfigXMLSerializer (state, settings) =
+      { state with XmlSerializer = DefaultXmlSerializer settings }
+
+    ///Replaces built in XML (de)serializer with custom serializer
+    [<CustomOperation("use_xml_serializer")>]
+    member __.UseCustomXMLSerializer (state, serializer : #Giraffe.Serialization.Xml.IXmlSerializer ) =
+      { state with XmlSerializer = serializer }
+
+    ///Configures negotiation config
+    [<CustomOperation("use_negotiation_config")>]
+    member __.ConfigXMLSerializer (state, config) =
+      { state with NegotiationConfig = config }
 
 
   let azureFunction = FunctionBuilder()
