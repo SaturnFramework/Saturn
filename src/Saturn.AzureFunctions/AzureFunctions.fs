@@ -5,12 +5,12 @@ open Giraffe
 open System
 open Microsoft.AspNetCore.Http
 open System.Threading.Tasks
-open Microsoft.Azure.WebJobs.Host
+open Microsoft.Extensions.Logging
 
 module AzureFunctions =
 
   type FunctionState = {
-    Logger: TraceWriter option
+    Logger: ILogger option
     Router: HttpHandler option
     ErrorHandler: (System.Exception -> HttpHandler)
     NotFoundHandler: HttpHandler
@@ -18,11 +18,11 @@ module AzureFunctions =
   }
 
   type FunctionBuilder internal () =
-    member val LogWriter : TraceWriter option = None with get,set
+    member val LogWriter : ILogger option = None with get,set
 
     member __.Yield(_) =
         let errorHandler (ex : Exception) =
-            __.LogWriter |> Option.iter (fun logger -> logger.Error("An unhandled exception has occurred while executing the request.", ex))
+            __.LogWriter |> Option.iter (fun logger -> logger.LogError("An unhandled exception has occurred while executing the request.", ex))
             clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
 
         let notFoundHandler =
@@ -37,7 +37,7 @@ module AzureFunctions =
           | Some r -> r
           | None -> failwith "Router needs to be defined"
         let r = router {
-          pipe_through (fun nxt ctx -> state.Logger |> Option.iter (fun log -> ctx.Items.["TraceWriter"] <- log); nxt ctx)
+          pipe_through (fun nxt ctx -> state.Logger |> Option.iter (fun log -> ctx.Items.["Logger"] <- log); nxt ctx)
           forward state.HostPrefix r
         }
         task {
