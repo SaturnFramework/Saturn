@@ -6,6 +6,8 @@ open System
 open Microsoft.AspNetCore.Http
 open System.Threading.Tasks
 open Microsoft.Extensions.Logging
+open Giraffe.Serialization.Json
+open Giraffe.Serialization.Xml
 
 module AzureFunctions =
 
@@ -15,6 +17,9 @@ module AzureFunctions =
     ErrorHandler: (System.Exception -> HttpHandler)
     NotFoundHandler: HttpHandler
     HostPrefix: string
+    JsonSerializer: IJsonSerializer
+    XmlSerializer: IXmlSerializer
+    NegotiationConfig: INegotiationConfig
   }
 
   type FunctionBuilder internal () =
@@ -27,11 +32,22 @@ module AzureFunctions =
 
         let notFoundHandler =
             clearResponse >=> Giraffe.HttpStatusCodeHandlers.RequestErrors.NOT_FOUND "Not found"
-        {Logger = None; Router = None; ErrorHandler = errorHandler; NotFoundHandler = notFoundHandler; HostPrefix = "/api"}
+        {Logger = None; Router = None; ErrorHandler = errorHandler; NotFoundHandler = notFoundHandler; HostPrefix = "/api"; JsonSerializer = NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings); XmlSerializer = DefaultXmlSerializer(DefaultXmlSerializer.DefaultSettings);  NegotiationConfig = DefaultNegotiationConfig() }
 
     member __.Run(state: FunctionState) : (HttpRequest -> Task<HttpResponse>) =
+      let wrapGiraffeServices (existing:IServiceProvider) =
+        { new IServiceProvider with
+            member __.GetService(t:Type) =
+              if (t = typeof<IJsonSerializer>) then upcast state.JsonSerializer
+              elif (t = typeof<IXmlSerializer>) then upcast state.XmlSerializer
+              elif (t = typeof<INegotiationConfig>) then upcast state.NegotiationConfig
+              else existing.GetService(t)
+        }
+
+
       let next : HttpContext -> Task<HttpContext option> = Some >> Task.FromResult
       fun req ->
+        req.HttpContext.RequestServices <- wrapGiraffeServices request.HttpContext.RequestServices
         let r =
           match state.Router with
           | Some r -> r
@@ -82,5 +98,7 @@ module AzureFunctions =
     [<CustomOperation("host_prefix")>]
     member __.HostPrefix(state : FunctionState, prefix) =
       {state with HostPrefix = prefix}
+
+
 
   let azureFunction = FunctionBuilder()
