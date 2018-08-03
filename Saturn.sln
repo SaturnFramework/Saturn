@@ -15,7 +15,7 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "JWTSample", "sample\JWTSamp
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Controller.Sample", "sample\Controller.Sample\Controller.Sample.fsproj", "{46864B03-97C9-4235-8681-F3DBAD9DC7A0}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Saturn.HttpSys", "src\Saturn.HttpSys\Saturn.HttpSys.fsproj", "{2A5314E9-9DDD-470E-9F3F-1E72A16551F1}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Saturn.Extensions.HttpSys", "src\Saturn.Extensions.HttpSys\Saturn.Extensions.HttpSys.fsproj", "{2A5314E9-9DDD-470E-9F3F-1E72A16551F1}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WindowsAuthSample", "sample\WindowsAuthSample\WindowsAuthSample.fsproj", "{2BB87218-C92F-4C05-BFEC-83BAFDF1CDFC}"
 EndProject
