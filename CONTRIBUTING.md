@@ -124,7 +124,7 @@ in order to craft an excellent pull request:
 5. Make sure all the tests are still passing.
 
    ```bash
-   ./build.sh
+   fake build
    ```
 
 6. Push your topic branch up to your fork:
