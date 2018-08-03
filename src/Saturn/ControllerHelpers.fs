@@ -30,13 +30,13 @@ module ControllerHelpers =
     let text (ctx: HttpContext) (value: string) =
       ctx.WriteTextAsync value
 
-    ///Returns to the client rendered template.
-    let render (ctx: HttpContext) template =
+    ///Returns the string template as html to the client.
+    let html (ctx: HttpContext) template =
       ctx.WriteHtmlStringAsync template
 
-    ///Returns to the client rendered xml template.
-    let renderXml (ctx: HttpContext) template =
-      ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode template)
+    ///Returns to the client rendered html template.
+    let renderHtml (ctx: HttpContext) template =
+      ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderHtmlDocument template)
 
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
@@ -71,33 +71,33 @@ module ControllerHelpers =
         let stringType = mediaTypes |> Seq.tryFind (fun n -> plainMediaType.IsSubsetOf n || htmlMediaType.IsSubsetOf n)
 
         match typeof<'a>, stringType with
-        | k, Some s when k = typeof<string> && htmlMediaType.IsSubsetOf s -> ctx.WriteHtmlStringAsync(unbox<string> output)
-        | k, Some s when k = typeof<string> && plainMediaType.IsSubsetOf s -> ctx.WriteTextAsync(unbox<string> output)
+        | k, Some s when k = typeof<string> && htmlMediaType.IsSubsetOf s -> html ctx (unbox<string> output)
+        | k, Some s when k = typeof<string> && plainMediaType.IsSubsetOf s -> text ctx (unbox<string> output)
         | k, _ when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
-          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+          renderHtml ctx (unbox<_> output)
         | _ ->
-          if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteXmlAsync(output)
+          if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then json ctx output
+          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then xml ctx output
           else failwithf "Couldn't recognize any known Accept type"
       | _ ->
       match ctx.Request.Headers.TryGetValue "Content-Type" with
       | true, header ->
         let mediaTypes = MediaTypeHeaderValue.ParseList header
         match typeof<'a> with
-        | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> ctx.WriteHtmlStringAsync(unbox<string> output)
-        | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> ctx.WriteTextAsync(unbox<string> output)
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> html ctx (unbox<string> output)
+        | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> text ctx (unbox<string> output)
         | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
-          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+          renderHtml ctx (unbox<_> output)
         | _ ->
-          if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then ctx.WriteJsonAsync(output)
-          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then ctx.WriteXmlAsync(output)
+          if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then json ctx output
+          elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then xml ctx output
           else failwithf "Couldn't recognize any known Content-Type type"
       | _ ->
         match typeof<'a> with
         | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> ->
-          ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderXmlNode (unbox<_> output))
+          renderHtml ctx (unbox<_> output)
         | k when k = typeof<string>  -> ctx.WriteTextAsync(unbox<string> output)
-        | _ -> ctx.WriteJsonAsync(output)
+        | _ -> json ctx output
 
 
     ///Gets model from body as JSON.
