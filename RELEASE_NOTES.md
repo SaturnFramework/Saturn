@@ -1,3 +1,9 @@
+### 0.7.5 - 03.08.2018
+* Check state.Urls before running UseUrls (by [@NinoFloris](https://github.com/NinoFloris))
+* fixes missing doctype in html controller actions (by [@WalternativE](https://github.com/WalternativE ))
+* Add abstraction for hosting Saturn on Azure Functions (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Enable packaging for extensions (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
 ### 0.7.4 - 20.07.2018
 * Fix adding multiple auth sources (by [@BohdanZhmud](https://github.com/BohdanZhmud))
 * Fix controller nesting bug (by [@TWith2Sugars](https://github.com/TWith2Sugars))
