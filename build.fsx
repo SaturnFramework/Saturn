@@ -150,12 +150,14 @@ Target.create "ReleaseGitHub" (fun _ ->
 
         // Git.createClient user pw
         GitHub.createClient user pw
-    let file = !! (buildDir </> "*.nupkg") |> Seq.head
+    let files = !! (buildDir </> "*.nupkg")
 
     // release on github
-    client
-    |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
-    |> GitHub.uploadFile file
+    let cl =
+        client
+        |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
+    (cl,files)
+    ||> Seq.fold (fun acc e -> acc |> GitHub.uploadFile e)
     |> GitHub.publishDraft//releaseDraft
     |> Async.RunSynchronously
 )
