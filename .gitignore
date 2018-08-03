@@ -392,3 +392,4 @@ packages
 *.sln.iml
 
 release.cmd
+.ionide/

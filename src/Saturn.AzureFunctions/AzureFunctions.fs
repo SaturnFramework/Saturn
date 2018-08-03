@@ -121,7 +121,7 @@ module AzureFunctions =
 
     ///Configures negotiation config
     [<CustomOperation("use_negotiation_config")>]
-    member __.ConfigXMLSerializer (state, config) =
+    member __.UseConfigNegotiation (state, config) =
       { state with NegotiationConfig = config }
 
 
