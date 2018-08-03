@@ -10,6 +10,11 @@ Read more about why I've decided to create Saturn, and some of its design choice
 
 Saturn has a nice [documentation](https://saturnframework.github.io/docs/) and I appreciate any help to improve it further by sending pull requests or just adding an issue with you think is missing.
 
+## How to build
+
+1. Install requirements - .Net SDK 2.1, and FAKE 5.X
+2. `fake build`
+
 ## How to contribute
 
 *Imposter syndrome disclaimer*: I want your help. No really, I do.
