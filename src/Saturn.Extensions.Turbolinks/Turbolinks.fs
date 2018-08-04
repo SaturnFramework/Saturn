@@ -1,6 +1,5 @@
 module Saturn
 
-open System
 open Saturn
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Http
@@ -8,11 +7,14 @@ open System.IO
 open FSharp.Control.Tasks.ContextInsensitive
 open System.Threading.Tasks
 open Giraffe
+open Microsoft.Extensions.Primitives
 
 module TurbolinksHelpers =
     let isXhr (ctx: HttpContext) =
         ctx.Request.Headers.["X-Requested-With"].ToString() = "XMLHttpRequest"
 
+    let isTurbolink (ctx: HttpContext) =
+        ctx.Request.Headers.ContainsKey "Turbolinks-Referrer"
 
     let js (ctx: HttpContext, data) =
         ctx.SetContentType "text/javascript"
@@ -31,30 +33,25 @@ module TurbolinksHelpers =
         else
             Controller.redirect ctx path
 
+    let internal handleTurbolinks (ctx: HttpContext) =
+        if isTurbolink ctx then
+            ctx.Response.Headers.Add("Turbolinks-Location", StringValues ctx.Request.Path.Value)
 
-type Turbolinks (next: RequestDelegate) =
+///HttpHandler enabling Turbolinks support for given pipelines
+let turbolinks (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
+    task {
+        TurbolinksHelpers.handleTurbolinks ctx
+        return! nxt ctx
+    }
 
-
-
-
-
+type TurbolinksMiddleware (next: RequestDelegate) =
     member __.Invoke(ctx: HttpContext) =
         task {
             let ms = new MemoryStream()
             let bs = ctx.Response.Body
             ctx.Response.Body <- ms
             do! next.Invoke(ctx)
-            let req = ctx.Request
-            let res = ctx.Response
-            if not (String.IsNullOrWhiteSpace (req.Headers.["Turbolinks-Referrer"].ToString())) then
-                let co = CookieOptions()
-                co.HttpOnly <- false
-                ctx.Response.Cookies.Append("request_method", req.Method, co)
-                if ctx.Response.StatusCode = 301 || ctx.Response.StatusCode = 302 then
-                    let uri = Uri(res.Headers.["Location"].ToString())
-                    if uri.Host.Equals(req.Host.Value) then
-                        res.Headers.["Turbolinks-Location"] <- res.Headers.["Location"]
-
+            TurbolinksHelpers.handleTurbolinks ctx
             ms.WriteTo bs
             do! bs.FlushAsync ()
             ms.Dispose ()
@@ -65,9 +62,10 @@ type Turbolinks (next: RequestDelegate) =
 type ApplicationBuilder with
 
     [<CustomOperation("use_turbolinks")>]
+    ///Enable turbolinks supports for whole application (all endpoints)
     member __.UseTurbolinks(state) =
         let middleware (app : IApplicationBuilder) =
-            app.UseMiddleware<Turbolinks>()
+            app.UseMiddleware<TurbolinksMiddleware>()
 
         { state with
             AppConfigs = middleware::state.AppConfigs
