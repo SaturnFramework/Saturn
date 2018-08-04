@@ -9,7 +9,7 @@ open FSharp.Control.Tasks.ContextInsensitive
 open System.Threading.Tasks
 open Giraffe
 
-module TurnolinksHelpers =
+module TurbolinksHelpers =
     let isXhr (ctx: HttpContext) =
         ctx.Request.Headers.["X-Requested-With"].ToString() = "XMLHttpRequest"
 
