@@ -5,22 +5,33 @@ open Giraffe.Core
 open Giraffe.ResponseWriters
 open Giraffe
 open System
+open Microsoft.Extensions.Logging
+
+type SampleDeps = {logger : ILogger}
 
 let commentController userId = controller {
-    index (fun ctx -> (sprintf "Comment Index handler for user %i" userId ) |> Controller.text ctx)
-    add (fun ctx -> (sprintf "Comment Add handler for user %i" userId ) |> Controller.text ctx)
-    show (fun ctx id -> (sprintf "Show comment %s handler for user %i" id userId ) |> Controller.text ctx)
-    edit (fun ctx id -> (sprintf "Edit comment %s handler for user %i" id userId )  |> Controller.text ctx)
+    index (fun ctx deps ->
+        deps.logger.LogInformation("Index Action")
+        (sprintf "Comment Index handler for user %i" userId ) |> Controller.text ctx)
+    add (fun ctx deps ->
+        deps.logger.LogInformation("Add Action")
+        (sprintf "Comment Add handler for user %i" userId ) |> Controller.text ctx)
+    show (fun ctx id deps ->
+        deps.logger.LogInformation("Show Action")
+        (sprintf "Show comment %s handler for user %i" id userId ) |> Controller.text ctx)
+    edit (fun ctx id deps ->
+        deps.logger.LogInformation("Edit Action")
+        (sprintf "Edit comment %s handler for user %i" id userId )  |> Controller.text ctx)
 }
 
 let userControllerVersion1 = controller {
     version "1"
     subController "/comments" commentController
 
-    index (fun ctx -> "Index handler version 1" |> Controller.text ctx)
-    add (fun ctx -> "Add handler version 1" |> Controller.text ctx)
-    show (fun ctx id -> (sprintf "Show handler version 1 - %i" id) |> Controller.text ctx)
-    edit (fun ctx id -> (sprintf "Edit handler version 1 - %i" id) |> Controller.text ctx)
+    index (fun ctx _-> "Index handler version 1" |> Controller.text ctx)
+    add (fun ctx _-> "Add handler version 1" |> Controller.text ctx)
+    show (fun ctx id _-> (sprintf "Show handler version 1 - %i" id) |> Controller.text ctx)
+    edit (fun ctx id _-> (sprintf "Edit handler version 1 - %i" id) |> Controller.text ctx)
 }
 
 let userController = controller {
@@ -29,13 +40,13 @@ let userController = controller {
     plug [All] (setHttpHeader "user-controller-common" "123")
     plug [Index; Show] (setHttpHeader "user-controller-specialized" "123")
 
-    index (fun ctx -> "Index handler no version" |> Controller.text ctx)
-    show (fun ctx id -> (sprintf "Show handler no version - %i" id) |> Controller.text ctx)
-    add (fun ctx -> "Add handler no version" |> Controller.text ctx)
-    create (fun ctx -> "Create handler no version" |> Controller.text ctx)
-    edit (fun ctx id -> (sprintf "Edit handler no version - %i" id) |> Controller.text ctx)
-    update (fun ctx id -> (sprintf "Update handler no version - %i" id) |> Controller.text ctx)
-    delete (fun ctx id -> failwith (sprintf "Delete handler no version failed - %i" id) |> Controller.text ctx)
+    index (fun ctx _-> "Index handler no version" |> Controller.text ctx)
+    show (fun ctx id _ -> (sprintf "Show handler no version - %i" id) |> Controller.text ctx)
+    add (fun ctx _ -> "Add handler no version" |> Controller.text ctx)
+    create (fun ctx _ -> "Create handler no version" |> Controller.text ctx)
+    edit (fun ctx id _ -> (sprintf "Edit handler no version - %i" id) |> Controller.text ctx)
+    update (fun ctx id _ -> (sprintf "Update handler no version - %i" id) |> Controller.text ctx)
+    delete (fun ctx id _ -> failwith (sprintf "Delete handler no version failed - %i" id) |> Controller.text ctx)
     error_handler (fun ctx ex -> sprintf "Error handler no version - %s" ex.Message |> Controller.text ctx)
 }
 
@@ -50,11 +61,11 @@ type DifferentResponse = {
 }
 
 let typedController = controller {
-    index (fun _ -> task {
+    index (fun _ _-> task {
         return {a = "hello"; b = "world"}
     })
 
-    add (fun _ -> task {
+    add (fun _ _ -> task {
         return {c = 123; d = DateTime.Now}
     })
 }

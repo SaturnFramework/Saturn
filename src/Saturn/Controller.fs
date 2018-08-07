@@ -2,6 +2,8 @@ namespace Saturn
 
 open System
 open SiteMap
+open System.Collections.Concurrent
+open Microsoft.FSharp.Reflection
 
 [<AutoOpen>]
 module Controller =
@@ -29,16 +31,16 @@ module Controller =
       let allSet = Set [Index;Show;Add;Edit;Create;Update;Patch;Delete;DeleteAll]
       allSet - inputSet |> Set.toList
 
-  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = {
-    Index: (HttpContext -> Task<'IndexOutput>) option
-    Show: (HttpContext -> 'Key -> Task<'ShowOutput>) option
-    Add: (HttpContext -> Task<'AddOutput>) option
-    Edit: (HttpContext -> 'Key -> Task<'EditOutput>) option
-    Create: (HttpContext -> Task<'CreateOutput>) option
-    Update: (HttpContext -> 'Key -> Task<'UpdateOutput>) option
-    Patch: (HttpContext -> 'Key -> Task<'PatchOutput>) option
-    Delete: (HttpContext -> 'Key -> Task<'DeleteOutput>) option
-    DeleteAll: (HttpContext -> Task<'DeleteAllOutput>) option
+  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput, 'IndexDependency, 'ShowDependency, 'AddDependency, 'EditDependency, 'CreateDependency, 'UpdateDependency, 'PatchDependency, 'DeleteDependency, 'DeleteAllDependency> = {
+    Index: (HttpContext -> 'IndexDependency -> Task<'IndexOutput>) option
+    Show: (HttpContext -> 'Key -> 'ShowDependency -> Task<'ShowOutput>) option
+    Add: (HttpContext -> 'AddDependency -> Task<'AddOutput>) option
+    Edit: (HttpContext -> 'Key -> 'EditDependency -> Task<'EditOutput>) option
+    Create: (HttpContext -> 'CreateDependency -> Task<'CreateOutput>) option
+    Update: (HttpContext -> 'Key -> 'UpdateDependency -> Task<'UpdateOutput>) option
+    Patch: (HttpContext -> 'Key -> 'PatchDependency -> Task<'PatchOutput>) option
+    Delete: (HttpContext -> 'Key -> 'DeleteDependency -> Task<'DeleteOutput>) option
+    DeleteAll: (HttpContext -> 'DeleteAllDependency -> Task<'DeleteAllOutput>) option
 
     NotFoundHandler: HttpHandler option
     ErrorHandler: HttpContext -> Exception -> HttpFuncResult
@@ -53,9 +55,8 @@ module Controller =
         return! Controller.response ctx i
       }
 
-  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
-
-    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
+  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput, 'IndexDependency, 'ShowDependency, 'AddDependency, 'EditDependency, 'CreateDependency, 'UpdateDependency, 'PatchDependency, 'DeleteDependency, 'DeleteAllDependency> internal () =
+    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput, 'IndexDependency, 'ShowDependency, 'AddDependency, 'EditDependency, 'CreateDependency, 'UpdateDependency, 'PatchDependency, 'DeleteDependency, 'DeleteAllDependency> =
       { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex) }
 
     ///Operation that should render (or return in case of API controllers) list of data
@@ -105,7 +106,7 @@ module Controller =
 
     ///Define not-found handler for the controller
     [<CustomOperation("not_found_handler")>]
-    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_,_>, handler) =
+    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_>, handler) =
       {state with NotFoundHandler = Some handler}
 
     ///Define error for the controller
@@ -139,31 +140,68 @@ module Controller =
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
 
-    member private __.AddHandler<'Output> state action (handler: HttpContext -> Task<'Output>) path =
+    member private __.DependencyConstructors = ConcurrentDictionary<Type, HttpContext -> obj>()
+
+    member private x.GetDependency<'Dependency>(ctx: HttpContext) =
+      let getCtor (typ : Type) : (HttpContext -> obj) =
+        if FSharpType.IsRecord typ then
+          let fields = FSharpType.GetRecordFields typ
+          fun (ctx: HttpContext) ->
+            let flds = fields |> Array.map (fun t -> ctx.RequestServices.GetService(t.PropertyType))
+            FSharpValue.MakeRecord(typ, flds)
+        elif FSharpType.IsTuple typ then
+          let fields = FSharpType.GetTupleElements typ
+          fun (ctx: HttpContext) ->
+            let flds = fields |> Array.map (ctx.RequestServices.GetService )
+            FSharpValue.MakeTuple(flds, typ)
+        else
+          failwith "Dependency type must be record or type"
+      let typ = typeof<'Dependency>
+      if x.DependencyConstructors.ContainsKey typ then
+        match x.DependencyConstructors.TryGetValue typ with
+        | true, v -> v ctx |> unbox<'Dependency>
+        | _ ->
+          let c = getCtor typ
+          let c = x.DependencyConstructors.AddOrUpdate(typ, c, Func<_,_,_>(fun _ _ -> c))
+          c ctx |> unbox<'Dependency>
+      else
+        let c = getCtor typ
+        let c = x.DependencyConstructors.AddOrUpdate(typ, c, Func<_,_,_>(fun _ _ -> c))
+        c ctx |> unbox<'Dependency>
+
+    member private x.AddHandler<'Output, 'Dependency> state action (handler: HttpContext -> 'Dependency -> Task<'Output>) path =
       let route = route path
 
       let handler =
         match typeof<'Output> with
-        | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
-        | _ -> fun _ ctx -> handler ctx |> response<'Output> ctx
+        | k when k = typeof<HttpContext option> -> fun _ ctx ->
+          let dep = x.GetDependency<'Dependency> ctx
+          handler ctx dep |> unbox<HttpFuncResult>
+        | _ -> fun _ ctx ->
+          let dep = x.GetDependency ctx
+          handler ctx dep |> response<'Output> ctx
 
       match state.Plugs.TryFind action with
       | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route >=> handler
       | None -> route >=> handler
 
-    member private __.AddKeyHandler<'Output> state action (handler: HttpContext -> 'Key -> Task<'Output>) path =
+    member private x.AddKeyHandler<'Output, 'Dependency> state action (handler: HttpContext -> 'Key -> 'Dependency -> Task<'Output>) path =
       let route = routef (PrintfFormat<_,_,_,_,'Key> path)
 
       let handler =
         match typeof<'Output> with
-        | k when k = typeof<HttpContext option> -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> unbox<HttpFuncResult>
-        | _ -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> response<'Output> ctx
+        | k when k = typeof<HttpContext option> -> fun input _ ctx ->
+          let dep = x.GetDependency ctx
+          handler ctx (unbox<'Key> input) dep |> unbox<HttpFuncResult>
+        | _ -> fun input _ ctx ->
+          let dep = x.GetDependency ctx
+          handler ctx (unbox<'Key> input) dep |> response<'Output> ctx
 
       match state.Plugs.TryFind action with
       | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route handler
       | None -> route handler
 
-    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
+    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput,  'IndexDependency, 'ShowDependency, 'AddDependency, 'EditDependency, 'CreateDependency, 'UpdateDependency, 'PatchDependency, 'DeleteDependency, 'DeleteAllDependency>) : HttpHandler =
       let siteMap = HandlerMap()
       let addToSiteMap v p = siteMap.AddPath p v
       let keyFormat, stringConvert =
@@ -304,5 +342,5 @@ module Controller =
       res
 
 
-  let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
+  let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput, 'IndexDependency, 'ShowDependency, 'AddDependency, 'EditDependency, 'CreateDependency, 'UpdateDependency, 'PatchDependency, 'DeleteDependency, 'DeleteAllDependency> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput, 'IndexDependency, 'ShowDependency, 'AddDependency, 'EditDependency, 'CreateDependency, 'UpdateDependency, 'PatchDependency, 'DeleteDependency, 'DeleteAllDependency> ()
 
