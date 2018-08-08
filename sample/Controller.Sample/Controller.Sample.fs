@@ -6,8 +6,9 @@ open Giraffe.ResponseWriters
 open Giraffe
 open System
 open Microsoft.Extensions.Logging
+open Microsoft.Extensions.Hosting
 
-type SampleDeps = {logger : ILogger}
+type SampleDeps = {logger : ILogger<obj>}
 
 let commentController userId = controller {
     index (fun ctx deps ->
@@ -24,14 +25,22 @@ let commentController userId = controller {
         (sprintf "Edit comment %s handler for user %i" id userId )  |> Controller.text ctx)
 }
 
+type OtherSampleDeps = ILogger<obj> * IHostingEnvironment
+
 let userControllerVersion1 = controller {
     version "1"
     subController "/comments" commentController
 
-    index (fun ctx _-> "Index handler version 1" |> Controller.text ctx)
-    add (fun ctx _-> "Add handler version 1" |> Controller.text ctx)
-    show (fun ctx id _-> (sprintf "Show handler version 1 - %i" id) |> Controller.text ctx)
-    edit (fun ctx id _-> (sprintf "Edit handler version 1 - %i" id) |> Controller.text ctx)
+    index (fun ctx (deps : OtherSampleDeps) ->
+        let log, env = deps
+        log.LogInformation("Index Action")
+        "Index handler version 1" |> Controller.text ctx)
+    add (fun ctx (deps : OtherSampleDeps)->
+        let log, env = deps
+        log.LogInformation("Add Action")
+        "Add handler version 1" |> Controller.text ctx)
+    show (fun ctx id _ -> (sprintf "Show handler version 1 - %i" id) |> Controller.text ctx)
+    edit (fun ctx id _ -> (sprintf "Edit handler version 1 - %i" id) |> Controller.text ctx)
 }
 
 let userController = controller {
@@ -40,8 +49,10 @@ let userController = controller {
     plug [All] (setHttpHeader "user-controller-common" "123")
     plug [Index; Show] (setHttpHeader "user-controller-specialized" "123")
 
-    index (fun ctx _-> "Index handler no version" |> Controller.text ctx)
-    show (fun ctx id _ -> (sprintf "Show handler no version - %i" id) |> Controller.text ctx)
+    index (fun ctx (logger: ILogger<obj>)->
+        logger.LogInformation("Index Action")
+        "Index handler no version" |> Controller.text ctx)
+    show (fun ctx id (logger: ILogger<obj>) -> (sprintf "Show handler no version - %i" id) |> Controller.text ctx)
     add (fun ctx _ -> "Add handler no version" |> Controller.text ctx)
     create (fun ctx _ -> "Create handler no version" |> Controller.text ctx)
     edit (fun ctx id _ -> (sprintf "Edit handler no version - %i" id) |> Controller.text ctx)

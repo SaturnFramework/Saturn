@@ -4,6 +4,7 @@ open System
 open SiteMap
 open System.Collections.Concurrent
 open Microsoft.FSharp.Reflection
+open Microsoft.AspNetCore.Http
 
 [<AutoOpen>]
 module Controller =
@@ -154,8 +155,13 @@ module Controller =
           fun (ctx: HttpContext) ->
             let flds = fields |> Array.map (ctx.RequestServices.GetService )
             FSharpValue.MakeTuple(flds, typ)
+        elif typ = typeof<obj> then
+          fun (_: HttpContext) ->
+            Object()
         else
-          failwith "Dependency type must be record or type"
+          fun (ctx: HttpContext) ->
+            ctx.RequestServices.GetService typ
+
       let typ = typeof<'Dependency>
       if x.DependencyConstructors.ContainsKey typ then
         match x.DependencyConstructors.TryGetValue typ with
