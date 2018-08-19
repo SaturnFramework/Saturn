@@ -3,8 +3,6 @@ module Saturn
 open Saturn
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Http
-open System.IO
-open FSharp.Control.Tasks.ContextInsensitive
 open System.Threading.Tasks
 open Giraffe
 open Microsoft.Extensions.Primitives
@@ -39,25 +37,16 @@ module TurbolinksHelpers =
 
 ///HttpHandler enabling Turbolinks support for given pipelines
 let turbolinks (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
-    task {
-        TurbolinksHelpers.handleTurbolinks ctx
-        return! nxt ctx
-    }
+    TurbolinksHelpers.handleTurbolinks ctx
+    nxt ctx
 
 type TurbolinksMiddleware (next: RequestDelegate) =
     member __.Invoke(ctx: HttpContext) =
-        task {
-            let ms = new MemoryStream()
-            let bs = ctx.Response.Body
-            ctx.Response.Body <- ms
-            do! next.Invoke(ctx)
-            TurbolinksHelpers.handleTurbolinks ctx
-            ms.WriteTo bs
-            do! bs.FlushAsync ()
-            ms.Dispose ()
-            bs.Dispose ()
-            return ()
-        } :> Task
+        ctx.Response.OnStarting((fun ctx ->
+            TurbolinksHelpers.handleTurbolinks (unbox<_> ctx)
+            Task.CompletedTask
+        ), ctx)
+        next.Invoke(ctx)
 
 type ApplicationBuilder with
 
