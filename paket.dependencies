@@ -19,7 +19,7 @@ nuget Microsoft.AspNetCore.Server.HttpSys >= 2.1
 
 nuget Giraffe >= 1.1
 
-nuget Microsoft.NET.Sdk.Functions >= 1.0.14
+nuget Microsoft.NET.Sdk.Functions >= 1.0.19
 
 nuget NSubstitute
 nuget Expecto
