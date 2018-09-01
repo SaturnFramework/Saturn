@@ -8,6 +8,7 @@ open System.Threading.Tasks
 open Microsoft.Extensions.Logging
 open Giraffe.Serialization.Json
 open Giraffe.Serialization.Xml
+open Microsoft.AspNetCore.Mvc
 
 module AzureFunctions =
 
@@ -23,6 +24,11 @@ module AzureFunctions =
   }
 
   type FunctionBuilder internal () =
+    let mvcNoopResult =
+      { new IActionResult with
+          member __.ExecuteResultAsync(_) = Task.CompletedTask
+      }
+
     member val LogWriter : ILogger option = None with get,set
 
     member __.Yield(_) =
@@ -34,7 +40,7 @@ module AzureFunctions =
             clearResponse >=> Giraffe.HttpStatusCodeHandlers.RequestErrors.NOT_FOUND "Not found"
         {Logger = None; Router = None; ErrorHandler = errorHandler; NotFoundHandler = notFoundHandler; HostPrefix = "/api"; JsonSerializer = NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings); XmlSerializer = DefaultXmlSerializer(DefaultXmlSerializer.DefaultSettings);  NegotiationConfig = DefaultNegotiationConfig() }
 
-    member __.Run(state: FunctionState) : (HttpRequest -> Task<HttpResponse>) =
+    member __.Run(state: FunctionState) : (HttpRequest -> Task<IActionResult>) =
       let wrapGiraffeServices (existing:IServiceProvider) =
         { new IServiceProvider with
             member __.GetService(t:Type) =
@@ -43,7 +49,6 @@ module AzureFunctions =
               elif (t = typeof<INegotiationConfig>) then upcast state.NegotiationConfig
               else existing.GetService(t)
         }
-
 
       let next : HttpContext -> Task<HttpContext option> = Some >> Task.FromResult
       fun req ->
@@ -64,14 +69,14 @@ module AzureFunctions =
               let! errorResult = state.NotFoundHandler next req.HttpContext
               match errorResult with
               | None -> return failwith "Internal error"
-              | Some ctx -> return ctx.Response
-            | Some ctx -> return ctx.Response
+              | Some _ -> return mvcNoopResult
+            | Some _ -> return mvcNoopResult
           with
           | ex ->
             let! errorResult = state.ErrorHandler ex next req.HttpContext
             match errorResult with
             | None -> return failwith "Internal error"
-            | Some ctx -> return ctx.Response
+            | Some _ -> return mvcNoopResult
         }
     ///Defines top-level router used for the function
     [<CustomOperation("use_router")>]
