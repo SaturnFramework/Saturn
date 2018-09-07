@@ -90,7 +90,7 @@ module Application =
 
     ///Adds error/not-found handler for current scope
     [<CustomOperation("error_handler")>]
-    member __.ErrprHandler(state : ApplicationState, handler) =
+    member __.ErrorHandler(state : ApplicationState, handler) =
       {state with ErrorHandler = Some handler}
 
     ///Adds custom application configuration step.
