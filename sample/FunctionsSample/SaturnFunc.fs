@@ -3,6 +3,7 @@ namespace MyFunctions
 open Microsoft.AspNetCore.Http
 open Microsoft.Azure.WebJobs.Host
 open Saturn.AzureFunctions
+open Microsoft.Extensions.Logging
 
 module Functions =
     open Saturn
@@ -20,5 +21,5 @@ module Functions =
     }
 
     [<FunctionName("HelloWorld")>]
-    let helloWorld ([<HttpTrigger(Extensions.Http.AuthorizationLevel.Anonymous, Route = "{route?}")>]req: HttpRequest, log: TraceWriter) =
+    let helloWorld ([<HttpTrigger(Extensions.Http.AuthorizationLevel.Anonymous, Route = "{route?}")>]req: HttpRequest, log: ILogger) =
         func log req
