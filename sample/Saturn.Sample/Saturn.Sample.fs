@@ -54,7 +54,7 @@ let endpointPipe = pipeline {
 
 let apiRouter = router {
     pipe_through apiHeaderPipe
-    not_found_handler (text "Api 404")
+    not_found_handler (setStatusCode 404 >=> text "Api 404")
 
     get "/" apiHelloWorld
     get "/a" apiHelloWorld2
@@ -96,7 +96,7 @@ let apiRouter = router {
 // delete - delete item
 
 let userController = controller {
-    not_found_handler (text "Users 404")
+    not_found_handler (setStatusCode 404 >=> text "Users 404")
 
     index (fun ctx -> "Index handler" |> Controller.text ctx)
     add (fun ctx -> "Add handler" |> Controller.text ctx)
@@ -110,7 +110,7 @@ let userController = controller {
 
 let topRouter = router {
     pipe_through headerPipe
-    not_found_handler (text "404")
+    not_found_handler (setStatusCode 404 >=> text "404")
 
     get "/" helloWorld
     get "/a" helloWorld2
@@ -119,7 +119,7 @@ let topRouter = router {
 
     forward "/other" (router {
         pipe_through otherHeaderPipe
-        not_found_handler (text "Other 404")
+        not_found_handler (setStatusCode 404 >=> text "Other 404")
 
         get "/" otherHelloWorld
         get "/a" otherHelloWorld2
