@@ -139,9 +139,19 @@ module Controller =
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
 
-    member private __.AddHandler<'Output> state action (handler: HttpContext -> Task<'Output>) path =
+    member private __.AddHandler<'Output> state action (handler: HttpContext -> Task<'Output>) (path: string) =
       let route = route path
 
+      let handler =
+        match typeof<'Output> with
+        | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
+        | _ -> fun _ ctx -> handler ctx |> response<'Output> ctx
+
+      match state.Plugs.TryFind action with
+      | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route >=> handler
+      | None -> route >=> handler
+
+    member private __.AddHandlerWithRoute<'Output> state action (handler: HttpContext -> Task<'Output>) route =
       let handler =
         match typeof<'Output> with
         | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
@@ -160,7 +170,12 @@ module Controller =
         | _ -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> response<'Output> ctx
 
       match state.Plugs.TryFind action with
-      | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route handler
+      | Some acts ->
+        let plugs: HttpHandler =
+            (succeed |> List.foldBack (fun e acc -> acc >=> e) acts)
+        // apply route test before applying plugs
+        route (fun key -> plugs >=> (handler key))
+
       | None -> route handler
 
     member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
@@ -184,6 +199,14 @@ module Controller =
           |> fun (keyFormat, stringConvert) -> (Some keyFormat, Some (unbox<'Key -> string> stringConvert))
 
       let initialController =
+        let trailingSlashHandler : HttpHandler =
+          fun next ctx ->
+            let route = route "/"
+            if ctx.Request.Path.Value.EndsWith("/") then
+              route next ctx
+            else
+              ctx.Request.Path <- PathString(ctx.Request.Path.Value + "/")
+              route next ctx
         choose [
           yield GET >=> choose [
             let addToSiteMap = addToSiteMap "GET"
@@ -192,10 +215,12 @@ module Controller =
               let path = "/add"
               addToSiteMap path
               yield this.AddHandler state Add state.Add.Value path
+
             if state.Index.IsSome then
               let path = "/"
               let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx)
               addToSiteMap path
+              // todo update this like we did for create
               yield this.AddHandler state Index handler ""
               yield this.AddHandler state Index state.Index.Value path
 
@@ -213,11 +238,8 @@ module Controller =
             let addToSiteMap = addToSiteMap "POST"
 
             if state.Create.IsSome then
-              let path = "/"
-              let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Create.Value(ctx)
-              addToSiteMap path
-              yield this.AddHandler state Create handler ""
-              yield this.AddHandler state Create state.Create.Value path
+              addToSiteMap "/"
+              yield this.AddHandlerWithRoute state Create state.Create.Value trailingSlashHandler
 
             if keyFormat.IsSome then
               if state.Update.IsSome then
@@ -305,4 +327,3 @@ module Controller =
 
 
   let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
-
