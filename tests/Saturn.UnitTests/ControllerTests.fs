@@ -27,8 +27,8 @@ let updateCount : HttpHandler =
 
 let testController = controller {
     create createAction
-    update updateAction
-    plug [Create;Update] updateCount
+    // update updateAction
+    plug [Create] updateCount
 
 }
 
@@ -72,21 +72,21 @@ let tests =
             finally
                 ()
 
-        testCase "update works" <|  fun _ ->
-            let ctx = getEmptyContext "PUT" "/1"
+        // testCase "update works" <|  fun _ ->
+        //     let ctx = getEmptyContext "PUT" "/1"
 
-            let expected = "Update 1"
-            try
-                try
-                    let result = testController next ctx |> runTask
-                    match result with
-                    | None -> failtestf "Result was expected to be %s, but was %A" expected result
-                    | Some ctx ->
-                        Expect.equal (getBody ctx) expected "Result should be equal"
-                        Expect.equal (count.["PUT"]) 1 "Count should be 1"
-                with ex -> failtestf "failed because %A" ex
-            finally
-                ()
+        //     let expected = "Update 1"
+        //     try
+        //         try
+        //             let result = testController next ctx |> runTask
+        //             match result with
+        //             | None -> failtestf "Result was expected to be %s, but was %A" expected result
+        //             | Some ctx ->
+        //                 Expect.equal (getBody ctx) expected "Result should be equal"
+        //                 Expect.equal (count.["PUT"]) 1 "Count should be 1"
+        //         with ex -> failtestf "failed because %A" ex
+        //     finally
+        //         ()
 
         testCase "doctype is added to implicit index html" <| fun _ ->
             let ctx = getEmptyContext "GET" "/"
