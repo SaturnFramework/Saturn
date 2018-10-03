@@ -5,31 +5,18 @@ open Saturn
 open Giraffe
 open Giraffe.GiraffeViewEngine
 open Microsoft.Extensions.Primitives
-open Microsoft.AspNetCore.Http
 open System
 
-let count = System.Collections.Generic.Dictionary<string, int>()
-
 let createAction =
-    fun ctx -> "Create" |> Controller.text ctx
+    fun ctx ->
+        "Create" |> Controller.text ctx
 
 let updateAction =
     fun ctx id -> (sprintf "Update %i" id) |> Controller.text ctx
 
-let updateCount : HttpHandler =
-    fun next ctx ->
-        let method = ctx.Request.Method
-        if count.ContainsKey method then
-            count.[method] <- count.[method] + 1
-        else
-            count.Add(method, 1)
-        next ctx
-
 let testController = controller {
     create createAction
-    // update updateAction
-    plug [Create] updateCount
-
+    update updateAction
 }
 
 let basicTemplate =
@@ -56,37 +43,57 @@ let implicitStringToHtmlTestController = controller {
 let tests =
     testList "Controller Tests" [
         testCase "create works" <|  fun _ ->
-            let ctx = getEmptyContext "POST" "/"
-
+            let ctx = getEmptyContext "POST" ""
             let expected = "Create"
+
             try
-                try
-                    let result = testController next ctx |> runTask
-                    match result with
-                    | None -> failtestf "Result was expected to be %s, but was %A" expected result
-                    | Some ctx ->
-                        Expect.equal (getBody ctx) expected "Result should be equal"
+                let result = testController next ctx |> runTask
+                match result with
+                | None -> failtestf "Result was expected to be %s, but was %A" expected result
+                | Some ctx ->
+                    Expect.equal (getBody ctx) expected "Result should be equal"
+            with ex -> failtestf "failed because %A" ex
 
-                        Expect.equal (count.["POST"]) 1 "Count should be 1"
-                with ex -> failtestf "failed because %A" ex
-            finally
-                ()
+        testCase "update works" <| fun _ ->
+            let ctx = getEmptyContext "PUT" "/1"
+            let expected = "Update 1"
 
-        // testCase "update works" <|  fun _ ->
-        //     let ctx = getEmptyContext "PUT" "/1"
+            try
+                let result = testController next ctx |> runTask
+                match result with
+                | None -> failtestf "Result was expected to be %s, but was %A" expected result
+                | Some ctx ->
+                    Expect.equal (getBody ctx) expected "Result should be equal"
 
-        //     let expected = "Update 1"
-        //     try
-        //         try
-        //             let result = testController next ctx |> runTask
-        //             match result with
-        //             | None -> failtestf "Result was expected to be %s, but was %A" expected result
-        //             | Some ctx ->
-        //                 Expect.equal (getBody ctx) expected "Result should be equal"
-        //                 Expect.equal (count.["PUT"]) 1 "Count should be 1"
-        //         with ex -> failtestf "failed because %A" ex
-        //     finally
-        //         ()
+            with ex -> failtestf "failed because %A" ex
+
+        testCase "plugs should only fire once" <| fun _ ->
+            let mutable count = 0
+            let controllerWithPlugs =
+                controller {
+                    create createAction
+                    update updateAction
+                    plug [All] (fun next ctx -> count <- count + 1; next ctx)
+                }
+            try
+                let postEmpty = getEmptyContext "POST" "" |> controllerWithPlugs next |> runTask
+                Expect.equal count 1 "Count should be 1"
+                match postEmpty with
+                | None -> failtestf "Result was expected to be %s, but was %A" "Create" postEmpty
+                | Some ctx ->
+                    Expect.equal (getBody ctx) "Create" "Result should be equal"
+                getEmptyContext "POST" "/" |> controllerWithPlugs next |> runTask |> ignore
+                Expect.equal count 2 "Count should be 2"
+                getEmptyContext "POST" "/1" |> controllerWithPlugs next |> runTask |> ignore
+                Expect.equal count 3 "Count should be 3"
+                let putResult = getEmptyContext "PUT" "/1" |> controllerWithPlugs next |> runTask
+                match putResult with
+                | None -> failtestf "Result was expected to be %s, but was %A" "Create" postEmpty
+                | Some ctx ->
+                    Expect.equal (getBody ctx) "Update 1" "Result should be equal"
+                Expect.equal count 4 "Count should be 4"
+
+            with ex -> failtestf "failed because %A" ex
 
         testCase "doctype is added to implicit index html" <| fun _ ->
             let ctx = getEmptyContext "GET" "/"

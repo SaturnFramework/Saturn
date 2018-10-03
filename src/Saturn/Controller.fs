@@ -2,7 +2,6 @@ namespace Saturn
 
 open System
 open SiteMap
-open System.Collections.Generic
 
 [<AutoOpen>]
 module Controller =
@@ -55,8 +54,6 @@ module Controller =
       }
 
   type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
-
-    let mutable plugState: IDictionary<Action,bool> = System.Collections.Generic.Dictionary<Action,bool>() :> IDictionary<Action,bool>
 
     member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
       { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex) }
@@ -142,9 +139,19 @@ module Controller =
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
 
-    member private __.AddHandler<'Output> state action (handler: HttpContext -> Task<'Output>) path =
+    member private __.AddHandler<'Output> state action (handler: HttpContext -> Task<'Output>) (path: string) =
       let route = route path
 
+      let handler =
+        match typeof<'Output> with
+        | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
+        | _ -> fun _ ctx -> handler ctx |> response<'Output> ctx
+
+      match state.Plugs.TryFind action with
+      | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route >=> handler
+      | None -> route >=> handler
+
+    member private __.AddHandlerWithRoute<'Output> state action (handler: HttpContext -> Task<'Output>) route =
       let handler =
         match typeof<'Output> with
         | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
@@ -162,14 +169,13 @@ module Controller =
         | k when k = typeof<HttpContext option> -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> unbox<HttpFuncResult>
         | _ -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> response<'Output> ctx
 
-      // let eligiblePlugs =
-
-      //   plugState
-      //   |> Map.tryFind
-
-
       match state.Plugs.TryFind action with
-      | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route handler
+      | Some acts ->
+        let plugs: HttpHandler =
+            (succeed |> List.foldBack (fun e acc -> acc >=> e) acts)
+        // apply route test before applying plugs
+        route (fun key -> plugs >=> (handler key))
+
       | None -> route handler
 
     member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
@@ -192,12 +198,15 @@ module Controller =
                   "Type %A is not a supported type for controller<'T>. Supported types include bool, char, float, guid int32, int64, and string" k
           |> fun (keyFormat, stringConvert) -> (Some keyFormat, Some (unbox<'Key -> string> stringConvert))
 
-      // plugState <-
-      //   state.Plugs
-      //   |> Seq.map(fun kv -> kv.Key,false)
-      //   |> dict
-
       let initialController =
+        let trailingSlashHandler : HttpHandler =
+          fun next ctx ->
+            let route = route "/"
+            if ctx.Request.Path.Value.EndsWith("/") then
+              route next ctx
+            else
+              ctx.Request.Path <- PathString(ctx.Request.Path.Value + "/")
+              route next ctx
         choose [
           yield GET >=> choose [
             let addToSiteMap = addToSiteMap "GET"
@@ -211,6 +220,7 @@ module Controller =
               let path = "/"
               let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx)
               addToSiteMap path
+              // todo update this like we did for create
               yield this.AddHandler state Index handler ""
               yield this.AddHandler state Index state.Index.Value path
 
@@ -228,18 +238,14 @@ module Controller =
             let addToSiteMap = addToSiteMap "POST"
 
             if state.Create.IsSome then
-              let path = "/"
-              let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Create.Value(ctx)
-              addToSiteMap path
-              yield this.AddHandler state Create handler ""
-              yield this.AddHandler state Create state.Create.Value path
+              addToSiteMap "/"
+              yield this.AddHandlerWithRoute state Create state.Create.Value trailingSlashHandler
 
             if keyFormat.IsSome then
               if state.Update.IsSome then
                 let path = keyFormat.Value
                 addToSiteMap path
                 yield this.AddKeyHandler state Update state.Update.Value path
-                // plugState.[Update] <- true
           ]
           yield PATCH >=> choose [
             let addToSiteMap = addToSiteMap "PATCH"
