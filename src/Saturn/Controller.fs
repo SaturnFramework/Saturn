@@ -2,6 +2,7 @@ namespace Saturn
 
 open System
 open SiteMap
+open System.Collections.Generic
 
 [<AutoOpen>]
 module Controller =
@@ -54,6 +55,8 @@ module Controller =
       }
 
   type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
+
+    let mutable plugState: IDictionary<Action,bool> = System.Collections.Generic.Dictionary<Action,bool>() :> IDictionary<Action,bool>
 
     member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
       { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex) }
@@ -159,6 +162,12 @@ module Controller =
         | k when k = typeof<HttpContext option> -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> unbox<HttpFuncResult>
         | _ -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> response<'Output> ctx
 
+      // let eligiblePlugs =
+
+      //   plugState
+      //   |> Map.tryFind
+
+
       match state.Plugs.TryFind action with
       | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route handler
       | None -> route handler
@@ -183,6 +192,11 @@ module Controller =
                   "Type %A is not a supported type for controller<'T>. Supported types include bool, char, float, guid int32, int64, and string" k
           |> fun (keyFormat, stringConvert) -> (Some keyFormat, Some (unbox<'Key -> string> stringConvert))
 
+      // plugState <-
+      //   state.Plugs
+      //   |> Seq.map(fun kv -> kv.Key,false)
+      //   |> dict
+
       let initialController =
         choose [
           yield GET >=> choose [
@@ -192,6 +206,7 @@ module Controller =
               let path = "/add"
               addToSiteMap path
               yield this.AddHandler state Add state.Add.Value path
+
             if state.Index.IsSome then
               let path = "/"
               let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx)
@@ -224,6 +239,7 @@ module Controller =
                 let path = keyFormat.Value
                 addToSiteMap path
                 yield this.AddKeyHandler state Update state.Update.Value path
+                // plugState.[Update] <- true
           ]
           yield PATCH >=> choose [
             let addToSiteMap = addToSiteMap "PATCH"
@@ -305,4 +321,3 @@ module Controller =
 
 
   let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
-
