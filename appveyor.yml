@@ -4,10 +4,9 @@ image:
 init:
   - git config --global core.autocrlf input
 install:
-  - chmod +x build.sh
+  - dotnet tool install fake-cli -g
 build_script:
-  - cmd: build.cmd
-  - sh: ./build.sh
+  - fake build
 test: off
 version: 0.7.5.{build}
 artifacts:
