@@ -1,6 +1,6 @@
 # Saturn
 
-Saturn is a web development framework written in F# which implements the server-side MVC pattern. Many of its components and concepts will seem familiar to those of us with experience in other web frameworks like Ruby on Rails or Python’s Django.
+Saturn is a web development framework written in F# which implements the server-side MVC pattern. Many of its components and concepts will seem familiar to anyone with experience in other web frameworks like Ruby on Rails or Python’s Django.
 
 It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
 
@@ -8,12 +8,13 @@ Read more about why I've decided to create Saturn, and some of its design choice
 
 ## Documentation
 
-Saturn has a nice [documentation](https://saturnframework.github.io/docs/) and I appreciate any help to improve it further by sending pull requests or just adding an issue with you think is missing.
+Saturn has nice [documentation](https://saturnframework.github.io/docs/) and I appreciate any help to improve it further by sending pull requests or just adding an issue with what you think is missing.
 
 ## How to build
 
-1. Install requirements - .Net SDK 2.1, and FAKE 5.X
-2. `fake build`
+1. Install the .NET Core SDK from https://www.microsoft.com/net/download
+2. Install FAKE: `dotnet tool install fake-cli -g`
+3. Inside the repo directory, run `fake build`
 
 ## How to contribute
 
