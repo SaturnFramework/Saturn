@@ -135,7 +135,7 @@ module Controller =
         {state with Plugs = newplugs}
 
       if actions |> List.contains All then
-        [Index; Show; Add; Edit; Create; Update; Delete] |> List.fold (fun acc e -> addPlug acc e handler) state
+        [Index; Show; Add; Edit; Create; Update; Delete;DeleteAll] |> List.fold (fun acc e -> addPlug acc e handler) state
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
 
@@ -220,9 +220,7 @@ module Controller =
               let path = "/"
               let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx)
               addToSiteMap path
-              // todo update this like we did for create
-              yield this.AddHandler state Index handler ""
-              yield this.AddHandler state Index state.Index.Value path
+              yield this.AddHandlerWithRoute state Index state.Index.Value trailingSlashHandler
 
             if keyFormat.IsSome then
               if state.Edit.IsSome then
@@ -270,10 +268,8 @@ module Controller =
 
             if state.DeleteAll.IsSome then
               let path = "/"
-              let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.DeleteAll.Value(ctx)
               addToSiteMap path
-              yield this.AddHandler state DeleteAll handler ""
-              yield this.AddHandler state DeleteAll state.DeleteAll.Value path
+              yield this.AddHandlerWithRoute state DeleteAll state.DeleteAll.Value trailingSlashHandler
 
             if keyFormat.IsSome then
               if state.Delete.IsSome then
@@ -324,6 +320,5 @@ module Controller =
       siteMap.SetKey res
       SiteMap.add siteMap
       res
-
 
   let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
