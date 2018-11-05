@@ -1,3 +1,11 @@
+### 0.7.6 - 05.11.2018
+* Add extension for turbolinks
+* Fix turbolinks header application (by [@NinoFloris](https://github.com/NinoFloris))
+* Set 404 status code on not found handlers in sample
+* return an IActionResult over HttpResponse in azure functions handler
+* Fix for plugs firing twice (by [@jeremyabbott](https://github.com/jeremyabbott))
+
+
 ### 0.7.5 - 03.08.2018
 * Check state.Urls before running UseUrls (by [@NinoFloris](https://github.com/NinoFloris))
 * fixes missing doctype in html controller actions (by [@WalternativE](https://github.com/WalternativE ))
