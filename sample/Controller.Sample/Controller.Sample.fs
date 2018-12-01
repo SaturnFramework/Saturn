@@ -3,7 +3,7 @@ module Controller.Sample
 open Saturn
 open Giraffe.Core
 open Giraffe.ResponseWriters
-open Giraffe
+open FSharp.Control.Tasks.V2.ContextInsensitive
 open System
 
 let commentController userId = controller {

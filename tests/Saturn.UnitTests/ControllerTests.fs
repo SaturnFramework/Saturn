@@ -4,6 +4,7 @@ open Expecto
 open Saturn
 open Giraffe
 open Giraffe.GiraffeViewEngine
+open FSharp.Control.Tasks.V2.ContextInsensitive
 open Microsoft.Extensions.Primitives
 open Microsoft.AspNetCore.Http
 open System

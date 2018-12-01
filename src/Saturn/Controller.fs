@@ -8,6 +8,8 @@ module Controller =
 
   open Microsoft.AspNetCore.Http
   open Giraffe
+  open Giraffe.FormatExpressions
+  open FSharp.Control.Tasks.V2.ContextInsensitive
   open System.Threading.Tasks
 
   type Action =

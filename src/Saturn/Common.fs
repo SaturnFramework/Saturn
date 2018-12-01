@@ -7,6 +7,7 @@ open Microsoft.Extensions.Primitives
 [<AutoOpen>]
 module Common =
   open Giraffe
+  open FSharp.Control.Tasks.V2.ContextInsensitive
 
   [<RequireQualifiedAccess>]
   type InclusiveOption<'T> =
