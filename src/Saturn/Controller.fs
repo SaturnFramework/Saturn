@@ -173,22 +173,22 @@ module Controller =
     member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
       let siteMap = HandlerMap()
       let addToSiteMap v p = siteMap.AddPath p v
-      let keyFormat, stringConvert =
+      let keyFormat =
         match state with
-        | { Show = None; Edit = None; Update = None; Delete = None; SubControllers = [] } -> None, None
+        | { Show = None; Edit = None; Update = None; Delete = None; SubControllers = [] } -> None
         | _ ->
-          // Parameterizing `string` here so we don't constrain 'Key to SRTP ^Key when we would have used it later on
           match typeof<'Key> with
-          | k when k = typeof<bool> -> "/%b", string<bool> :> obj
-          | k when k = typeof<char> -> "/%c", string<char> :> obj
-          | k when k = typeof<string> -> "/%s", string<string> :> obj
-          | k when k = typeof<int32> -> "/%i", string<int32> :> obj
-          | k when k = typeof<int64> -> "/%d", string<int64> :> obj
-          | k when k = typeof<float> -> "/%f", string<float> :> obj
-          | k when k = typeof<Guid> -> "/%O", string<Guid> :> obj
+          | k when k = typeof<bool> -> "/%b"
+          | k when k = typeof<char> -> "/%c"
+          | k when k = typeof<string> -> "/%s"
+          | k when k = typeof<int32> -> "/%i"
+          | k when k = typeof<int64> -> "/%d"
+          | k when k = typeof<float> -> "/%f"
+          | k when k = typeof<Guid> -> "/%O"
+          | k when k = typeof<uint64> -> "/%u"
           | k -> failwithf
                   "Type %A is not a supported type for controller<'T>. Supported types include bool, char, float, guid int32, int64, and string" k
-          |> fun (keyFormat, stringConvert) -> (Some keyFormat, Some (unbox<'Key -> string> stringConvert))
+          |> Some
 
       let initialController =
         let trailingSlashHandler : HttpHandler =
@@ -261,6 +261,7 @@ module Controller =
             let addToSiteMap = addToSiteMap "DELETE"
 
             if state.DeleteAll.IsSome then
+              addToSiteMap "/"
               yield this.AddHandlerWithRoute state DeleteAll state.DeleteAll.Value trailingSlashHandler
 
             if keyFormat.IsSome then
@@ -285,20 +286,14 @@ module Controller =
       let controllerWithSubs =
         choose [
           if keyFormat.IsSome then
-            let stringConvert = stringConvert.Value
-            for (sPath, sCs) in state.SubControllers do
-              if not (sPath.StartsWith("/")) then
-                failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." sPath)
+            for (subPath, sCs) in state.SubControllers do
+              if not (subPath.StartsWith("/")) then
+                failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." subPath)
 
-              let path = keyFormat.Value
-              let dummy = sCs (unbox<'Key> Unchecked.defaultof<'Key>)
-              siteMap.Forward (path + sPath) "" dummy
+              let fullPath = keyFormat.Value + subPath
 
-              yield routef (PrintfFormat<'Key -> obj,_,_,_,'Key> (path + sPath))
-                      (fun input -> subRoute ("/" + (stringConvert input) + sPath) (sCs (unbox<'Key> input)))
-
-              yield routef (PrintfFormat<'Key -> string -> obj,_,_,_,'Key * string> (path + sPath + "%s"))
-                      (fun (input, _) -> subRoute ("/" + (stringConvert input) + sPath) (sCs (unbox<'Key> input)))
+              siteMap.Forward fullPath "" (sCs (Unchecked.defaultof<'Key>))
+              yield subRoutef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
 
           yield controllerWithErrorHandler
         ]
