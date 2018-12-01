@@ -141,18 +141,6 @@ module Controller =
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
 
-    member private __.AddHandler<'Output> state action (handler: HttpContext -> Task<'Output>) (path: string) =
-      let route = route path
-
-      let handler =
-        match typeof<'Output> with
-        | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
-        | _ -> fun _ ctx -> handler ctx |> response<'Output> ctx
-
-      match state.Plugs.TryFind action with
-      | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route >=> handler
-      | None -> route >=> handler
-
     member private __.AddHandlerWithRoute<'Output> state action (handler: HttpContext -> Task<'Output>) route =
       let handler =
         match typeof<'Output> with
@@ -160,7 +148,10 @@ module Controller =
         | _ -> fun _ ctx -> handler ctx |> response<'Output> ctx
 
       match state.Plugs.TryFind action with
-      | Some acts -> (succeed |> List.foldBack (fun e acc -> acc >=> e) acts) >=> route >=> handler
+      | Some acts ->
+        // Apply route test before applying plugs
+        let plugs = succeed |> List.foldBack (fun e acc -> acc >=> e) acts
+        route >=> plugs >=> handler
       | None -> route >=> handler
 
     member private __.AddKeyHandler<'Output> state action (handler: HttpContext -> 'Key -> Task<'Output>) path =
@@ -173,9 +164,8 @@ module Controller =
 
       match state.Plugs.TryFind action with
       | Some acts ->
-        let plugs: HttpHandler =
-            (succeed |> List.foldBack (fun e acc -> acc >=> e) acts)
-        // apply route test before applying plugs
+        // Apply route test before applying plugs
+        let plugs = succeed |> List.foldBack (fun e acc -> acc >=> e) acts
         route (fun key -> plugs >=> (handler key))
 
       | None -> route handler
@@ -206,8 +196,12 @@ module Controller =
             let route = route "/"
             if ctx.Request.Path.Value.EndsWith("/") then
               route next ctx
-            else
+            else if (SubRouting.getNextPartOfPath ctx = "") then
+              // TODO this could go away pending discussion about ctx.Request.Path modification.
+              // Only change Path at the end of the road, otherwise we cannot have all plugs fire after route check.
               ctx.Request.Path <- PathString(ctx.Request.Path.Value + "/")
+              route next ctx
+            else
               route next ctx
         choose [
           yield GET >=> choose [
@@ -216,12 +210,10 @@ module Controller =
             if state.Add.IsSome then
               let path = "/add"
               addToSiteMap path
-              yield this.AddHandler state Add state.Add.Value path
+              yield this.AddHandlerWithRoute state Add state.Add.Value (route path)
 
             if state.Index.IsSome then
-              let path = "/"
-              let handler (ctx: HttpContext) = ctx.Request.Path <- PathString(ctx.Request.Path.ToString() + "/"); state.Index.Value(ctx)
-              addToSiteMap path
+              addToSiteMap "/"
               yield this.AddHandlerWithRoute state Index state.Index.Value trailingSlashHandler
 
             if keyFormat.IsSome then
@@ -269,8 +261,6 @@ module Controller =
             let addToSiteMap = addToSiteMap "DELETE"
 
             if state.DeleteAll.IsSome then
-              let path = "/"
-              addToSiteMap path
               yield this.AddHandlerWithRoute state DeleteAll state.DeleteAll.Value trailingSlashHandler
 
             if keyFormat.IsSome then
