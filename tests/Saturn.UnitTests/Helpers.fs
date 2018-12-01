@@ -8,7 +8,10 @@ open System.IO
 open System.Net.Http
 open System.Text
 open NSubstitute
-
+open System.Collections.Generic
+open Microsoft.AspNetCore.Http.Features
+open Expecto.Tests
+open Expecto
 
 let getEmptyContext (method: string) (path : string) =
   let ctx = Substitute.For<HttpContext>()
@@ -19,6 +22,12 @@ let getEmptyContext (method: string) (path : string) =
   ctx.Request.PathBase.ReturnsForAnyArgs(PathString "") |> ignore
   ctx.Request.Path.ReturnsForAnyArgs (PathString(path)) |> ignore
   ctx.Request.QueryString.ReturnsForAnyArgs (QueryString "") |>ignore
+
+  // Essential for Giraffe subrouting work.
+  ctx.Items.ReturnsForAnyArgs(Dictionary<_,_>()) |> ignore
+
+  // For posterity, not needed, yet.
+  ctx.Features.ReturnsForAnyArgs(FeatureCollection()) |> ignore
 
   ctx.Response.Body <- new MemoryStream()
   ctx
@@ -48,3 +57,17 @@ let readText (response : HttpResponseMessage) =
 let readBytes (response : HttpResponseMessage) =
   response.Content.ReadAsByteArrayAsync()
   |> runTask
+
+let expectResponse expected actual =
+  match actual with
+  | None -> failtestf "Result was expected to be %s, but was %A" expected actual
+  | Some ctx ->
+      Expect.equal (getBody ctx) expected "Result should be equal"
+
+let responseTestCase handler method path expected () =
+  let ctx = getEmptyContext method path
+
+  try
+      let result = handler next ctx |> runTask
+      expectResponse expected result
+  with ex -> failtestf "failed because %A" ex

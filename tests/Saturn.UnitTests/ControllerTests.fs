@@ -2,32 +2,43 @@ module ControllerTests
 
 open Expecto
 open Saturn
-open Giraffe
 open Giraffe.GiraffeViewEngine
 open FSharp.Control.Tasks.V2.ContextInsensitive
 open Microsoft.Extensions.Primitives
 open Microsoft.AspNetCore.Http
 open System
 
-let createAction =
-    fun ctx ->
-        "Create" |> Controller.text ctx
+let createAction id ctx =
+  match id with
+  | Some id -> sprintf "Create %i" id
+  | None -> "Create"
+  |> Controller.text ctx
 
-let updateAction =
-    fun ctx id -> (sprintf "Update %i" id) |> Controller.text ctx
+let updateAction id ctx subId =
+    match id with
+    | Some id -> sprintf "Update %i %i" id subId
+    | None -> sprintf "Update %i" subId
+    |> Controller.text ctx
+
+let testSubController (id: int) = controller {
+  create (createAction (Some id))
+  update (updateAction (Some id))
+}
 
 let testController = controller {
-    create createAction
-    update updateAction
+  subController "/sub" testSubController
+
+  create (createAction None)
+  update (updateAction None)
 }
 
 let basicTemplate =
-    html [] [
-        head [] []
-        body [] [
-            h1 [] [ encodedText "Hello, world!" ]
-        ]
-    ]
+  html [] [
+      head [] []
+      body [] [
+          h1 [] [ encodedText "Hello, world!" ]
+      ]
+  ]
 
 let implicitNodeToHtmlTestController = controller {
     index (fun _ -> task { return basicTemplate })
@@ -38,36 +49,34 @@ let explicitNodeToHtmlTestController = controller {
 }
 
 let implicitStringToHtmlTestController = controller {
-   index (fun _ -> task { return GiraffeViewEngine.renderHtmlNode basicTemplate})
+   index (fun _ -> task { return renderHtmlNode basicTemplate})
 }
+
+let responseTestCase = responseTestCase testController
 
 [<Tests>]
 let tests =
     testList "Controller Tests" [
-        testCase "create works" <|  fun _ ->
-            let ctx = getEmptyContext "POST" ""
-            let expected = "Create"
+        testCase "subController Update works" <|
+          responseTestCase "PUT" "/1/sub/2" "Update 1 2"
 
-            try
-                let result = testController next ctx |> runTask
-                match result with
-                | None -> failtestf "Result was expected to be %s, but was %A" expected result
-                | Some ctx ->
-                    Expect.equal (getBody ctx) expected "Result should be equal"
-            with ex -> failtestf "failed because %A" ex
+        testCase "subController Create trailing slash works" <|
+          responseTestCase "POST" "/1/sub/" "Create 1"
 
-        testCase "update works" <| fun _ ->
-            let ctx = getEmptyContext "PUT" "/1"
-            let expected = "Update 1"
+        testCase "subController Create no trailing slash works" <|
+          responseTestCase "POST" "/1/sub" "Create 1"
 
-            try
-                let result = testController next ctx |> runTask
-                match result with
-                | None -> failtestf "Result was expected to be %s, but was %A" expected result
-                | Some ctx ->
-                    Expect.equal (getBody ctx) expected "Result should be equal"
+        testCase "Create trailing slash works" <|
+          responseTestCase "POST" "/" "Create"
 
-            with ex -> failtestf "failed because %A" ex
+        testCase "Create no trailing slash works" <|
+          responseTestCase "POST" "" "Create"
+
+        testCase "Update POST works" <|
+          responseTestCase "POST" "/1" "Update 1"
+
+        testCase "Update PUT works" <|
+          responseTestCase "PUT" "/1" "Update 1"
 
         testCase "deleteAll works" <| fun _ ->
             let expectedStatusCode = 204
@@ -75,7 +84,7 @@ let tests =
             let mutable plugged = ""
             let deleteAll = fun (ctx: HttpContext) ->
                 task {
-                    do ctx.SetStatusCode 204
+                    ctx.Response.StatusCode <- 204
                     return (Some ctx)
                 }
             let deleteController = controller {
@@ -98,7 +107,7 @@ let tests =
             let mutable plugged = ""
             let deleteAll = fun (ctx: HttpContext) ->
                 task {
-                    do ctx.SetStatusCode 204
+                    ctx.Response.StatusCode <- 204
                     return (Some ctx)
                 }
             let deleteController = controller {
@@ -118,33 +127,27 @@ let tests =
         testCase "plugs should only fire once" <| fun _ ->
             let deleteAll = fun (ctx: HttpContext) ->
                 task {
-                    do ctx.SetStatusCode 204
+                    ctx.Response.StatusCode <- 204
                     return (Some ctx)
                 }
             let mutable count = 0
             let controllerWithPlugs =
                 controller {
-                    create createAction
-                    update updateAction
+                    create (createAction None)
+                    update (updateAction None)
                     delete_all deleteAll
                     plug [All] (fun next ctx -> count <- count + 1; next ctx)
                 }
             try
                 let postEmpty = getEmptyContext "POST" "" |> controllerWithPlugs next |> runTask
                 Expect.equal count 1 "Count should be 1"
-                match postEmpty with
-                | None -> failtestf "Result was expected to be %s, but was %A" "Create" postEmpty
-                | Some ctx ->
-                    Expect.equal (getBody ctx) "Create" "Result should be equal"
+                expectResponse "Create" postEmpty
                 getEmptyContext "POST" "/" |> controllerWithPlugs next |> runTask |> ignore
                 Expect.equal count 2 "Count should be 2"
                 getEmptyContext "POST" "/1" |> controllerWithPlugs next |> runTask |> ignore
                 Expect.equal count 3 "Count should be 3"
                 let putResult = getEmptyContext "PUT" "/1" |> controllerWithPlugs next |> runTask
-                match putResult with
-                | None -> failtestf "Result was expected to be %s, but was %A" "Create" postEmpty
-                | Some ctx ->
-                    Expect.equal (getBody ctx) "Update 1" "Result should be equal"
+                expectResponse "Update 1" putResult
                 Expect.equal count 4 "Count should be 4"
                 let deleteAllResult = getEmptyContext "DELETE" "" |> controllerWithPlugs next |> runTask
                 match deleteAllResult with
