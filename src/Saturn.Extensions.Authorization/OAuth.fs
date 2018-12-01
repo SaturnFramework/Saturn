@@ -1,7 +1,7 @@
 module Saturn
 
 open Saturn
-open Giraffe
+open FSharp.Control.Tasks.V2.ContextInsensitive
 open Microsoft.AspNetCore
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.AspNetCore.Builder

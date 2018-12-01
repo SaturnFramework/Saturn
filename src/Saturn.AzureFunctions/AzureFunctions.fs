@@ -2,6 +2,7 @@ namespace Saturn
 
 open Saturn
 open Giraffe
+open FSharp.Control.Tasks.V2.ContextInsensitive
 open System
 open Microsoft.AspNetCore.Http
 open System.Threading.Tasks

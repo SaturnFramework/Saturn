@@ -6,6 +6,7 @@ open System.Security.Claims
 open System.IdentityModel.Tokens.Jwt
 open Microsoft.IdentityModel.Tokens
 open Giraffe
+open FSharp.Control.Tasks.V2.ContextInsensitive
 open Microsoft.AspNetCore.Http
 
 //Based on https://medium.com/@dsincl12/json-web-token-with-giraffe-and-f-4cebe1c3ef3b

@@ -38,7 +38,7 @@ module Pipeline =
 
     ///`requires_auth_policy` validates if a user satisfies policy requirement, if not then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_auth_policy")>]
-    member __.RequiresAuthPolicy(state, check, authFailedHandler) : HttpHandler  = state >=> (requiresAuthPolicy check authFailedHandler)
+    member __.RequiresAuthPolicy(state, check, authFailedHandler) : HttpHandler  = state >=> (authorizeUser check authFailedHandler)
 
     ///`requires_policy` validates if a user satisfies a defined policy requirement, if not then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_policy")>]
