@@ -5,6 +5,7 @@ open Saturn
 open Giraffe
 open Giraffe.GiraffeViewEngine
 open Microsoft.Extensions.Primitives
+open Microsoft.AspNetCore.Http
 open System
 
 let createAction =
@@ -67,12 +68,64 @@ let tests =
 
             with ex -> failtestf "failed because %A" ex
 
+        testCase "deleteAll works" <| fun _ ->
+            let expectedStatusCode = 204
+            let expectedString = "deleted"
+            let mutable plugged = ""
+            let deleteAll = fun (ctx: HttpContext) ->
+                task {
+                    do ctx.SetStatusCode 204
+                    return (Some ctx)
+                }
+            let deleteController = controller {
+                delete_all deleteAll
+                plug [DeleteAll] (fun next ctx -> plugged <- "deleted"; next ctx)
+            }
+            let deleteResponse =
+                getEmptyContext "DELETE" ""
+                |> deleteController next
+                |> runTask
+            match deleteResponse with
+            | None -> failtestf "Resulted was expected to be %d, but was %A" expectedStatusCode deleteResponse
+            | Some ctx ->
+                Expect.equal (ctx.Response.StatusCode) expectedStatusCode "Status code should be 204"
+            Expect.equal plugged expectedString "Plugged should equal deleted"
+
+        testCase "deleteAll with trailing slash works" <| fun _ ->
+            let expectedStatusCode = 204
+            let expectedString = "deleted"
+            let mutable plugged = ""
+            let deleteAll = fun (ctx: HttpContext) ->
+                task {
+                    do ctx.SetStatusCode 204
+                    return (Some ctx)
+                }
+            let deleteController = controller {
+                delete_all deleteAll
+                plug [DeleteAll] (fun next ctx -> plugged <- "deleted"; next ctx)
+            }
+            let deleteResponse =
+                getEmptyContext "DELETE" "/"
+                |> deleteController next
+                |> runTask
+            match deleteResponse with
+            | None -> failtestf "Resulted was expected to be %d, but was %A" expectedStatusCode deleteResponse
+            | Some ctx ->
+                Expect.equal (ctx.Response.StatusCode) expectedStatusCode "Status code should be 204"
+            Expect.equal plugged expectedString "Plugged should equal deleted"
+
         testCase "plugs should only fire once" <| fun _ ->
+            let deleteAll = fun (ctx: HttpContext) ->
+                task {
+                    do ctx.SetStatusCode 204
+                    return (Some ctx)
+                }
             let mutable count = 0
             let controllerWithPlugs =
                 controller {
                     create createAction
                     update updateAction
+                    delete_all deleteAll
                     plug [All] (fun next ctx -> count <- count + 1; next ctx)
                 }
             try
@@ -92,6 +145,12 @@ let tests =
                 | Some ctx ->
                     Expect.equal (getBody ctx) "Update 1" "Result should be equal"
                 Expect.equal count 4 "Count should be 4"
+                let deleteAllResult = getEmptyContext "DELETE" "" |> controllerWithPlugs next |> runTask
+                match deleteAllResult with
+                | None -> failtestf "deleteAllResult was expected to have status code 204, but was %A" deleteAllResult
+                | Some ctx ->
+                    Expect.equal (ctx.Response.StatusCode) 204 "status code should be 204"
+                Expect.equal count 5 "Count should be 5"
 
             with ex -> failtestf "failed because %A" ex
 
