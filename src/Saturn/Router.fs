@@ -271,7 +271,7 @@ module Router =
     member __.CaseInsensitive (state) =
       {state with CaseInsensitive = true}
 
-  [<ObsoleteAttribute("This construct is obsolete, use router instead")>]
+  [<ObsoleteAttribute("This construct is obsolete, use `router` instead")>]
   let scope = RouterBuilder()
 
   let router = RouterBuilder()

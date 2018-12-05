@@ -14,6 +14,28 @@ module ChallengeType =
     | Cookies
     | Custom of string
 
+module OAuth =
+
+  ///Record type representing simple OAuth configuration to be used with `use_oauth_with_settings`.
+  type OAuthSettings = {
+    ///Name of the schema to be registered
+    Schema: string
+    ///OAuth CallbackPath endpoint
+    CallbackPath: string
+    ///OAuth Authorization endpoint
+    ///For example: https://github.com/login/oauth/authorize
+    AuthorizationEndpoint: string
+    ///OAuth Token endpoint
+    ///For example: https://github.com/login/oauth/access_token
+    TokenEndpoint: string
+    ///OAuth User Information endpoint
+    ///For example: https://api.github.com/user
+    UserInformationEndpoint: string
+    ///Sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
+    ///For example: `["login", "githubUsername"; "name", "fullName"]` where `login` and `name` are names of fields in GitHub JSON response (https://developer.github.com/v3/users/#get-the-authenticated-user).
+    Claims : (string * string) seq
+  }
+
 module Auth =
   let private mapChallengeTypeToScheme = function
     | JWT -> Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme
