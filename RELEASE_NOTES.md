@@ -1,3 +1,9 @@
+### 0.8.0 - 05.12.2018
+* Updates Index and DeleteAll to not result in plugs fired twice. (by [@jeremyabbott](https://github.com/jeremyabbott))
+* Upgrade of Giraffe to 3.4, fixes breaking compilation errors. (by [@NinoFloris](https://github.com/NinoFloris))
+* Fixes other spots that are related to #143, DeleteAll and Index, brings consistency, all plugs are now only run after route check (by [@NinoFloris](https://github.com/NinoFloris))
+* Removes stringConvert, we now completely rely on giraffe to convert our route segments, which means ShortID and ShortGuid automatically work as they should, also adds quite some tests for (sub) routing (by [@NinoFloris](https://github.com/NinoFloris))
+
 ### 0.7.6 - 05.11.2018
 * Add extension for turbolinks
 * Fix turbolinks header application (by [@NinoFloris](https://github.com/NinoFloris))
