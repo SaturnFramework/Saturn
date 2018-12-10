@@ -8,6 +8,8 @@ open Microsoft.Extensions.Primitives
 open Microsoft.AspNetCore.Http
 open System
 
+//---------------------------Routing tests----------------------------------------
+
 let createAction id ctx =
   match id with
   | Some id -> sprintf "Create %i" id
@@ -32,31 +34,12 @@ let testController = controller {
   update (updateAction None)
 }
 
-let basicTemplate =
-  html [] [
-      head [] []
-      body [] [
-          h1 [] [ encodedText "Hello, world!" ]
-      ]
-  ]
-
-let implicitNodeToHtmlTestController = controller {
-    index (fun _ -> task { return basicTemplate })
-}
-
-let explicitNodeToHtmlTestController = controller {
-    index (fun ctx -> task { return! Controller.renderHtml ctx basicTemplate })
-}
-
-let implicitStringToHtmlTestController = controller {
-   index (fun _ -> task { return renderHtmlNode basicTemplate})
-}
-
-let responseTestCase = responseTestCase testController
 
 [<Tests>]
-let tests =
-    testList "Controller Tests" [
+let routingTests =
+    let responseTestCase = responseTestCase testController
+
+    testList "Controller Routing Tests" [
         testCase "subController Update works" <|
           responseTestCase "PUT" "/1/sub/2" "Update 1 2"
 
@@ -123,7 +106,14 @@ let tests =
             | Some ctx ->
                 Expect.equal (ctx.Response.StatusCode) expectedStatusCode "Status code should be 204"
             Expect.equal plugged expectedString "Plugged should equal deleted"
+]
 
+//---------------------------Plug tests----------------------------------------
+
+
+[<Tests>]
+let plugTests =
+    testList "Controller plug tests" [
         testCase "plugs should only fire once" <| fun _ ->
             let deleteAll = fun (ctx: HttpContext) ->
                 task {
@@ -157,7 +147,33 @@ let tests =
                 Expect.equal count 5 "Count should be 5"
 
             with ex -> failtestf "failed because %A" ex
+    ]
 
+//---------------------------Rendering tests----------------------------------------
+
+let basicTemplate =
+  html [] [
+      head [] []
+      body [] [
+          h1 [] [ encodedText "Hello, world!" ]
+      ]
+  ]
+
+let implicitNodeToHtmlTestController = controller {
+    index (fun _ -> task { return basicTemplate })
+}
+
+let explicitNodeToHtmlTestController = controller {
+    index (fun ctx -> task { return! Controller.renderHtml ctx basicTemplate })
+}
+
+let implicitStringToHtmlTestController = controller {
+   index (fun _ -> task { return renderHtmlNode basicTemplate})
+}
+
+[<Tests>]
+let htmlRendererTests =
+    testList "Controller HTML rendering" [
         testCase "doctype is added to implicit index html" <| fun _ ->
             let ctx = getEmptyContext "GET" "/"
             ctx.Request.Headers.Add("Accept", StringValues("text/html"))
@@ -201,4 +217,34 @@ let tests =
                     else
                         ()
             with ex -> failtestf "failed because %A" ex
-]
+    ]
+
+//---------------------------Implicit conversion tests----------------------------------------
+type Test = {A: string; B: int; C: bool}
+
+
+let implicitConversionsController = controller {
+    index (fun _ ->
+        task {
+            return [{A = "test"; B = 1; C = false}; {A = "test2"; B = 2; C = true}]
+        })
+
+    show (fun _ (id : string) ->
+        task {
+            return {A = "test"; B = 1; C = false}
+        })
+}
+
+[<Tests>]
+let implicitConversionTest =
+    let responseTestCase = responseTestCase implicitConversionsController
+    testList "Controller implicit conversion" [
+        testCase "convert list to JSON" <|
+            responseTestCase "GET" "/" """[{"a":"test","b":1,"c":false},{"a":"test2","b":2,"c":true}]"""
+
+        testCase "convert record to JSON" <|
+            responseTestCase "GET" "/1" """{"a":"test","b":1,"c":false}"""
+
+
+
+    ]

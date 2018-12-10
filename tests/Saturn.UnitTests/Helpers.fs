@@ -12,6 +12,7 @@ open System.Collections.Generic
 open Microsoft.AspNetCore.Http.Features
 open Expecto.Tests
 open Expecto
+open Giraffe.Serialization
 
 let getEmptyContext (method: string) (path : string) =
   let ctx = Substitute.For<HttpContext>()
@@ -30,6 +31,10 @@ let getEmptyContext (method: string) (path : string) =
   ctx.Features.ReturnsForAnyArgs(FeatureCollection()) |> ignore
 
   ctx.Response.Body <- new MemoryStream()
+  ctx.RequestServices
+     .GetService(typeof<Json.IJsonSerializer>)
+     .Returns(new NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings))
+  |> ignore
   ctx
 
 let next : HttpFunc = Some >> Task.FromResult
