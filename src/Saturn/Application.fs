@@ -17,6 +17,7 @@ open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.StaticFiles
+open Microsoft.Extensions.Configuration
 
 [<AutoOpen>]
 module Application =
@@ -167,10 +168,19 @@ module Application =
       }
 
     [<CustomOperation("use_config")>]
-    member __.UseConfig(state : ApplicationState, configBuilder : unit -> 'a) =
-      let x = lazy(configBuilder ())
+    member __.UseConfig(state : ApplicationState, configBuilder : IConfiguration -> 'a) =
+      let mutable (x: 'a option) = None
       let handler (nxt : HttpFunc) (ctx : Microsoft.AspNetCore.Http.HttpContext) : HttpFuncResult =
-        ctx.Items.["Configuration"] <- x.Value
+        let v =
+          match x with
+          | None ->
+            let ic = ctx.GetService<IConfiguration>()
+            let v = configBuilder ic
+            x <- Some v
+            v
+          | Some v -> v
+
+        ctx.Items.["Configuration"] <- v
         nxt ctx
 
       {state with Pipelines = handler::state.Pipelines}
