@@ -25,6 +25,7 @@ module Router =
 
       NotFoundHandler: HttpHandler option
       Pipelines: HttpHandler list
+      CaseInsensitive: bool
     }
     with
       member internal state.GetRoutes(typ: RouteType) =
@@ -63,7 +64,8 @@ module Router =
       { Routes = Dictionary()
         RoutesF = Dictionary()
         Pipelines = []
-        NotFoundHandler = None }
+        NotFoundHandler = None
+        CaseInsensitive = false }
 
     member __.Run(state : RouterState) : HttpHandler =
       let siteMap = HandlerMap()
@@ -98,6 +100,11 @@ module Router =
         with
         | _ ->
           failwith "Couldn't evaluate handler"
+
+      let route = if state.CaseInsensitive then routeCi else route
+      let routefUnsafe = if state.CaseInsensitive then routefUnsafeCi else routefUnsafe
+      let subRoute = if state.CaseInsensitive then subRouteCi else subRoute
+      let subRoutefUnsafe = if state.CaseInsensitive then subRoutefUnsafeCi else subRoutefUnsafe
 
       let generateRoutes typ =
         let v =
@@ -258,6 +265,11 @@ module Router =
     [<CustomOperation("not_found_handler")>]
     member __.NotFoundHandler(state, handler) : RouterState =
       {state with NotFoundHandler = Some handler}
+
+    ///Toggle case insensitve routing
+    [<CustomOperation("case_insensitive")>]
+    member __.CaseInsensitive (state) =
+      {state with CaseInsensitive = true}
 
   [<ObsoleteAttribute("This construct is obsolete, use router instead")>]
   let scope = RouterBuilder()

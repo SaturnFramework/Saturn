@@ -61,14 +61,14 @@ module Common =
     | Some p when ctx.Request.Path.Value.Contains p -> ctx.Request.Path.Value.[p.Length..]
     | _   -> ctx.Request.Path.Value
 
-  let routefUnsafe (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
+  let internal routefUnsafe (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
         Giraffe.FormatExpressions.tryMatchInput path (getPath ctx) false
         |> function
             | None      -> System.Threading.Tasks.Task.FromResult None
             | Some args -> routeHandler args next ctx
 
-  let subRoutefUnsafe (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
+  let internal subRoutefUnsafe (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
         fun (next : HttpFunc) (ctx : HttpContext) ->
             let paramCount   = (path.Value.Split '/').Length
             let subPathParts = (getPath ctx).Split '/'
@@ -85,3 +85,47 @@ module Common =
                 |> function
                     | None      -> abort
                     | Some args -> handlerWithRootedPath subPath (routeHandler args) next ctx
+
+  let internal routefUnsafeCi (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        Giraffe.FormatExpressions.tryMatchInput path (getPath ctx) true
+        |> function
+            | None      -> System.Threading.Tasks.Task.FromResult None
+            | Some args -> routeHandler args next ctx
+
+  let internal subRoutefUnsafeCi (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            let paramCount   = (path.Value.Split '/').Length
+            let subPathParts = (getPath ctx).Split '/'
+            if paramCount > subPathParts.Length then abort
+            else
+                let subPath =
+                    subPathParts
+                    |> Array.take paramCount
+                    |> Array.fold (fun state elem ->
+                        if String.IsNullOrEmpty elem
+                        then state
+                        else sprintf "%s/%s" state elem) ""
+                Giraffe.FormatExpressions.tryMatchInput path subPath true
+                |> function
+                    | None      -> abort
+                    | Some args -> handlerWithRootedPath subPath (routeHandler args) next ctx
+
+  let internal subRoutefCi (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
+        Giraffe.FormatExpressions.validateFormat path
+        fun (next : HttpFunc) (ctx : HttpContext) ->
+            let paramCount   = (path.Value.Split '/').Length
+            let subPathParts = (SubRouting.getNextPartOfPath ctx).Split '/'
+            if paramCount > subPathParts.Length then abort
+            else
+                let subPath =
+                    subPathParts
+                    |> Array.take paramCount
+                    |> Array.fold (fun state elem ->
+                        if String.IsNullOrEmpty elem
+                        then state
+                        else sprintf "%s/%s" state elem) ""
+                Giraffe.FormatExpressions.tryMatchInput path subPath true
+                |> function
+                    | None      -> abort
+                    | Some args -> SubRouting.routeWithPartialPath subPath (routeHandler args) next ctx
