@@ -12,7 +12,7 @@
     <Compile Include="Helpers.fs" />
     <Compile Include="ControllerTests.fs" />
     <Compile Include="LinksTests.fs" />
-    <Compile Include="SampleTests.fs" />
+    <Compile Include="RouterTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
