@@ -47,6 +47,7 @@ module Controller =
     SubControllers : (string * ('Key -> HttpHandler)) list
     Plugs : Map<Action, HttpHandler list>
     Version: string option
+    CaseInsensitive: bool
   }
 
   let inline response<'a> ctx (input : Task<'a>) =
@@ -58,7 +59,7 @@ module Controller =
   type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
 
     member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex) }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex); CaseInsensitive = false }
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
@@ -120,6 +121,11 @@ module Controller =
     member __.Version(state, version) =
       {state with Version = Some version}
 
+    ///Toggle case insensitve routing
+    [<CustomOperation("case_insensitive")>]
+    member __.CaseInsensitive (state) =
+      {state with CaseInsensitive = true}
+
     ///Inject a controller into the routing table rooted at a given path. All of that controller's actions will be anchored off of the path as a prefix.
     [<CustomOperation("subController")>]
     member __.SubController(state, path, handler) =
@@ -155,7 +161,11 @@ module Controller =
       | None -> route >=> handler
 
     member private __.AddKeyHandler<'Output> state action (handler: HttpContext -> 'Key -> Task<'Output>) path =
-      let route = routef (PrintfFormat<_,_,_,_,'Key> path)
+      let route =
+        if state.CaseInsensitive then
+          routeCif (PrintfFormat<_,_,_,_,'Key> path)
+        else
+          routef (PrintfFormat<_,_,_,_,'Key> path)
 
       let handler =
         match typeof<'Output> with
@@ -193,7 +203,7 @@ module Controller =
       let initialController =
         let trailingSlashHandler : HttpHandler =
           fun next ctx ->
-            let route = route "/"
+            let route = if state.CaseInsensitive then routeCi "/" else route "/"
             if ctx.Request.Path.Value.EndsWith("/") then
               route next ctx
             else if (SubRouting.getNextPartOfPath ctx = "") then
@@ -293,7 +303,11 @@ module Controller =
               let fullPath = keyFormat.Value + subPath
 
               siteMap.Forward fullPath "" (sCs (Unchecked.defaultof<'Key>))
-              yield subRoutef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
+              yield
+                if state.CaseInsensitive then
+                  subRoutefCi (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
+                else
+                  subRoutef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
 
           yield controllerWithErrorHandler
         ]
