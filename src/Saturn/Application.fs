@@ -18,6 +18,12 @@ open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.StaticFiles
 open Microsoft.Extensions.Configuration
+open Microsoft.AspNetCore.Authentication
+open FSharp.Control.Tasks.V2
+open System.Net.Http
+open System.Net.Http.Headers
+open Newtonsoft.Json.Linq
+open System.Threading.Tasks
 
 [<AutoOpen>]
 module Application =
@@ -33,6 +39,8 @@ module Application =
     CliArguments: string array option
     CookiesAlreadyAdded: bool
   }
+
+  let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
 
   type ApplicationBuilder internal () =
     member __.Yield(_) =
@@ -300,9 +308,80 @@ module Application =
           CookiesAlreadyAdded = flag
       }
 
+    ///Enables simple custom OAuth authentication using parmeters provided with `OAuth.OAuthSettings` record.
+    ///Can be used to quickly implement default OAuth authentication for 3rd party providers.
+    [<CustomOperation("use_oauth")>]
+    member __.UseOAuthWithSettings(state: ApplicationState,  clientId : string, clientSecret : string, settings: Saturn.OAuth.OAuthSettings) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let c = s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- settings.Schema)
+        addCookie state c
+        c.AddOAuth(settings.Schema, fun (opt : Authentication.OAuth.OAuthOptions) ->
+          opt.ClientId <- clientId
+          opt.ClientSecret <- clientSecret
+          opt.CallbackPath <- PathString(settings.CallbackPath)
+          opt.AuthorizationEndpoint <- settings.AuthorizationEndpoint
+          opt.TokenEndpoint <- settings.TokenEndpoint
+          opt.UserInformationEndpoint <- settings.UserInformationEndpoint
+          settings.Claims |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(v,k) )
+          let ev = opt.Events
+
+          ev.OnCreatingTicket <-
+            fun ctx ->
+              let tsk = task {
+                let req = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint)
+                req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue("application/json"))
+                req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", ctx.AccessToken)
+                let! (response : HttpResponseMessage) = ctx.Backchannel.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ctx.HttpContext.RequestAborted)
+                response.EnsureSuccessStatusCode () |> ignore
+                let! cnt = response.Content.ReadAsStringAsync()
+                let user = JObject.Parse cnt
+                ctx.RunClaimActions user
+              }
+              Task.Factory.StartNew(fun () -> tsk.Result)
+
+         ) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = true
+      }
+
     ///Enables custom OAuth authentication
     [<CustomOperation("use_custom_oauth")>]
+    [<ObsoleteAttribute("This construct is obsolete, use `use_oauth_with_config` instead")>]
     member __.UseCustomOAuth(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      let mutable flag = state.CookiesAlreadyAdded
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let c = s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- name)
+        if not flag then
+          flag <- true
+          c.AddCookie() |> ignore
+        c.AddOAuth(name,config) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = flag
+      }
+
+    ///Enables OAuth authentication with custom configuration
+    [<CustomOperation("use_oauth_with_config")>]
+    member __.UseOAuthWithConfig(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
       let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()

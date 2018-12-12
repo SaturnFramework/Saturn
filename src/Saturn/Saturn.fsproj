@@ -17,8 +17,8 @@
     <Compile Include="Router.fs" />
     <Compile Include="ControllerHelpers.fs" />
     <Compile Include="Controller.fs" />
-    <Compile Include="Application.fs" />
     <Compile Include="Authentication.fs" />
+    <Compile Include="Application.fs" />
     <Compile Include="Links.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
