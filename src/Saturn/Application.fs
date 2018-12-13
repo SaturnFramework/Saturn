@@ -496,6 +496,7 @@ module Application =
       { state with
           ServicesConfig = xmlService :: state.ServicesConfig }
 
+    ///Registers channel for given url.
     [<CustomOperation("add_channel")>]
     member __.AddChannel (state, url: string, channel: IChannel ) =
       { state with
