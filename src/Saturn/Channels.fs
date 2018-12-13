@@ -24,7 +24,7 @@ module Channels =
         abstract member HandleMessage: HttpContext * WebSocketReceiveResult * Message -> Task<unit>
         abstract member Terminate: HttpContext -> Task<unit>
 
-    type internal SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel) =
+    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel) =
         do sockets.Add(path, ConcurrentDictionary())
 
         member __.Invoke(ctx : HttpContext) =
