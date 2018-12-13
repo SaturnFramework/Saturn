@@ -24,6 +24,7 @@ open System.Net.Http
 open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
 open System.Threading.Tasks
+open Channels
 
 [<AutoOpen>]
 module Application =
@@ -38,6 +39,7 @@ module Application =
     ServicesConfig: (IServiceCollection -> IServiceCollection) list
     CliArguments: string array option
     CookiesAlreadyAdded: bool
+    Channels: (string * IChannel) list
   }
 
   let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
@@ -49,7 +51,7 @@ module Application =
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
 
 
-      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false }
+      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; Channels = [] }
 
     member __.Run(state: ApplicationState) : IWebHostBuilder =
       match state.Router with
@@ -76,6 +78,13 @@ module Application =
       wbhst
         .Configure(Action<IApplicationBuilder> appConfigs)
         .ConfigureServices(Action<IServiceCollection> serviceConfigs)  |> ignore
+      if not (state.Channels.IsEmpty) then
+        wbhst.Configure(fun ab -> ab.UseWebSockets() |> ignore)
+        |> ignore
+        state.Channels
+        |> List.iter (fun (url, chnl) ->
+          wbhst.Configure(fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl) |> ignore) |> ignore)
+
       if not (state.Urls |> List.isEmpty) then
         wbhst.UseUrls(state.Urls |> List.toArray)
       else wbhst
@@ -486,6 +495,11 @@ module Application =
         s.AddSingleton<Giraffe.Serialization.Xml.IXmlSerializer>(serializer)
       { state with
           ServicesConfig = xmlService :: state.ServicesConfig }
+
+    [<CustomOperation("add_channel")>]
+    member __.AddChannel (state, url: string, channel: IChannel ) =
+      { state with
+          Channels = (url, channel) :: state.Channels }
 
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
