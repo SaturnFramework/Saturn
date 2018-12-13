@@ -159,8 +159,8 @@ module Controller =
 
     ///Toggle case insensitve routing
     [<CustomOperation("case_insensitive")>]
-    member __.CaseInsensitive (state) =
-      {state with ControllerState.CaseInsensitive = true}
+    member __.CaseInsensitive (state : ControllerState<_,_,_,_,_,_,_,_,_,_> ) =
+      {state with CaseInsensitive = true}
 
     ///Inject a controller into the routing table rooted at a given route. All of that controller's actions will be anchored off of the route as a prefix.
     [<CustomOperation("subController")>]
