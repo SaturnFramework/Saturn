@@ -12,3 +12,4 @@ Microsoft.AspNetCore.Authentication.Cookies
 Microsoft.AspNetCore.Authentication.OAuth
 Microsoft.AspNetCore.Authorization
 Microsoft.AspNetCore.Antiforgery
+Microsoft.AspNetCore.WebSockets
