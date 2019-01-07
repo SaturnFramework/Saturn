@@ -248,3 +248,45 @@ let implicitConversionTest =
 
 
     ]
+
+//---------------------------DI tests----------------------------------------
+
+type Dependency = {dep : IDependency}
+
+let diController = controller {
+    index (fun ctx d ->
+        d.dep.Call ()
+        d.dep.Call ()
+        let v = d.dep.Value().ToString()
+        Controller.text ctx v
+    )
+
+    show (fun ctx (d: IDependency) (id: int) ->
+        d.Call ()
+        d.Call ()
+        let v = (id + d.Value()).ToString()
+        Controller.text ctx v
+    )
+
+    add (fun ctx (d: (IDependency * obj))->
+        let (d,_) = d
+        d.Call ()
+        d.Call ()
+        let v = d.Value().ToString()
+        Controller.text ctx v
+    )
+}
+
+[<Tests>]
+let automaticDiTest =
+    let responseTestCase = responseTestCase diController
+    testList "Controller automatic DI" [
+        testCase "can inject record" <|
+            responseTestCase "GET" "/" "2"
+
+        testCase "can inject interface" <|
+            responseTestCase "GET" "/1" "3"
+
+        testCase "can inject tupple" <|
+            responseTestCase "GET" "/add" "2"
+    ]
