@@ -36,7 +36,7 @@ let userController = controller {
     edit (fun ctx id -> (sprintf "Edit handler no version - %i" id) |> Controller.text ctx)
     update (fun ctx id -> (sprintf "Update handler no version - %i" id) |> Controller.text ctx)
     delete (fun ctx id -> failwith (sprintf "Delete handler no version failed - %i" id) |> Controller.text ctx)
-    error_handler (fun ctx ex -> sprintf "Error handler no version - %s" ex.Message |> Controller.text ctx)
+    error_handler (fun ctx (ex: Exception) -> sprintf "Error handler no version - %s" ex.Message |> Controller.text ctx)
 }
 
 type Response = {
