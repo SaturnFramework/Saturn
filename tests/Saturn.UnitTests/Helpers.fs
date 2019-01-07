@@ -14,6 +14,20 @@ open Expecto.Tests
 open Expecto
 open Giraffe.Serialization
 
+type IDependency =
+  abstract member Call : unit -> unit
+  abstract member Value : unit -> int
+
+let dependency () =
+  let mutable counter = 0
+  {new IDependency with
+    member __.Call () =
+      counter <- counter + 1
+      ()
+    member __.Value() =
+      counter
+  }
+
 let getEmptyContext (method: string) (path : string) =
   let ctx = Substitute.For<HttpContext>()
   ctx.Request.Method.ReturnsForAnyArgs method |> ignore
@@ -34,6 +48,10 @@ let getEmptyContext (method: string) (path : string) =
   ctx.RequestServices
      .GetService(typeof<Json.IJsonSerializer>)
      .Returns(new NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings))
+  |> ignore
+  ctx.RequestServices
+    .GetService(typeof<IDependency>)
+    .Returns(dependency ())
   |> ignore
   ctx
 
