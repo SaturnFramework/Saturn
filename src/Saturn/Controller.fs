@@ -2,13 +2,14 @@ namespace Saturn
 
 open System
 open SiteMap
+open Microsoft.FSharp.Reflection
+open System.Collections.Concurrent
+open Microsoft.AspNetCore.Http
 
 [<AutoOpen>]
 module Controller =
 
-  open Microsoft.AspNetCore.Http
   open Giraffe
-  open Giraffe.FormatExpressions
   open FSharp.Control.Tasks.V2.ContextInsensitive
   open System.Threading.Tasks
 
@@ -63,48 +64,75 @@ module Controller =
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
-    member __.Index (state, handler) =
+    member __.Index (state, (handler : HttpContext -> Task<'IndexOutput>)) =
       {state with Index = Some handler}
+
+    member x.Index (state, (handler : HttpContext -> 'Dependency -> Task<'IndexOutput>)) =
+      {state with Index = Some (x.MapDependencyHandlerToHandler handler)}
 
     ///Operation that should render (or return in case of API controllers) single entry of data
     [<CustomOperation("show")>]
-    member __.Show (state, handler) =
+    member __.Show (state, handler: HttpContext -> 'Key -> Task<'ShowOutput>) =
       {state with Show = Some handler}
+
+    member x.Show (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'ShowOutput>) =
+      {state with Show = Some (x.MapDependencyHandlerToHandler' handler)}
 
     ///Operation that should render form for adding new item
     [<CustomOperation("add")>]
-    member __.Add (state, handler) =
+    member __.Add (state, handler: HttpContext -> Task<'AddOutput>) =
       {state with Add = Some handler}
+
+    member x.Add (state, handler : HttpContext -> 'Dependency -> Task<'AddOutput>) =
+      {state with Add = Some (x.MapDependencyHandlerToHandler handler)}
 
     ///Operation that should render form for editing existing item
     [<CustomOperation("edit")>]
-    member __.Edit (state, handler) =
+    member __.Edit (state, handler: HttpContext -> 'Key -> Task<'EditOutput>) =
       {state with Edit = Some handler}
+
+    member x.Edit (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'EditOutput>) =
+      {state with Edit = Some (x.MapDependencyHandlerToHandler' handler)}
 
     ///Operation that creates new item
     [<CustomOperation("create")>]
-    member __.Create (state, handler) =
+    member __.Create (state, handler: HttpContext -> Task<'CreateOutput>) =
       {state with Create = Some handler}
+
+    member x.Create (state, handler: HttpContext -> 'Dependency -> Task<'AddOutput>) =
+      {state with Create = Some (x.MapDependencyHandlerToHandler handler)}
 
     ///Operation that updates existing item
     [<CustomOperation("update")>]
-    member __.Update (state, handler) =
+    member __.Update (state, handler: HttpContext -> 'Key -> Task<'UpdateOutput>) =
       {state with Update = Some handler}
+
+    member x.Update (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'UpdateOutput>) =
+      {state with Update = Some (x.MapDependencyHandlerToHandler' handler)}
 
     ///Operation that patches existing item
     [<CustomOperation("patch")>]
-    member __.Patch (state, handler) =
+    member __.Patch (state, handler: HttpContext -> 'Key -> Task<'PatchOutput>) =
       {state with Patch = Some handler}
+
+    member x.Patch (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'PatchOutput>) =
+      {state with Patch = Some (x.MapDependencyHandlerToHandler' handler)}
 
     ///Operation that deletes existing item
     [<CustomOperation("delete")>]
-    member __.Delete (state, handler) =
+    member __.Delete (state, handler: HttpContext -> 'Key -> Task<'DeleteOutput>) =
       {state with Delete = Some handler}
+
+    member x.Delete (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'DeleteOutput>) =
+      {state with Delete = Some (x.MapDependencyHandlerToHandler' handler)}
 
     ///Operation that deletes all items
     [<CustomOperation("delete_all")>]
-    member __.DeleteAll (state, handler) =
+    member __.DeleteAll (state, handler: HttpContext -> Task<'DeleteAllOutput>) =
       {state with DeleteAll = Some handler}
+
+    member x.DeleteAll (state, handler: HttpContext -> 'Dependency -> Task<'DeleteAllOutput>) =
+      {state with DeleteAll = Some (x.MapDependencyHandlerToHandler handler)}
 
     ///Define not-found handler for the controller
     [<CustomOperation("not_found_handler")>]
@@ -113,8 +141,16 @@ module Controller =
 
     ///Define error for the controller
     [<CustomOperation("error_handler")>]
-    member __.ErrorHandler(state, handler) =
+    member __.ErrorHandler(state, handler: HttpContext -> Exception -> HttpFuncResult) =
       {state with ErrorHandler = handler}
+
+    member x.ErrorHandler(state, handler: HttpContext -> 'Dependency -> Exception -> HttpFuncResult) =
+      let h =
+        fun ctx exc ->
+          let d = x.GetDependency<'Dependency> ctx
+          handler ctx d exc
+
+      {state with ErrorHandler = h}
 
     ///Define version of controller. Adds checking of `x-controller-version` header
     [<CustomOperation("version")>]
@@ -146,6 +182,50 @@ module Controller =
         [Index; Show; Add; Edit; Create; Update; Delete;DeleteAll] |> List.fold (fun acc e -> addPlug acc e handler) state
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
+
+    member private __.DependencyConstructors = ConcurrentDictionary<Type, HttpContext -> obj>()
+
+    member private x.GetDependency<'Dependency>(ctx: HttpContext) =
+      let getCtor (typ : Type) : (HttpContext -> obj) =
+        if FSharpType.IsRecord typ then
+          let fields = FSharpType.GetRecordFields typ
+          fun (ctx: HttpContext) ->
+            let flds = fields |> Array.map (fun t -> ctx.RequestServices.GetService(t.PropertyType))
+            FSharpValue.MakeRecord(typ, flds)
+        elif FSharpType.IsTuple typ then
+          let fields = FSharpType.GetTupleElements typ
+          fun (ctx: HttpContext) ->
+            let flds = fields |> Array.map (ctx.RequestServices.GetService )
+            FSharpValue.MakeTuple(flds, typ)
+        elif typ = typeof<obj> then
+          fun (_: HttpContext) ->
+            Object()
+        else
+          fun (ctx: HttpContext) ->
+            ctx.RequestServices.GetService typ
+
+      let typ = typeof<'Dependency>
+      if x.DependencyConstructors.ContainsKey typ then
+        match x.DependencyConstructors.TryGetValue typ with
+        | true, v -> v ctx |> unbox<'Dependency>
+        | _ ->
+          let c = getCtor typ
+          let c = x.DependencyConstructors.AddOrUpdate(typ, c, Func<_,_,_>(fun _ _ -> c))
+          c ctx |> unbox<'Dependency>
+      else
+        let c = getCtor typ
+        let c = x.DependencyConstructors.AddOrUpdate(typ, c, Func<_,_,_>(fun _ _ -> c))
+        c ctx |> unbox<'Dependency>
+
+    member private x.MapDependencyHandlerToHandler<'Dependency, 'Output> (depHandler: HttpContext -> 'Dependency -> Task<'Output>) : HttpContext -> Task<'Output> =
+      fun ctx ->
+        let d = x.GetDependency<'Dependency> ctx
+        depHandler ctx d
+
+    member private x.MapDependencyHandlerToHandler'<'Dependency, 'Output> (depHandler: HttpContext -> 'Dependency -> 'Key -> Task<'Output>) : HttpContext -> 'Key -> Task<'Output> =
+      fun ctx ->
+        let d = x.GetDependency<'Dependency> ctx
+        depHandler ctx d
 
     member private __.AddHandlerWithRoute<'Output> state action (handler: HttpContext -> Task<'Output>) route =
       let handler =
