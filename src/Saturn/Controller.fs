@@ -162,10 +162,10 @@ module Controller =
     member __.CaseInsensitive (state) =
       {state with ControllerState.CaseInsensitive = true}
 
-    ///Inject a controller into the routing table rooted at a given path. All of that controller's actions will be anchored off of the path as a prefix.
+    ///Inject a controller into the routing table rooted at a given route. All of that controller's actions will be anchored off of the route as a prefix.
     [<CustomOperation("subController")>]
-    member __.SubController(state, path, handler) =
-      {state with SubControllers = (path, handler)::state.SubControllers}
+    member __.SubController(state, route, handler) =
+      {state with SubControllers = (route, handler)::state.SubControllers}
 
     ///Add a plug that will be run on each of the provided actions.
     [<CustomOperation("plug")>]
@@ -285,22 +285,22 @@ module Controller =
           fun next ctx ->
             let route = if state.CaseInsensitive then routeCi "/" else route "/"
             if ctx.Request.Path.Value.EndsWith("/") then
-              route next ctx
+              routeHandler next ctx
             else if (SubRouting.getNextPartOfPath ctx = "") then
-              // TODO this could go away pending discussion about ctx.Request.Path modification.
-              // Only change Path at the end of the road, otherwise we cannot have all plugs fire after route check.
+              // TODO this could go away pending discussion about ctx.Request.route modification.
+              // Only change route at the end of the road, otherwise we cannot have all plugs fire after route check.
               ctx.Request.Path <- PathString(ctx.Request.Path.Value + "/")
-              route next ctx
+              routeHandler next ctx
             else
-              route next ctx
+              routeHandler next ctx
         choose [
           yield GET >=> choose [
             let addToSiteMap = addToSiteMap "GET"
 
             if state.Add.IsSome then
-              let path = "/add"
-              addToSiteMap path
               yield this.AddHandlerWithRoute state Add state.Add.Value (route path)
+              let route = "/add"
+              addToSiteMap route
 
             if state.Index.IsSome then
               addToSiteMap "/"
@@ -308,13 +308,13 @@ module Controller =
 
             if keyFormat.IsSome then
               if state.Edit.IsSome then
-                let path = keyFormat.Value + "/edit"
-                addToSiteMap path
-                yield this.AddKeyHandler state Edit state.Edit.Value path
+                let route = keyFormat.Value + "/edit"
+                addToSiteMap route
+                yield this.AddKeyHandler state Edit state.Edit.Value route
               if state.Show.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Show state.Show.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Show state.Show.Value route
           ]
           yield POST >=> choose [
             let addToSiteMap = addToSiteMap "POST"
@@ -325,27 +325,27 @@ module Controller =
 
             if keyFormat.IsSome then
               if state.Update.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Update state.Update.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Update state.Update.Value route
           ]
           yield PATCH >=> choose [
             let addToSiteMap = addToSiteMap "PATCH"
 
             if keyFormat.IsSome then
               if state.Patch.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Patch state.Patch.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Patch state.Patch.Value route
           ]
           yield PUT >=> choose [
             let addToSiteMap = addToSiteMap "PUT"
 
             if keyFormat.IsSome then
               if state.Update.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Update state.Update.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Update state.Update.Value route
           ]
           yield DELETE >=> choose [
             let addToSiteMap = addToSiteMap "DELETE"
@@ -356,9 +356,9 @@ module Controller =
 
             if keyFormat.IsSome then
               if state.Delete.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Delete state.Delete.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Delete state.Delete.Value route
           ]
           if state.NotFoundHandler.IsSome then
             siteMap.NotFound ()
@@ -376,18 +376,18 @@ module Controller =
       let controllerWithSubs =
         choose [
           if keyFormat.IsSome then
-            for (subPath, sCs) in state.SubControllers do
-              if not (subPath.StartsWith("/")) then
-                failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." subPath)
+            for (subRoute, sCs) in state.SubControllers do
+              if not (subRoute.StartsWith("/")) then
+                failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." subRoute)
 
-              let fullPath = keyFormat.Value + subPath
+              let fullRoute = keyFormat.Value + subRoute
 
-              siteMap.Forward fullPath "" (sCs (Unchecked.defaultof<'Key>))
+              siteMap.Forward fullRoute "" (sCs (Unchecked.defaultof<'Key>))
               yield
                 if state.CaseInsensitive then
-                  subRoutefCi (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
+                  subRoutefCi (PrintfFormat<'Key -> obj,_,_,_,'Key> fullRoute) (unbox<'Key> >> sCs)
                 else
-                  subRoutef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
+                  subRoutef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullRoute) (unbox<'Key> >> sCs)
 
           yield controllerWithErrorHandler
         ]
