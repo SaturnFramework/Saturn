@@ -229,6 +229,9 @@ module Controller =
 
     member private __.AddHandlerWithRoute<'Output> state action (handler: HttpContext -> Task<'Output>) route =
       let handler =
+    member inline private  __.RouteFunc state route =
+      if state.CaseInsensitive then routeCi route else Giraffe.Routing.route route
+
         match typeof<'Output> with
         | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
         | _ -> fun _ ctx -> handler ctx |> response<'Output> ctx
@@ -283,7 +286,7 @@ module Controller =
       let initialController =
         let trailingSlashHandler : HttpHandler =
           fun next ctx ->
-            let route = if state.CaseInsensitive then routeCi "/" else route "/"
+            let routeHandler = this.RouteFunc state "/"
             if ctx.Request.Path.Value.EndsWith("/") then
               routeHandler next ctx
             else if (SubRouting.getNextPartOfPath ctx = "") then
@@ -298,9 +301,9 @@ module Controller =
             let addToSiteMap = addToSiteMap "GET"
 
             if state.Add.IsSome then
-              yield this.AddHandlerWithRoute state Add state.Add.Value (route path)
               let route = "/add"
               addToSiteMap route
+              yield this.AddHandlerWithRoute state Add state.Add.Value (this.RouteFunc state path)
 
             if state.Index.IsSome then
               addToSiteMap "/"
