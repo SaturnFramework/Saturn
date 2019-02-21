@@ -160,7 +160,7 @@ module Controller =
     ///Toggle case insensitve routing
     [<CustomOperation("case_insensitive")>]
     member __.CaseInsensitive (state) =
-      {state with CaseInsensitive = true}
+      {state with ControllerState.CaseInsensitive = true}
 
     ///Inject a controller into the routing table rooted at a given path. All of that controller's actions will be anchored off of the path as a prefix.
     [<CustomOperation("subController")>]
