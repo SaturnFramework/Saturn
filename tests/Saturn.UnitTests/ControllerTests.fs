@@ -34,32 +34,35 @@ let testController = controller {
   update (updateAction None)
 }
 
+let testPathSegmentController = controller {
+  update (fun ctx (id: string) -> sprintf "Update %s" id |> Controller.text ctx)
+}
 
 [<Tests>]
 let routingTests =
-    let responseTestCase = responseTestCase testController
+    let responseTestCaseDefault = responseTestCase testController
 
     testList "Controller Routing Tests" [
         testCase "subController Update works" <|
-          responseTestCase "PUT" "/1/sub/2" "Update 1 2"
+          responseTestCaseDefault "PUT" "/1/sub/2" "Update 1 2"
 
         testCase "subController Create trailing slash works" <|
-          responseTestCase "POST" "/1/sub/" "Create 1"
+          responseTestCaseDefault "POST" "/1/sub/" "Create 1"
 
         testCase "subController Create no trailing slash works" <|
-          responseTestCase "POST" "/1/sub" "Create 1"
+          responseTestCaseDefault "POST" "/1/sub" "Create 1"
 
         testCase "Create trailing slash works" <|
-          responseTestCase "POST" "/" "Create"
+          responseTestCaseDefault "POST" "/" "Create"
 
         testCase "Create no trailing slash works" <|
-          responseTestCase "POST" "" "Create"
+          responseTestCaseDefault "POST" "" "Create"
 
         testCase "Update POST works" <|
-          responseTestCase "POST" "/1" "Update 1"
+          responseTestCaseDefault "POST" "/1" "Update 1"
 
         testCase "Update PUT works" <|
-          responseTestCase "PUT" "/1" "Update 1"
+          responseTestCaseDefault "PUT" "/1" "Update 1"
 
         testCase "deleteAll works" <| fun _ ->
             let expectedStatusCode = 204
@@ -106,6 +109,10 @@ let routingTests =
             | Some ctx ->
                 Expect.equal (ctx.Response.StatusCode) expectedStatusCode "Status code should be 204"
             Expect.equal plugged expectedString "Plugged should equal deleted"
+
+        testCase "Request `/test/1` returns `test` as controller's key handlers should match up to one path segment" <|
+          responseTestCase testPathSegmentController "PUT" "/test" "Update test"
+
 ]
 
 //---------------------------Plug tests----------------------------------------

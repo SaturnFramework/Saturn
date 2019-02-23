@@ -160,12 +160,12 @@ module Controller =
     ///Toggle case insensitve routing
     [<CustomOperation("case_insensitive")>]
     member __.CaseInsensitive (state) =
-      {state with CaseInsensitive = true}
+      {state with ControllerState.CaseInsensitive = true}
 
-    ///Inject a controller into the routing table rooted at a given path. All of that controller's actions will be anchored off of the path as a prefix.
+    ///Inject a controller into the routing table rooted at a given route. All of that controller's actions will be anchored off of the route as a prefix.
     [<CustomOperation("subController")>]
-    member __.SubController(state, path, handler) =
-      {state with SubControllers = (path, handler)::state.SubControllers}
+    member __.SubController(state, route, handler) =
+      {state with SubControllers = (route, handler)::state.SubControllers}
 
     ///Add a plug that will be run on each of the provided actions.
     [<CustomOperation("plug")>]
@@ -227,38 +227,53 @@ module Controller =
         let d = x.GetDependency<'Dependency> ctx
         depHandler ctx d
 
-    member private __.AddHandlerWithRoute<'Output> state action (handler: HttpContext -> Task<'Output>) route =
-      let handler =
+    member inline private  __.RouteFunc state route =
+      if state.CaseInsensitive then routeCi route else Giraffe.Routing.route route
+
+    member inline private  __.FormattedRouteFunc state route routeHandler =
+      if state.CaseInsensitive then routeCif route routeHandler else routef route routeHandler
+
+    member private __.AddHandlerWithRouteHandler<'Output> state action (actionHandler: HttpContext -> Task<'Output>) routeHandler =
+      let actionHandler =
         match typeof<'Output> with
-        | k when k = typeof<HttpContext option> -> fun _ ctx -> handler ctx |> unbox<HttpFuncResult>
-        | _ -> fun _ ctx -> handler ctx |> response<'Output> ctx
+        | k when k = typeof<HttpContext option> -> fun _ ctx -> actionHandler ctx |> unbox<HttpFuncResult>
+        | _ -> fun _ ctx -> actionHandler ctx |> response<'Output> ctx
 
       match state.Plugs.TryFind action with
       | Some acts ->
         // Apply route test before applying plugs
         let plugs = succeed |> List.foldBack (fun e acc -> acc >=> e) acts
-        route >=> plugs >=> handler
-      | None -> route >=> handler
+        routeHandler >=> plugs >=> actionHandler
+      | None -> routeHandler >=> actionHandler
 
-    member private __.AddKeyHandler<'Output> state action (handler: HttpContext -> 'Key -> Task<'Output>) path =
-      let route =
-        if state.CaseInsensitive then
-          routeCif (PrintfFormat<_,_,_,_,'Key> path)
-        else
-          routef (PrintfFormat<_,_,_,_,'Key> path)
-
-      let handler =
+    member private x.AddKeyHandler<'Output> state action (actionHandler: HttpContext -> 'Key -> Task<'Output>) (route: string) =
+      let actionHandler : 'Key -> HttpHandler =
         match typeof<'Output> with
-        | k when k = typeof<HttpContext option> -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> unbox<HttpFuncResult>
-        | _ -> fun input _ ctx -> handler ctx (unbox<'Key> input) |> response<'Output> ctx
+        | k when k = typeof<HttpContext option> -> fun input _ ctx -> actionHandler ctx (unbox<'Key> input) |> unbox<HttpFuncResult>
+        | _ -> fun input _ ctx -> actionHandler ctx (unbox<'Key> input) |> response<'Output> ctx
+
+      let routeHandler (actionHandler: 'Key -> HttpHandler) =
+        let routeHandler = x.FormattedRouteFunc state (PrintfFormat<_,_,_,_,'Key> route) actionHandler
+        // All 'Key types except string don't match "/" so they always stay within a single path segment by design.
+        if not (typeof<'Key> = typeof<string>)
+        then routeHandler else
+          let segmentRouteHandler =
+            // Open issue in Giraffe for a routStartsWithf https://github.com/giraffe-fsharp/Giraffe/issues/341
+            x.FormattedRouteFunc state (PrintfFormat<_,_,_,_,'Key * string> (route + "/%s")) (fst >> actionHandler)
+
+          fun next ctx ->
+            let hasTrailingSlash = (SubRouting.getNextPartOfPath ctx).LastIndexOf("/") = 0
+            // If we still have more segments beyond our current segment we'll only match up to the next "/".
+            // ASP.NET Core decodes everything but "/" characters for Request.Path, so we won't match those by accident here.
+            (if hasTrailingSlash then routeHandler else segmentRouteHandler) next ctx
 
       match state.Plugs.TryFind action with
       | Some acts ->
         // Apply route test before applying plugs
         let plugs = succeed |> List.foldBack (fun e acc -> acc >=> e) acts
-        route (fun key -> plugs >=> (handler key))
+        routeHandler (fun key -> plugs >=> (actionHandler key))
 
-      | None -> route handler
+      | None -> routeHandler actionHandler
 
     member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
       let siteMap = HandlerMap()
@@ -283,82 +298,82 @@ module Controller =
       let initialController =
         let trailingSlashHandler : HttpHandler =
           fun next ctx ->
-            let route = if state.CaseInsensitive then routeCi "/" else route "/"
+            let routeHandler = this.RouteFunc state "/"
             if ctx.Request.Path.Value.EndsWith("/") then
-              route next ctx
+              routeHandler next ctx
             else if (SubRouting.getNextPartOfPath ctx = "") then
-              // TODO this could go away pending discussion about ctx.Request.Path modification.
-              // Only change Path at the end of the road, otherwise we cannot have all plugs fire after route check.
+              // TODO this could go away pending discussion about ctx.Request.route modification.
+              // Only change route at the end of the road, otherwise we cannot have all plugs fire after route check.
               ctx.Request.Path <- PathString(ctx.Request.Path.Value + "/")
-              route next ctx
+              routeHandler next ctx
             else
-              route next ctx
+              routeHandler next ctx
         choose [
           yield GET >=> choose [
             let addToSiteMap = addToSiteMap "GET"
 
             if state.Add.IsSome then
-              let path = "/add"
-              addToSiteMap path
-              yield this.AddHandlerWithRoute state Add state.Add.Value (route path)
+              let route = "/add"
+              addToSiteMap route
+              yield this.AddHandlerWithRouteHandler state Add state.Add.Value (this.RouteFunc state route)
 
             if state.Index.IsSome then
               addToSiteMap "/"
-              yield this.AddHandlerWithRoute state Index state.Index.Value trailingSlashHandler
+              yield this.AddHandlerWithRouteHandler state Index state.Index.Value trailingSlashHandler
 
             if keyFormat.IsSome then
               if state.Edit.IsSome then
-                let path = keyFormat.Value + "/edit"
-                addToSiteMap path
-                yield this.AddKeyHandler state Edit state.Edit.Value path
+                let route = keyFormat.Value + "/edit"
+                addToSiteMap route
+                yield this.AddKeyHandler state Edit state.Edit.Value route
               if state.Show.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Show state.Show.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Show state.Show.Value route
           ]
           yield POST >=> choose [
             let addToSiteMap = addToSiteMap "POST"
 
             if state.Create.IsSome then
               addToSiteMap "/"
-              yield this.AddHandlerWithRoute state Create state.Create.Value trailingSlashHandler
+              yield this.AddHandlerWithRouteHandler state Create state.Create.Value trailingSlashHandler
 
             if keyFormat.IsSome then
               if state.Update.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Update state.Update.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Update state.Update.Value route
           ]
           yield PATCH >=> choose [
             let addToSiteMap = addToSiteMap "PATCH"
 
             if keyFormat.IsSome then
               if state.Patch.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Patch state.Patch.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Patch state.Patch.Value route
           ]
           yield PUT >=> choose [
             let addToSiteMap = addToSiteMap "PUT"
 
             if keyFormat.IsSome then
               if state.Update.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Update state.Update.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Update state.Update.Value route
           ]
           yield DELETE >=> choose [
             let addToSiteMap = addToSiteMap "DELETE"
 
             if state.DeleteAll.IsSome then
               addToSiteMap "/"
-              yield this.AddHandlerWithRoute state DeleteAll state.DeleteAll.Value trailingSlashHandler
+              yield this.AddHandlerWithRouteHandler state DeleteAll state.DeleteAll.Value trailingSlashHandler
 
             if keyFormat.IsSome then
               if state.Delete.IsSome then
-                let path = keyFormat.Value
-                addToSiteMap path
-                yield this.AddKeyHandler state Delete state.Delete.Value path
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Delete state.Delete.Value route
           ]
           if state.NotFoundHandler.IsSome then
             siteMap.NotFound ()
@@ -376,18 +391,18 @@ module Controller =
       let controllerWithSubs =
         choose [
           if keyFormat.IsSome then
-            for (subPath, sCs) in state.SubControllers do
-              if not (subPath.StartsWith("/")) then
-                failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." subPath)
+            for (subRoute, sCs) in state.SubControllers do
+              if not (subRoute.StartsWith("/")) then
+                failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." subRoute)
 
-              let fullPath = keyFormat.Value + subPath
+              let fullRoute = keyFormat.Value + subRoute
 
-              siteMap.Forward fullPath "" (sCs (Unchecked.defaultof<'Key>))
+              siteMap.Forward fullRoute "" (sCs (Unchecked.defaultof<'Key>))
               yield
                 if state.CaseInsensitive then
-                  subRoutefCi (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
+                  subRoutefCi (PrintfFormat<'Key -> obj,_,_,_,'Key> fullRoute) (unbox<'Key> >> sCs)
                 else
-                  subRoutef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullPath) (unbox<'Key> >> sCs)
+                  subRoutef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullRoute) (unbox<'Key> >> sCs)
 
           yield controllerWithErrorHandler
         ]
