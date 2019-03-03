@@ -24,6 +24,7 @@ open System.Net.Http
 open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
 open System.Threading.Tasks
+open Microsoft.Extensions.Configuration
 
 [<AutoOpen>]
 module Application =
@@ -310,8 +311,8 @@ module Application =
       }
 
     ///Enables cookies authentication with custom configuration
-    [<CustomOperation("use_cookies_authentication_with_config")>]
-    member __.UseCookiesAuthConfig(state: ApplicationState, (options :  CookieAuthenticationOptions -> unit) ) =
+    [<CustomOperation("use_cookies_authentication_with_builder")>]
+    member __.UseCookiesAuthBuilder(state: ApplicationState, (builder :  CookieAuthenticationOptions -> unit) ) =
       let mutable flag = state.CookiesAlreadyAdded
 
       let middleware (app : IApplicationBuilder) =
@@ -323,7 +324,7 @@ module Application =
           cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
         if not flag then
           flag <- true
-          c.AddCookie(options) |> ignore
+          c.AddCookie(builder) |> ignore
         s
 
       { state with
@@ -331,7 +332,36 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
           CookiesAlreadyAdded = flag
       }
+    
+    [<CustomOperation("use_cookies_authentication_with_config")>]
+    [<ObsoleteAttribute("This construct is obsolete, use `use_cookies_authentication_with_builder` instead")>]
+    member __.UseCookiesAuthConfig(state: ApplicationState, (options :  CookieAuthenticationOptions -> unit) ) =
+      __.UseCookiesAuthBuilder(state, options)
 
+    ///Enables cookies authentication with custom config depending on global configuration
+    [<CustomOperation("use_cookies_authentication_from_config")>]
+    member __.UseCookiesAuthFromConfiguration(state: ApplicationState, (configFun : IConfiguration -> CookieAuthenticationOptions -> unit) ) =
+      let mutable flag = state.CookiesAlreadyAdded
+
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let c = s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
+        if not flag then
+          flag <- true
+          let configuration = getConfiguration s
+          c.AddCookie(configFun configuration) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = flag
+      }
+    
     ///Enables simple custom OAuth authentication using parmeters provided with `OAuth.OAuthSettings` record.
     ///Can be used to quickly implement default OAuth authentication for 3rd party providers.
     [<CustomOperation("use_oauth")>]
