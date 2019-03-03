@@ -205,8 +205,14 @@ module Application =
     ///Enables application level CORS protection
     [<CustomOperation("use_cors")>]
     member __.UseCors(state: ApplicationState, policy : string, (policyConfig : CorsPolicyBuilder -> unit ) ) =
+      __.UseCorsFromConfig(state, policy, fun _ -> policyConfig)
+
+    ///Enables application level CORS protection depending on global configuration
+    [<CustomOperation("use_cors_from_config")>]
+    member __.UseCorsFromConfig(state: ApplicationState, policy : string, (configFun : IConfiguration -> CorsPolicyBuilder -> unit ) ) =
       let service (s : IServiceCollection) =
-        s.AddCors(fun o -> o.AddPolicy(policy, policyConfig) |> ignore)
+        let configuration = getConfiguration s
+        s.AddCors(fun o -> o.AddPolicy(policy, configFun configuration) |> ignore)
       let middleware (app : IApplicationBuilder) =
         app.UseCors policy
 
@@ -244,16 +250,27 @@ module Application =
       }
 
     ///Enables JWT authentication with custom configuration
+    [<CustomOperation("use_jwt_authentication_with_builder")>]
+    member __.UseJWTAuthBuilder(state: ApplicationState, (builder : JwtBearerOptions -> unit)) =
+      __.UseJWTAuthConfigFromConfiguration(state, fun _ -> builder)
+
     [<CustomOperation("use_jwt_authentication_with_config")>]
+    [<ObsoleteAttribute("This construct is obsolete, use `use_jwt_authentication_with_builder` instead")>]
     member __.UseJWTAuthConfig(state: ApplicationState, (config : JwtBearerOptions -> unit)) =
+      __.UseJWTAuthBuilder(state, config)
+
+    ///Enables JWT authentication with custom config depending on global configuration
+    [<CustomOperation("use_jwt_authentication_from_config")>]
+    member __.UseJWTAuthConfigFromConfiguration(state: ApplicationState, (configFun : IConfiguration -> JwtBearerOptions -> unit)) =
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
       let service (s : IServiceCollection) =
+        let configuration = getConfiguration s
         s.AddAuthentication(fun cfg ->
           cfg.DefaultScheme <- JwtBearerDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme)
-         .AddJwtBearer(Action<JwtBearerOptions> config) |> ignore
+         .AddJwtBearer(Action<JwtBearerOptions> (configFun configuration)) |> ignore
         s
 
       { state with
@@ -286,8 +303,18 @@ module Application =
       }
 
     ///Enables cookies authentication with custom configuration
+    [<CustomOperation("use_cookies_authentication_with_builder")>]
+    member __.UseCookiesAuthBuilder(state: ApplicationState, (builder :  CookieAuthenticationOptions -> unit) ) =
+      __.UseCookiesAuthFromConfiguration(state, fun _ -> builder)
+    
     [<CustomOperation("use_cookies_authentication_with_config")>]
+    [<ObsoleteAttribute("This construct is obsolete, use `use_cookies_authentication_with_builder` instead")>]
     member __.UseCookiesAuthConfig(state: ApplicationState, (options :  CookieAuthenticationOptions -> unit) ) =
+      __.UseCookiesAuthBuilder(state, options)
+
+    ///Enables cookies authentication with custom config depending on global configuration
+    [<CustomOperation("use_cookies_authentication_from_config")>]
+    member __.UseCookiesAuthFromConfiguration(state: ApplicationState, (configFun : IConfiguration -> CookieAuthenticationOptions -> unit) ) =
       let mutable flag = state.CookiesAlreadyAdded
 
       let middleware (app : IApplicationBuilder) =
@@ -299,7 +326,8 @@ module Application =
           cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
         if not flag then
           flag <- true
-          c.AddCookie(options) |> ignore
+          let configuration = getConfiguration s
+          c.AddCookie(configFun configuration) |> ignore
         s
 
       { state with
@@ -307,7 +335,7 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
           CookiesAlreadyAdded = flag
       }
-
+    
     ///Enables simple custom OAuth authentication using parmeters provided with `OAuth.OAuthSettings` record.
     ///Can be used to quickly implement default OAuth authentication for 3rd party providers.
     [<CustomOperation("use_oauth")>]
@@ -380,8 +408,17 @@ module Application =
       }
 
     ///Enables OAuth authentication with custom configuration
+    [<CustomOperation("use_oauth_with_builder")>]
+    member __.UseOAuthWithBuilder(state: ApplicationState, name : string, (builder : Authentication.OAuth.OAuthOptions -> unit) ) =
+      __.UseOAuthFromConfig(state, name, fun _ -> builder)
+
     [<CustomOperation("use_oauth_with_config")>]
+    [<ObsoleteAttribute("This construct is obsolete, use `use_oauth_with_builder` instead")>]
     member __.UseOAuthWithConfig(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      __.UseOAuthWithBuilder(state, name, config)
+
+    [<CustomOperation("use_oauth_from_config")>]
+    member __.UseOAuthFromConfig(state: ApplicationState, name : string, (configFun : IConfiguration -> Authentication.OAuth.OAuthOptions -> unit) ) =
       let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
@@ -394,7 +431,8 @@ module Application =
         if not flag then
           flag <- true
           c.AddCookie() |> ignore
-        c.AddOAuth(name,config) |> ignore
+        let configuration = getConfiguration s
+        c.AddOAuth(name, configFun configuration) |> ignore
         s
 
       { state with
