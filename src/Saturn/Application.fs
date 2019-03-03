@@ -244,8 +244,8 @@ module Application =
       }
 
     ///Enables JWT authentication with custom configuration
-    [<CustomOperation("use_jwt_authentication_with_config")>]
-    member __.UseJWTAuthConfig(state: ApplicationState, (config : JwtBearerOptions -> unit)) =
+    [<CustomOperation("use_jwt_authentication_with_builder")>]
+    member __.UseJWTAuthBuilder(state: ApplicationState, (builder : JwtBearerOptions -> unit)) =
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
@@ -253,13 +253,18 @@ module Application =
         s.AddAuthentication(fun cfg ->
           cfg.DefaultScheme <- JwtBearerDefaults.AuthenticationScheme
           cfg.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme)
-         .AddJwtBearer(Action<JwtBearerOptions> config) |> ignore
+         .AddJwtBearer(Action<JwtBearerOptions> builder) |> ignore
         s
 
       { state with
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
       }
+
+    [<CustomOperation("use_jwt_authentication_with_config")>]
+    [<ObsoleteAttribute("This construct is obsolete, use `use_jwt_authentication_with_builder` instead")>]
+    member __.UseJWTAuthConfig(state: ApplicationState, (config : JwtBearerOptions -> unit)) =
+      __.UseJWTAuthBuilder(state, config)
 
     ///Enables JWT authentication with custom config depending on global configuration
     [<CustomOperation("use_jwt_auth_from_configuration")>]
