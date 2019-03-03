@@ -3,6 +3,8 @@ namespace Saturn
 open System
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
+open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Configuration
 
 [<AutoOpen>]
 module Common =
@@ -129,3 +131,7 @@ module Common =
                 |> function
                     | None      -> abort
                     | Some args -> SubRouting.routeWithPartialPath subPath (routeHandler args) next ctx
+
+  let getConfiguration (s : IServiceCollection) =
+    let sp = s.BuildServiceProvider()
+    sp.GetService<IConfiguration>()

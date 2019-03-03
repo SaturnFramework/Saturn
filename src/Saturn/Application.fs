@@ -261,6 +261,25 @@ module Application =
           AppConfigs = middleware::state.AppConfigs
       }
 
+    ///Enables JWT authentication with custom config depending on global configuration
+    [<CustomOperation("use_jwt_auth_from_configuration")>]
+    member __.UseJWTAuthConfigFromConfiguration(state: ApplicationState, (configFun : IConfiguration -> JwtBearerOptions -> unit)) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let configuration = getConfiguration s
+        s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- JwtBearerDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme)
+         .AddJwtBearer(Action<JwtBearerOptions> (configFun configuration)) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+      }
+
     ///Enables default cookies authentication
     [<CustomOperation("use_cookies_authentication")>]
     member __.UseCookiesAuth(state: ApplicationState, issuer : string) =
