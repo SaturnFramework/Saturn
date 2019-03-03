@@ -206,8 +206,14 @@ module Application =
     ///Enables application level CORS protection
     [<CustomOperation("use_cors")>]
     member __.UseCors(state: ApplicationState, policy : string, (policyConfig : CorsPolicyBuilder -> unit ) ) =
+      __.UseCorsFromConfig(state, policy, fun _ -> policyConfig)
+
+    ///Enables application level CORS protection depending on global configuration
+    [<CustomOperation("use_cors_from_config")>]
+    member __.UseCorsFromConfig(state: ApplicationState, policy : string, (configFun : IConfiguration -> CorsPolicyBuilder -> unit ) ) =
       let service (s : IServiceCollection) =
-        s.AddCors(fun o -> o.AddPolicy(policy, policyConfig) |> ignore)
+        let configuration = getConfiguration s
+        s.AddCors(fun o -> o.AddPolicy(policy, configFun configuration) |> ignore)
       let middleware (app : IApplicationBuilder) =
         app.UseCors policy
 
