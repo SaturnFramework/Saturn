@@ -9,6 +9,7 @@ open Giraffe
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Configuration
 open Microsoft.AspNetCore.Authentication.JwtBearer
+open FSharp.Control.Tasks.V2.ContextInsensitive
 
 //Based on https://medium.com/@dsincl12/json-web-token-with-giraffe-and-f-4cebe1c3ef3b
 
@@ -86,7 +87,7 @@ let configureJwt (configuration : IConfiguration) (options : JwtBearerOptions) =
   options.TokenValidationParameters <- tvp
 
 let app = application {
-    use_jwt_auth_from_configuration configureJwt
+    use_jwt_authentication_from_config configureJwt
 
     use_router topRouter
     url "http://0.0.0.0:8085/"

@@ -267,7 +267,7 @@ module Application =
       __.UseJWTAuthBuilder(state, config)
 
     ///Enables JWT authentication with custom config depending on global configuration
-    [<CustomOperation("use_jwt_auth_from_configuration")>]
+    [<CustomOperation("use_jwt_authentication_from_config")>]
     member __.UseJWTAuthConfigFromConfiguration(state: ApplicationState, (configFun : IConfiguration -> JwtBearerOptions -> unit)) =
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
