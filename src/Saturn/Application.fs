@@ -247,20 +247,7 @@ module Application =
     ///Enables JWT authentication with custom configuration
     [<CustomOperation("use_jwt_authentication_with_builder")>]
     member __.UseJWTAuthBuilder(state: ApplicationState, (builder : JwtBearerOptions -> unit)) =
-      let middleware (app : IApplicationBuilder) =
-        app.UseAuthentication()
-
-      let service (s : IServiceCollection) =
-        s.AddAuthentication(fun cfg ->
-          cfg.DefaultScheme <- JwtBearerDefaults.AuthenticationScheme
-          cfg.DefaultChallengeScheme <- JwtBearerDefaults.AuthenticationScheme)
-         .AddJwtBearer(Action<JwtBearerOptions> builder) |> ignore
-        s
-
-      { state with
-          ServicesConfig = service::state.ServicesConfig
-          AppConfigs = middleware::state.AppConfigs
-      }
+      __.UseJWTAuthConfigFromConfiguration(state, fun _ -> builder)
 
     [<CustomOperation("use_jwt_authentication_with_config")>]
     [<ObsoleteAttribute("This construct is obsolete, use `use_jwt_authentication_with_builder` instead")>]
@@ -313,25 +300,7 @@ module Application =
     ///Enables cookies authentication with custom configuration
     [<CustomOperation("use_cookies_authentication_with_builder")>]
     member __.UseCookiesAuthBuilder(state: ApplicationState, (builder :  CookieAuthenticationOptions -> unit) ) =
-      let mutable flag = state.CookiesAlreadyAdded
-
-      let middleware (app : IApplicationBuilder) =
-        app.UseAuthentication()
-
-      let service (s : IServiceCollection) =
-        let c = s.AddAuthentication(fun cfg ->
-          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
-          cfg.DefaultChallengeScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
-        if not flag then
-          flag <- true
-          c.AddCookie(builder) |> ignore
-        s
-
-      { state with
-          ServicesConfig = service::state.ServicesConfig
-          AppConfigs = middleware::state.AppConfigs
-          CookiesAlreadyAdded = flag
-      }
+      __.UseCookiesAuthFromConfiguration(state, fun _ -> builder)
     
     [<CustomOperation("use_cookies_authentication_with_config")>]
     [<ObsoleteAttribute("This construct is obsolete, use `use_cookies_authentication_with_builder` instead")>]
