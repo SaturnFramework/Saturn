@@ -434,8 +434,17 @@ module Application =
       }
 
     ///Enables OAuth authentication with custom configuration
+    [<CustomOperation("use_oauth_with_builder")>]
+    member __.UseOAuthWithBuilder(state: ApplicationState, name : string, (builder : Authentication.OAuth.OAuthOptions -> unit) ) =
+      __.UseOAuthFromConfig(state, name, fun _ -> builder)
+
     [<CustomOperation("use_oauth_with_config")>]
+    [<ObsoleteAttribute("This construct is obsolete, use `use_oauth_with_builder` instead")>]
     member __.UseOAuthWithConfig(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      __.UseOAuthWithBuilder(state, name, config)
+
+    [<CustomOperation("use_oauth_from_config")>]
+    member __.UseOAuthFromConfig(state: ApplicationState, name : string, (configFun : IConfiguration -> Authentication.OAuth.OAuthOptions -> unit) ) =
       let mutable flag = state.CookiesAlreadyAdded
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
@@ -448,7 +457,8 @@ module Application =
         if not flag then
           flag <- true
           c.AddCookie() |> ignore
-        c.AddOAuth(name,config) |> ignore
+        let configuration = getConfiguration s
+        c.AddOAuth(name, configFun configuration) |> ignore
         s
 
       { state with
