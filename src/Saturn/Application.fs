@@ -24,7 +24,6 @@ open System.Net.Http
 open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
 open System.Threading.Tasks
-open Microsoft.Extensions.Configuration
 
 [<AutoOpen>]
 module Application =
