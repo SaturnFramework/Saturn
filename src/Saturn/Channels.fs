@@ -83,7 +83,7 @@ module Channels =
                             let guid = Guid.NewGuid().ToString()
                             sockets.[path].AddOrUpdate (guid, webSocket, fun _ _ -> webSocket) |> ignore
 
-                            let buffer : byte [] = Array.zeroCreate 4096 //It's buffer for just open message.
+                            let buffer : byte [] = Array.zeroCreate defaultBufferSize //It's buffer for just open message.
                             let! echo = webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None)
 
                             while not echo.CloseStatus.HasValue do
