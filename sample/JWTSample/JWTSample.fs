@@ -52,7 +52,7 @@ let handlePostToken =
 }
 
 let securedRouter = router {
-    pipe_through (Auth.requireAuthentication JWT)
+    with_auth (Auth.requireAuthentication JWT)
     get "/" handleGetSecured
 }
 

@@ -22,7 +22,7 @@ module Router =
   type RouterState =
     { Routes: Dictionary<string * RouteType, HttpHandler list>
       RoutesF: Dictionary<string * RouteType, (obj -> HttpHandler) list>
-
+      AuthHandler: HttpHandler option
       NotFoundHandler: HttpHandler option
       Pipelines: HttpHandler list
       CaseInsensitive: bool
@@ -64,6 +64,7 @@ module Router =
       { Routes = Dictionary()
         RoutesF = Dictionary()
         Pipelines = []
+        AuthHandler = None
         NotFoundHandler = None
         CaseInsensitive = false }
 
@@ -106,6 +107,11 @@ module Router =
       let subRoute = if state.CaseInsensitive then subRouteCi else subRoute
       let subRoutefUnsafe = if state.CaseInsensitive then subRoutefUnsafeCi else subRoutefUnsafe
 
+      let auth: HttpHandler =
+        match state.AuthHandler with
+        | None -> fun next ctx -> next ctx
+        | Some handler -> handler
+
       let generateRoutes typ =
         let v =
           match typ with
@@ -118,18 +124,25 @@ module Router =
         let routes, routesf = state.GetRoutes typ
         let routes = routes |> Seq.map (fun (p, lst) ->
           lst |> Seq.iter (fun l -> siteMap.Forward p v l)
-          route p >=> (choose lst))
+          // auth happens post-route-matching, but pre-route-handler
+          route p >=> auth >=> (choose lst)
+        )
         let routesf = routesf |> Seq.map (fun (p, lst) ->
           lst |> Seq.iter (fun l ->
             try
               siteMap.Forward p v (tryDummy l)
             with
-            | _ -> ())
+            | _ -> ()
+          )
           let pf = PrintfFormat<_,_,_,_,_> p
           let chooseF = fun o ->
-            lst
-            |> List.map (fun f -> f o)
-            |> choose
+            let chooser =
+              lst
+              |> List.map (fun f -> f o)
+              |> choose
+            // auth happens post-route-matching, but pre-route-handler
+            auth >=> chooser
+
           routefUnsafe pf chooseF
         )
         routes, routesf
@@ -146,7 +159,8 @@ module Router =
         forwards
         |> Seq.map (fun (p, lst) ->
           lst |> Seq.iter (fun l -> siteMap.Forward p "" l)
-          subRoute p (choose lst))
+          // auth happens post-route-matching, but pre-route-handler
+          subRoute p (auth >=> choose lst))
 
       let forwardsf =
         forwardsf |> Seq.map (fun (p, lst) ->
@@ -157,9 +171,12 @@ module Router =
             | _ -> ())
           let pf = PrintfFormat<_,_,_,_,_> p
           let chooseF = fun o ->
-            lst
-            |> List.map (fun f -> f o)
-            |> choose
+            let chooser =
+              lst
+              |> List.map (fun f -> f o)
+              |> choose
+            // auth happens post-route-matching, but pre-route-handler
+            auth >=> chooser
           subRoutefUnsafe pf chooseF
         )
 
@@ -270,6 +287,11 @@ module Router =
     [<CustomOperation("case_insensitive")>]
     member __.CaseInsensitive (state) =
       {state with CaseInsensitive = true}
+
+    ///Apply the provided Giraffe HttpHandler as an authentication mechanism after route matching but before the route handler is run
+    [<CustomOperation("with_auth")>]
+    member __.WithAuthHandler(state, handler)  =
+      { state with AuthHandler = Some handler }
 
   [<ObsoleteAttribute("This construct is obsolete, use `router` instead")>]
   let scope = RouterBuilder()
