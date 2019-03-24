@@ -11,7 +11,24 @@ open System.Collections.Concurrent
 open Giraffe.Serialization.Json
 
 module Channels =
-    let internal sockets = Dictionary<string, ConcurrentDictionary<string, WebSocket>>()
+    open System.Collections.Concurrent
+
+    /// A type that wraps access to connected websockets by endpoint
+    type SocketHub() =
+      let sockets = Dictionary<string, ConcurrentDictionary<string, WebSocket>>()
+
+      member __.NewPath path =
+        match sockets.TryGetValue path with
+        | true, _path -> ()
+        | false, _ -> sockets.[path] <- ConcurrentDictionary()
+
+      member __.ConnectSocketToPath path socket =
+        let id = Guid.NewGuid().ToString()
+        sockets.[path].AddOrUpdate(id, socket, fun _ _ -> socket) |> ignore
+        id
+
+      member __.DisconnectSocketForPath path socketId =
+        sockets.[path].TryRemove socketId |> ignore
 
     type Message = {Topic: string; Ref: string; Payload: obj}
 
@@ -24,8 +41,8 @@ module Channels =
         abstract member HandleMessage: HttpContext * WebSocketReceiveResult * Message -> Task<unit>
         abstract member Terminate: HttpContext -> Task<unit>
 
-    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel) =
-        do sockets.Add(path, ConcurrentDictionary())
+    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub) =
+        do sockets.NewPath path
 
         /// **Description**
         ///
@@ -80,8 +97,7 @@ module Channels =
                         match joinResult with
                         | Ok ->
                             let! webSocket = ctx.WebSockets.AcceptWebSocketAsync()
-                            let guid = Guid.NewGuid().ToString()
-                            sockets.[path].AddOrUpdate (guid, webSocket, fun _ _ -> webSocket) |> ignore
+                            let socketId = sockets.ConnectSocketToPath path webSocket
 
                             let buffer : byte [] = Array.zeroCreate defaultBufferSize //It's buffer for just open message.
                             let! echo = webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None)
@@ -93,7 +109,7 @@ module Channels =
                                 ()
 
                             do! channel.Terminate ctx
-                            sockets.[path].TryRemove(guid) |> ignore
+                            sockets.DisconnectSocketForPath socketId
                             do! webSocket.CloseAsync(echo.CloseStatus.Value, echo.CloseStatusDescription, CancellationToken.None)
                         | Rejected msg ->
                             ctx.Response.StatusCode <- 400
@@ -101,6 +117,7 @@ module Channels =
                     | false -> ctx.Response.StatusCode <- 400
                 else do! next.Invoke(ctx) |> (Async.AwaitIAsyncResult >> Async.Ignore)
             } :> Task
+
 
 
 [<AutoOpen>]
