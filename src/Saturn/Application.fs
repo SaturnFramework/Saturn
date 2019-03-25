@@ -54,19 +54,37 @@ module Application =
       {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; Channels = [] }
 
     member __.Run(state: ApplicationState) : IWebHostBuilder =
+      /// to build the app we have to separate our configurations and our pipelines.
+      /// we can only call `Configure` once, so we have to apply our pipelines in the end
       match state.Router with
       | None -> failwith "Router needs to be defined in Saturn application"
       | Some router ->
       let router = (succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> router
 
-      let appConfigs (app: IApplicationBuilder) =
-        let app = app |> List.foldBack(fun e acc -> e acc) state.AppConfigs
-        let app =
-          match state.ErrorHandler with
-          | Some err -> app.UseGiraffeErrorHandler(err)
-          | None -> app
-        app.UseGiraffe router
+      // as we want to add middleware to our pipeline, we can add it here and we'll fold across it in the end
+      let useParts = ResizeArray<IApplicationBuilder -> IApplicationBuilder>()
 
+      /// error handler first so that errors are caught
+      match state.ErrorHandler with
+      | Some err -> useParts.Add (fun app -> app.UseGiraffeErrorHandler(err))
+      | None -> ()
+
+      /// channels next so that they don't get swallowed by Giraffe
+      match state.Channels with
+      | [] -> ()
+      | channels ->
+        useParts.Add(fun (ab: IApplicationBuilder) -> ab.UseWebSockets())
+
+        channels
+        |> List.iter (fun (url, chnl) -> useParts.Add (fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl)))
+
+      /// user-provided middleware
+      state.AppConfigs |> List.iter (useParts.Add)
+
+      /// finally Giraffe itself
+      useParts.Add (fun app -> app.UseGiraffe router; app)
+
+      /// configs can happen whenever
       let serviceConfigs (services : IServiceCollection) =
         let services = services.AddGiraffe()
         state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore)
@@ -75,19 +93,19 @@ module Application =
         // Explicit null removes unnecessary handlers.
         WebHost.CreateDefaultBuilder(Option.toObj state.CliArguments)
         |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
-      wbhst
-        .Configure(Action<IApplicationBuilder> appConfigs)
-        .ConfigureServices(Action<IServiceCollection> serviceConfigs)  |> ignore
-      if not (state.Channels.IsEmpty) then
-        wbhst.Configure(fun ab -> ab.UseWebSockets() |> ignore)
-        |> ignore
-        state.Channels
-        |> List.iter (fun (url, chnl) ->
-          wbhst.Configure(fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl) |> ignore) |> ignore)
 
-      if not (state.Urls |> List.isEmpty) then
-        wbhst.UseUrls(state.Urls |> List.toArray)
-      else wbhst
+      wbhst.ConfigureServices(Action<IServiceCollection> serviceConfigs) |> ignore
+
+      let wbhst =
+        if not (state.Urls |> List.isEmpty) then
+          wbhst.UseUrls(state.Urls |> List.toArray)
+        else wbhst
+
+      wbhst.Configure(fun ab ->
+        (ab, useParts)
+        ||> Seq.fold (fun ab part -> part ab)
+        |> ignore
+      )
 
     ///Defines top-level router used for the application
     ///This construct is obsolete, use `use_router` instead
