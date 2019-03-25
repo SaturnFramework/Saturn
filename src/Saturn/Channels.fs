@@ -149,24 +149,6 @@ module Channels =
                             ctx.Response.StatusCode <- 400
                             do! ctx.Response.WriteAsync msg
                     | false ->
-                      logger.LogInformation("path: {0}", ctx.Request.Path)
-                      logger.LogInformation("IsWebsocketRequest: {0}", ctx.WebSockets.IsWebSocketRequest)
-                      let feature = ctx.Features.[typeof<IHttpWebSocketFeature>] :?> IHttpWebSocketFeature
-                      if feature <> null
-                      then
-                        logger.LogInformation("Feature isWebsocketREquest: {0}", feature.IsWebSocketRequest)
-                      else
-                        logger.LogWarning("WTF no websocket feature")
-                      let feature = ctx.Features.[typeof<IHttpUpgradeFeature>] :?> IHttpUpgradeFeature
-                      if feature <> null
-                      then
-                        logger.LogInformation("Feature isUpgradeableRequest: {0}", feature.IsUpgradableRequest)
-                      else
-                        logger.LogWarning("WTF no upgrade feature")
-
-                      for (KeyValue(feature, impl)) in ctx.Features do
-                        printfn "%s:\t%s" feature.FullName (impl.GetType().FullName)
-
                       ctx.Response.StatusCode <- 400
                 else do! next.Invoke(ctx) |> (Async.AwaitIAsyncResult >> Async.Ignore)
             } :> Task
