@@ -1,10 +1,11 @@
-﻿module WindowsAuthSample
+﻿module ChannelsSample
 
 open Saturn
 open Giraffe.ResponseWriters
 open Giraffe.Core
 open FSharp.Control.Tasks.V2
 open Saturn.Channels
+open Microsoft.Extensions.Logging
 
 
 
@@ -13,7 +14,10 @@ let browserRouter = router {
 }
 
 let sampleChannel = channel {
-    join (fun ctx -> task {return Ok})
+    join (fun ctx -> task {
+      ctx.GetLogger().LogInformation("Connected!")
+      return Ok
+    })
 
     handle "topic" (fun ctx res msg ->
         task {
