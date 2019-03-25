@@ -1,4 +1,4 @@
-﻿module ChannelsSample
+module ChannelsSample
 
 open Saturn
 open Giraffe.ResponseWriters
@@ -10,7 +10,7 @@ open Microsoft.Extensions.Logging
 
 
 let browserRouter = router {
-    forward "" (text "Hello world")
+    get "/" (text "Hello world")
 }
 
 let sampleChannel = channel {
@@ -21,7 +21,8 @@ let sampleChannel = channel {
 
     handle "topic" (fun ctx res msg ->
         task {
-            printfn "%A" msg
+            let logger = ctx.GetLogger()
+            logger.LogInformation("got message {message}", msg)
             return ()
         }
     )

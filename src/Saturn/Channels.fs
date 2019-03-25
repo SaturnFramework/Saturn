@@ -9,13 +9,41 @@ open FSharp.Control.Tasks.V2
 open System.Collections.Generic
 open System.Collections.Concurrent
 open Giraffe.Serialization.Json
+open System.IO
+open Microsoft.Extensions.Logging
+open Microsoft.AspNetCore.Http.Features
+open Microsoft.AspNetCore.Http.Features
 
 module Channels =
     open System.Collections.Concurrent
 
+    type Message<'a> = { Topic: string; Ref: string; Payload: 'a}
+    type Message = Message<obj>
+    type SocketId = string
+    type ChannelPath = string
+
+    type JoinResult =
+        | Ok
+        | Rejected of reason: string
+
+    type IChannel =
+        abstract member Join: HttpContext -> Task<JoinResult>
+        abstract member HandleMessage: HttpContext * WebSocketReceiveResult * Message -> Task<unit>
+        abstract member Terminate: HttpContext -> Task<unit>
+
+    type ISocketHub =
+        abstract member SendMessageToClients: ChannelPath -> Message<'a> -> Task<unit>
+        abstract member SendMessageToClient: ChannelPath -> SocketId -> Message<'a> -> Task<unit>
+
     /// A type that wraps access to connected websockets by endpoint
-    type SocketHub() =
+    type SocketHub(serializer: IJsonSerializer) =
       let sockets = Dictionary<string, ConcurrentDictionary<string, WebSocket>>()
+
+      let sendMessage (msg: 'a Message) (socket: WebSocket) = task {
+        let bytes = serializer.SerializeToBytes msg
+        let buf = ArraySegment(bytes)
+        do! socket.SendAsync(buf, WebSocketMessageType.Text, true, CancellationToken.None)
+      }
 
       member __.NewPath path =
         match sockets.TryGetValue path with
@@ -30,18 +58,20 @@ module Channels =
       member __.DisconnectSocketForPath path socketId =
         sockets.[path].TryRemove socketId |> ignore
 
-    type Message = {Topic: string; Ref: string; Payload: obj}
+      interface ISocketHub with
+        member __.SendMessageToClients path (msg: Message<'a>) = task {
+          let tasks = [for kvp in sockets.[path] -> sendMessage msg kvp.Value ]
+          let! _results = Task.WhenAll tasks
+          return ()
+        }
 
-    type JoinResult =
-        | Ok
-        | Rejected of reason: string
+        member __.SendMessageToClient path clientId (msg: Message<'a>) = task {
+          match sockets.[path].TryGetValue clientId with
+          | true, socket -> do! sendMessage msg socket
+          | _ -> ()
+        }
 
-    type IChannel =
-        abstract member Join: HttpContext -> Task<JoinResult>
-        abstract member HandleMessage: HttpContext * WebSocketReceiveResult * Message -> Task<unit>
-        abstract member Terminate: HttpContext -> Task<unit>
-
-    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub) =
+    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
         do sockets.NewPath path
 
         /// **Description**
@@ -109,12 +139,31 @@ module Channels =
                                 ()
 
                             do! channel.Terminate ctx
-                            sockets.DisconnectSocketForPath socketId
+                            sockets.DisconnectSocketForPath path socketId
                             do! webSocket.CloseAsync(echo.CloseStatus.Value, echo.CloseStatusDescription, CancellationToken.None)
                         | Rejected msg ->
                             ctx.Response.StatusCode <- 400
                             do! ctx.Response.WriteAsync msg
-                    | false -> ctx.Response.StatusCode <- 400
+                    | false ->
+                      logger.LogInformation("path: {0}", ctx.Request.Path)
+                      logger.LogInformation("IsWebsocketRequest: {0}", ctx.WebSockets.IsWebSocketRequest)
+                      let feature = ctx.Features.[typeof<IHttpWebSocketFeature>] :?> IHttpWebSocketFeature
+                      if feature <> null
+                      then
+                        logger.LogInformation("Feature isWebsocketREquest: {0}", feature.IsWebSocketRequest)
+                      else
+                        logger.LogWarning("WTF no websocket feature")
+                      let feature = ctx.Features.[typeof<IHttpUpgradeFeature>] :?> IHttpUpgradeFeature
+                      if feature <> null
+                      then
+                        logger.LogInformation("Feature isUpgradeableRequest: {0}", feature.IsUpgradableRequest)
+                      else
+                        logger.LogWarning("WTF no upgrade feature")
+
+                      for (KeyValue(feature, impl)) in ctx.Features do
+                        printfn "%s:\t%s" feature.FullName (impl.GetType().FullName)
+
+                      ctx.Response.StatusCode <- 400
                 else do! next.Invoke(ctx) |> (Async.AwaitIAsyncResult >> Async.Ignore)
             } :> Task
 

@@ -25,6 +25,8 @@ open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
 open System.Threading.Tasks
 open Channels
+open Utils.DependencyInjection
+open Microsoft.AspNetCore.Builder
 
 [<AutoOpen>]
 module Application =
@@ -86,7 +88,9 @@ module Application =
 
       /// configs can happen whenever
       let serviceConfigs (services : IServiceCollection) =
-        let services = services.AddGiraffe()
+        let services =
+          services
+            .AddGiraffe()
         state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore)
 
       let wbhst =
