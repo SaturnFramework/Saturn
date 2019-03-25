@@ -84,6 +84,8 @@ module Application =
       match state.Channels with
       | [] -> ()
       | channels ->
+        // we have to build the provider so we can get a serializer so we can make a singleton instance of the hub to register
+        // as both the interface _and_ itself, so that users can use `ISocketHub` without getting the add/remove socket members
         wbhst.ConfigureServices(fun svcs ->
           let provider = svcs.BuildServiceProvider()
           let serializer = provider.GetRequiredService(typeof<IJsonSerializer>) :?> IJsonSerializer

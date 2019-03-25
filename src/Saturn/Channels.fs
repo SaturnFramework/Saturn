@@ -21,6 +21,7 @@ module Channels =
     type Message = Message<obj>
     type SocketId = string
     type ChannelPath = string
+    type Topic = string
 
     type JoinResult =
         | Ok
@@ -32,8 +33,8 @@ module Channels =
         abstract member Terminate: HttpContext -> Task<unit>
 
     type ISocketHub =
-        abstract member SendMessageToClients: ChannelPath -> Message<'a> -> Task<unit>
-        abstract member SendMessageToClient: ChannelPath -> SocketId -> Message<'a> -> Task<unit>
+        abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> Task<unit>
+        abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
     type SocketHub(serializer: IJsonSerializer) =
@@ -59,15 +60,18 @@ module Channels =
         sockets.[path].TryRemove socketId |> ignore
 
       interface ISocketHub with
-        member __.SendMessageToClients path (msg: Message<'a>) = task {
+        member __.SendMessageToClients path topic payload  = task {
+          let msg = { Topic = topic; Ref = ""; Payload = payload }
           let tasks = [for kvp in sockets.[path] -> sendMessage msg kvp.Value ]
           let! _results = Task.WhenAll tasks
           return ()
         }
 
-        member __.SendMessageToClient path clientId (msg: Message<'a>) = task {
+        member __.SendMessageToClient path clientId topic payload  = task {
           match sockets.[path].TryGetValue clientId with
-          | true, socket -> do! sendMessage msg socket
+          | true, socket ->
+            let msg = { Topic = topic; Ref = ""; Payload = payload }
+            do! sendMessage msg socket
           | _ -> ()
         }
 
