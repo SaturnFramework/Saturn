@@ -12,9 +12,9 @@ module CSRF =
     let unprotectedMethods = Set.ofList ["GET"; "HEAD"; "TRACE"; "OPTIONS"]
     fun (ctx: HttpContext) -> not <| unprotectedMethods.Contains ctx.Request.Method
 
-  let inline private sendException (ex: AntiforgeryValidationException) =
-    setStatusCode 403
-    >=> text ex.Message
+  type CSRFError =
+  | NotConfigured
+  | Invalid of error: AntiforgeryValidationException
 
   let inline private logMissingAntiforgeryFeature (ctx: HttpContext) =
     let logger = ctx.GetService<ILoggerFactory>().CreateLogger("Saturn.CSRF")
@@ -28,26 +28,41 @@ or
     use_antiforgery_with_config (fun options -> options.HeaderName <- "X-XSRF-TOKEN")
   }
       """)
+
+
+  let inline private sendException (ex: CSRFError): HttpHandler = fun next ctx ->
+    match ex with
+    | NotConfigured ->
+      logMissingAntiforgeryFeature ctx
+      setStatusCode 500 next ctx
+    | Invalid ex ->
+      (setStatusCode 403
+       >=> text ex.Message) next ctx
+
   /// Protect a resource by validating that requests that can change state come with a valid request antiforgery token, which is based off of a known session token.
   /// The particular configuration options can be set via the `application` builder's `use_antiforgery_with_config` method.
-  let csrf : HttpHandler =
-    fun (next) (ctx) -> task {
-     if shouldValidate ctx
-     then
-      try
-        match ctx.GetService<IAntiforgery>() with
-        | null ->
-          logMissingAntiforgeryFeature ctx
-          return! setStatusCode 500 next ctx
-        | antiforgery ->
-          do! antiforgery.ValidateRequestAsync(ctx)
-          return! next ctx
-      with
-      | :? AntiforgeryValidationException as ex ->
-        return! sendException ex next ctx
-     else
-      return! next ctx
-    }
+  /// If the request is not valid, a custom error handler will be invoked with the validation error
+  let tryCsrf (errorHandler: (CSRFError -> HttpHandler)): HttpHandler = fun (next) (ctx) ->
+    if shouldValidate ctx
+    then
+      task {
+        try
+          match ctx.GetService<IAntiforgery>() with
+          | null ->
+            return! errorHandler NotConfigured next ctx
+          | antiforgery ->
+            do! antiforgery.ValidateRequestAsync(ctx)
+            return! next ctx
+        with
+        | :? AntiforgeryValidationException as ex ->
+          return! errorHandler (Invalid ex) next ctx
+      }
+    else
+      next ctx
+
+  /// Protect a resource by validating that requests that can change state come with a valid request antiforgery token, which is based off of a known session token.
+  /// The particular configuration options can be set via the `application` builder's `use_antiforgery_with_config` method.
+  let csrf : HttpHandler = tryCsrf sendException
 
   let getRequestTokens (ctx: HttpContext) = ctx.GetService<IAntiforgery>().GetAndStoreTokens(ctx)
 
