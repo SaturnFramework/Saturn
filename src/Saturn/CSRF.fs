@@ -7,6 +7,7 @@ module CSRF =
   open Microsoft.AspNetCore.Antiforgery
   open Microsoft.AspNetCore.Http
   open Microsoft.Extensions.Logging
+  open System.Threading.Tasks
 
   let private shouldValidate  =
     let unprotectedMethods = Set.ofList ["GET"; "HEAD"; "TRACE"; "OPTIONS"]
@@ -39,6 +40,20 @@ or
       (setStatusCode 403
        >=> text ex.Message) next ctx
 
+  let private validateCSRF (ctx: HttpContext): Task<Result<unit, CSRFError>> =
+    task {
+      try
+        match ctx.GetService<IAntiforgery>() with
+        | null ->
+          return Error NotConfigured
+        | antiforgery ->
+          do! antiforgery.ValidateRequestAsync(ctx)
+          return Ok ()
+      with
+      | :? AntiforgeryValidationException as ex ->
+        return Error (Invalid ex)
+    }
+
   /// Protect a resource by validating that requests that can change state come with a valid request antiforgery token, which is based off of a known session token.
   /// The particular configuration options can be set via the `application` builder's `use_antiforgery_with_config` method.
   /// If the request is not valid, a custom error handler will be invoked with the validation error
@@ -46,16 +61,9 @@ or
     if shouldValidate ctx
     then
       task {
-        try
-          match ctx.GetService<IAntiforgery>() with
-          | null ->
-            return! errorHandler NotConfigured next ctx
-          | antiforgery ->
-            do! antiforgery.ValidateRequestAsync(ctx)
-            return! next ctx
-        with
-        | :? AntiforgeryValidationException as ex ->
-          return! errorHandler (Invalid ex) next ctx
+        match! validateCSRF ctx with
+        | Ok () -> return! next ctx
+        | Error reason -> return! errorHandler reason next ctx
       }
     else
       next ctx
@@ -63,6 +71,27 @@ or
   /// Protect a resource by validating that requests that can change state come with a valid request antiforgery token, which is based off of a known session token.
   /// The particular configuration options can be set via the `application` builder's `use_antiforgery_with_config` method.
   let csrf : HttpHandler = tryCsrf sendException
+
+  type HttpContext with
+
+    /// Protect a resource by validating that requests that can change state come with a valid request antiforgery token, which is based off of a known session token.
+    /// The particular configuration options can be set via the `application` builder's `use_antiforgery_with_config` method.
+    /// If the request is not valid, an exception will be thrown with details
+    member x.ValidateCSRF() = task {
+      match! validateCSRF x with
+      | Ok () -> return ()
+      | Error NotConfigured ->
+        logMissingAntiforgeryFeature x
+        return failwith "Not correctly configured for Antiforgery"
+      | Error (Invalid reason) ->
+        return raise reason
+    }
+
+    /// Protect a resource by validating that requests that can change state come with a valid request antiforgery token, which is based off of a known session token.
+    /// The particular configuration options can be set via the `application` builder's `use_antiforgery_with_config` method.
+    /// If the request is not valid, an Error result will be returned with details
+    member x.TryValidateCSRF() = validateCSRF x
+
 
   let getRequestTokens (ctx: HttpContext) = ctx.GetService<IAntiforgery>().GetAndStoreTokens(ctx)
 
