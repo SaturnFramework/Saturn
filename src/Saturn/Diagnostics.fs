@@ -131,7 +131,7 @@ module SiteMap =
                                     tr [] [
                                         th [] [rawText "Route"]
                                         th [] [rawText "Verb"]
-                                        th [] [rawText "Required heders"]
+                                        th [] [rawText "Required headers"]
                                     ]
                                 ]
                                 tbody [] [
