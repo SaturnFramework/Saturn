@@ -144,7 +144,7 @@ module SiteMap =
                                 ]
                             ]
 
-                            h2 [ _class "title"] [rawText "Not Found handlers for following subrouts"]
+                            h2 [ _class "title"] [rawText "Not Found handlers for following subroutes"]
                             table [_class "table is-hoverable is-fullwidth"] [
                                 thead [] [
                                     tr [] [
