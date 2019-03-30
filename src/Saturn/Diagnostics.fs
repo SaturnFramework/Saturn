@@ -149,7 +149,7 @@ module SiteMap =
                                 thead [] [
                                     tr [] [
                                         th [] [rawText "Route"]
-                                        th [] [rawText "Required heders"]
+                                        th [] [rawText "Required headers"]
                                     ]
                                 ]
                                 tbody [] [
