@@ -1,16 +1,18 @@
 namespace Saturn
 
+open FSharp.Control.Tasks.V2
+open FSharp.Control.Websockets.TPL
+open Giraffe.Serialization.Json
+open Microsoft.AspNetCore.Http
+open Microsoft.AspNetCore.Http.Extensions
+open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Logging
 open System
+open System.Collections.Concurrent
+open System.Collections.Generic
+open System.Net.WebSockets
 open System.Threading
 open System.Threading.Tasks
-open System.Net.WebSockets
-open Microsoft.AspNetCore.Http
-open FSharp.Control.Tasks.V2
-open System.Collections.Generic
-open System.Collections.Concurrent
-open Giraffe.Serialization.Json
-open Microsoft.Extensions.Logging
-open FSharp.Control.Websockets.TPL
 
 module Socket = ThreadSafeWebsocket
 
@@ -84,23 +86,32 @@ module Channels =
                 if ctx.Request.Path = PathString(path) then
                     match ctx.WebSockets.IsWebSocketRequest with
                     | true ->
+                        let logger = ctx.RequestServices.GetRequiredService<ILogger<SocketMiddleware>>()
+                        logger.LogInformation("Promoted websocket request")
                         let! joinResult = channel.Join ctx
                         match joinResult with
                         | Ok ->
+                            logger.LogInformation("Joined channel {path}", path)
                             let ctok = ctx.RequestAborted
                             let! webSocket = ctx.WebSockets.AcceptWebSocketAsync()
                             let wrappedSocket = Socket.createFromWebSocket (Dataflow.DataflowBlockOptions()) webSocket // TODO: figure out what our datablock options should be
                             let socketId = sockets.ConnectSocketToPath path wrappedSocket
 
                             match! Socket.receiveMessageAsUTF8 wrappedSocket ctok with
-                            | Core.Ok _ ->
-                              while wrappedSocket.CloseStatus.IsSome do
+                            | Core.Ok result ->
+                              logger.LogInformation("received echo message {0}", result)
+                              while wrappedSocket.State = WebSocketState.Open do
                                 match! Socket.receiveMessageAsUTF8 wrappedSocket ctx.RequestAborted with
-                                | Core.Ok msg ->
+                                | Core.Ok msg when not (String.IsNullOrEmpty msg) ->
+                                  logger.LogInformation("received message {0}", msg)
                                   let msg = serializer.Deserialize<Message> msg
                                   do! channel.HandleMessage(ctx, msg)
                                   ()
+                                | Core.Ok _msg ->
+                                  logger.LogError("Got null message, swallowing")
+                                  ()
                                 | Core.Error exn ->
+                                  logger.LogError(exn.SourceException, "Error while receiving message")
                                   () // TODO: ?
 
                               do! channel.Terminate ctx
@@ -108,13 +119,14 @@ module Channels =
                               let! result =  Socket.close wrappedSocket ctok WebSocketCloseStatus.NormalClosure "Closing channel"
                               match result with
                               | Socket.MessageResult.Ok () ->
-                                ctx.Response.StatusCode <- 200
+                                logger.LogInformation("Closed socket")
+                                ()
                               | Socket.MessageResult.Error exn ->
-                                ctx.Response.StatusCode <- 400
-                                do! ctx.Response.WriteAsync(exn.SourceException.Message)
+                                logger.LogError(exn.SourceException, "Error while closing socket")
+                                ()
                             | Core.Error exn ->
-                              ctx.Response.StatusCode <- 400
-                              do! ctx.Response.WriteAsync (exn.SourceException.Message)
+                              logger.LogError(exn.SourceException, "Error while joining channel")
+                              ()
                         | Rejected msg ->
                             ctx.Response.StatusCode <- 400
                             do! ctx.Response.WriteAsync msg
@@ -174,18 +186,25 @@ module ChannelBuilder =
                 state.Handlers.TryFind msgTopic
 
             let handler =
-                fun ctx (msg : Message) -> task {
+                fun (ctx: HttpContext) (msg : Message) -> task {
+                    let logger = ctx.RequestServices.GetRequiredService<ILogger<IChannel>>()
+                    logger.LogInformation("got message {message}", msg)
                     try
                         match findHandler msg.Topic with
                         | None ->
+                            logger.LogInformation("no handler for topic {topic}", msg.Topic)
                             match state.NotFoundHandler with
                             | Some nfh ->
                                 return! nfh ctx msg
-                            | None -> return ()
+                            | None ->
+                              logger.LogInformation("no not found handler for topic {topic}", msg.Topic)
+                              return ()
                         | Some hdl ->
+                            logger.LogInformation("found handler for topic {topic}", msg.Topic)
                             return! hdl ctx msg
                     with
                     | ex ->
+                        logger.LogError(ex, "error while handling message {message}", msg)
                         return! state.ErrorHandler ctx msg ex
                 }
 
