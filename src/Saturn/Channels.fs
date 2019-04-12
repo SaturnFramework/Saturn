@@ -9,13 +9,12 @@ open FSharp.Control.Tasks.V2
 open System.Collections.Generic
 open System.Collections.Concurrent
 open Giraffe.Serialization.Json
-open System.IO
 open Microsoft.Extensions.Logging
-open Microsoft.AspNetCore.Http.Features
-open Microsoft.AspNetCore.Http.Features
+open FSharp.Control.Websockets.TPL
+
+module Socket = ThreadSafeWebsocket
 
 module Channels =
-    open System.Collections.Concurrent
 
     type Message<'a> = { Topic: string; Ref: string; Payload: 'a}
     type Message = Message<obj>
@@ -29,21 +28,23 @@ module Channels =
 
     type IChannel =
         abstract member Join: HttpContext -> Task<JoinResult>
-        abstract member HandleMessage: HttpContext * WebSocketReceiveResult * Message -> Task<unit>
+        abstract member HandleMessage: HttpContext * Message -> Task<unit>
         abstract member Terminate: HttpContext -> Task<unit>
 
     type ISocketHub =
-        abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> Task<unit>
-        abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> Task<unit>
+        abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> CancellationToken -> Task<unit>
+        abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> CancellationToken -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
     type SocketHub(serializer: IJsonSerializer) =
-      let sockets = Dictionary<string, ConcurrentDictionary<string, WebSocket>>()
+      let sockets = Dictionary<string, ConcurrentDictionary<string, Socket.ThreadSafeWebSocket>>()
 
-      let sendMessage (msg: 'a Message) (socket: WebSocket) = task {
-        let bytes = serializer.SerializeToBytes msg
-        let buf = ArraySegment(bytes)
-        do! socket.SendAsync(buf, WebSocketMessageType.Text, true, CancellationToken.None)
+      let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) (ctok: CancellationToken) = task {
+        let text = serializer.SerializeToString msg
+        let! result =  Socket.sendMessageAsUTF8 socket ctok text
+        match result with
+        | Socket.MessageResult.Ok () -> return ()
+        | Error exn -> return exn.Throw()
       }
 
       member __.NewPath path =
@@ -60,67 +61,23 @@ module Channels =
         sockets.[path].TryRemove socketId |> ignore
 
       interface ISocketHub with
-        member __.SendMessageToClients path topic payload  = task {
+        member __.SendMessageToClients path topic payload ctok  = task {
           let msg = { Topic = topic; Ref = ""; Payload = payload }
-          let tasks = [for kvp in sockets.[path] -> sendMessage msg kvp.Value ]
+          let tasks = [for kvp in sockets.[path] -> sendMessage msg kvp.Value ctok ]
           let! _results = Task.WhenAll tasks
           return ()
         }
 
-        member __.SendMessageToClient path clientId topic payload  = task {
+        member __.SendMessageToClient path clientId topic payload ctok = task {
           match sockets.[path].TryGetValue clientId with
           | true, socket ->
             let msg = { Topic = topic; Ref = ""; Payload = payload }
-            do! sendMessage msg socket
+            do! sendMessage msg socket ctok
           | _ -> ()
         }
 
     type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
         do sockets.NewPath path
-
-        /// **Description**
-        ///
-        /// (16 * 1024) = 16384
-        /// https://referencesource.microsoft.com/#System/net/System/Net/WebSockets/WebSocketHelpers.cs,285b8b64a4da6851
-        ///
-        /// **Output Type**
-        ///   * `int`
-        [<Literal>]
-        let defaultBufferSize : int = 16384 // (16 * 1024)
-
-
-        let receiveMessage cancellationToken bufferSize messageType (writeableStream : IO.Stream) (socket : WebSocket) = task {
-            let buffer = new ArraySegment<Byte>( Array.create (bufferSize) Byte.MinValue)
-            let mutable moreToRead = false
-            let mutable res = None
-            while moreToRead do
-                let! result  = socket.ReceiveAsync(buffer,cancellationToken)
-                res <- Some result
-                match result with
-                | result when result.MessageType = WebSocketMessageType.Close || socket.State = WebSocketState.CloseReceived ->
-                    // printfn "Close received! %A - %A" socket.CloseStatus socket.CloseStatusDescription
-                    do! socket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure,  "Close received", cancellationToken)
-                | result ->
-                    // printfn "result.MessageType -> %A" result.MessageType
-                    if result.MessageType <> messageType then
-                        failwithf "Invalid message type received %A, expected %A" result.MessageType messageType
-                    do! writeableStream.WriteAsync(buffer.Array, buffer.Offset, result.Count)
-                    if result.EndOfMessage then
-                        moreToRead <- false
-            return res.Value
-        }
-
-
-        let receiveMessageAsUTF8 cancellationToken socket = task {
-            use stream =  new IO.MemoryStream()
-            let! res = receiveMessage cancellationToken defaultBufferSize WebSocketMessageType.Text stream socket
-            stream.Seek(0L,IO.SeekOrigin.Begin) |> ignore
-            let cnt =
-                stream.ToArray()
-                |> Text.Encoding.UTF8.GetString
-                |> fun s -> s.TrimEnd(char 0)
-            return res,cnt
-        }
 
         member __.Invoke(ctx : HttpContext) =
             task {
@@ -130,21 +87,34 @@ module Channels =
                         let! joinResult = channel.Join ctx
                         match joinResult with
                         | Ok ->
+                            let ctok = ctx.RequestAborted
                             let! webSocket = ctx.WebSockets.AcceptWebSocketAsync()
-                            let socketId = sockets.ConnectSocketToPath path webSocket
+                            let wrappedSocket = Socket.createFromWebSocket (Dataflow.DataflowBlockOptions()) webSocket // TODO: figure out what our datablock options should be
+                            let socketId = sockets.ConnectSocketToPath path wrappedSocket
 
-                            let buffer : byte [] = Array.zeroCreate defaultBufferSize //It's buffer for just open message.
-                            let! echo = webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None)
+                            match! Socket.receiveMessageAsUTF8 wrappedSocket ctok with
+                            | Core.Ok _ ->
+                              while wrappedSocket.CloseStatus.IsSome do
+                                match! Socket.receiveMessageAsUTF8 wrappedSocket ctx.RequestAborted with
+                                | Core.Ok msg ->
+                                  let msg = serializer.Deserialize<Message> msg
+                                  do! channel.HandleMessage(ctx, msg)
+                                  ()
+                                | Core.Error exn ->
+                                  () // TODO: ?
 
-                            while not echo.CloseStatus.HasValue do
-                                let! (result, msg) = receiveMessageAsUTF8 CancellationToken.None webSocket
-                                let msg = serializer.Deserialize<Message> msg
-                                do! channel.HandleMessage(ctx, result, msg)
-                                ()
-
-                            do! channel.Terminate ctx
-                            sockets.DisconnectSocketForPath path socketId
-                            do! webSocket.CloseAsync(echo.CloseStatus.Value, echo.CloseStatusDescription, CancellationToken.None)
+                              do! channel.Terminate ctx
+                              sockets.DisconnectSocketForPath path socketId
+                              let! result =  Socket.close wrappedSocket ctok WebSocketCloseStatus.NormalClosure "Closing channel"
+                              match result with
+                              | Socket.MessageResult.Ok () ->
+                                ctx.Response.StatusCode <- 200
+                              | Socket.MessageResult.Error exn ->
+                                ctx.Response.StatusCode <- 400
+                                do! ctx.Response.WriteAsync(exn.SourceException.Message)
+                            | Core.Error exn ->
+                              ctx.Response.StatusCode <- 400
+                              do! ctx.Response.WriteAsync (exn.SourceException.Message)
                         | Rejected msg ->
                             ctx.Response.StatusCode <- 400
                             do! ctx.Response.WriteAsync msg
@@ -154,22 +124,21 @@ module Channels =
             } :> Task
 
 
-
 [<AutoOpen>]
 module ChannelBuilder =
     open Channels
 
     type ChannelBuilderState = {
         Join: (HttpContext -> Task<JoinResult>) option
-        Handlers: Map<string, (HttpContext -> WebSocketReceiveResult -> Message -> Task<unit>)>
+        Handlers: Map<string, (HttpContext -> Message -> Task<unit>)>
         Terminate: (HttpContext -> Task<unit>) option
-        NotFoundHandler: (HttpContext -> WebSocketReceiveResult -> Message -> Task<unit>) option
-        ErrorHandler: HttpContext -> WebSocketReceiveResult -> Message -> Exception -> Task<unit>
+        NotFoundHandler: (HttpContext -> Message -> Task<unit>) option
+        ErrorHandler: HttpContext -> Message -> Exception -> Task<unit>
     }
 
     type ChannelBuilder internal () =
         member __.Yield(_) : ChannelBuilderState =
-            {Join = None; Handlers = Map.empty; Terminate = None; NotFoundHandler = None; ErrorHandler = fun _ _ _ ex -> raise ex }
+            {Join = None; Handlers = Map.empty; Terminate = None; NotFoundHandler = None; ErrorHandler = fun _ _ ex -> raise ex }
 
         [<CustomOperation("join")>]
         member __.Join(state, handler) =
@@ -205,19 +174,19 @@ module ChannelBuilder =
                 state.Handlers.TryFind msgTopic
 
             let handler =
-                fun ctx res (msg : Message) -> task {
+                fun ctx (msg : Message) -> task {
                     try
                         match findHandler msg.Topic with
                         | None ->
                             match state.NotFoundHandler with
                             | Some nfh ->
-                                return! nfh ctx res msg
+                                return! nfh ctx msg
                             | None -> return ()
                         | Some hdl ->
-                            return! hdl ctx res msg
+                            return! hdl ctx msg
                     with
                     | ex ->
-                        return! state.ErrorHandler ctx res msg ex
+                        return! state.ErrorHandler ctx msg ex
                 }
 
 
@@ -227,8 +196,8 @@ module ChannelBuilder =
 
                 member __.Terminate(ctx) = terminate ctx
 
-                member __.HandleMessage(ctx,res,msg) =
-                    handler ctx res msg
+                member __.HandleMessage(ctx, msg) =
+                    handler ctx msg
             }
 
     let channel = ChannelBuilder()
