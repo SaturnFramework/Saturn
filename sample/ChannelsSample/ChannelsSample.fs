@@ -15,9 +15,9 @@ let browserRouter = router {
       let hub = ctx.GetService<Saturn.Channels.ISocketHub>()
       match ctx.TryGetQueryStringValue "message" with
       | None ->
-        do! hub.SendMessageToClients "/channel" "greeting" "hello"
+        do! hub.SendMessageToClients "/channel" "greeting" "hello" ctx.RequestAborted
       | Some message ->
-        do! hub.SendMessageToClients "/channel" "greeting" (sprintf "hello, %s" message)
+        do! hub.SendMessageToClients "/channel" "greeting" (sprintf "hello, %s" message) ctx.RequestAborted
       return! Successful.ok (text "Pinged the clients") next ctx
     })
 }
@@ -28,7 +28,7 @@ let sampleChannel = channel {
       return Ok
     })
 
-    handle "topic" (fun ctx res msg ->
+    handle "topic" (fun ctx msg ->
         task {
             let logger = ctx.GetLogger()
             logger.LogInformation("got message {message} from client", msg)
