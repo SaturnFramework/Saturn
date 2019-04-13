@@ -26,7 +26,7 @@ nuget Newtonsoft.Json == 12.0.1
 nuget NSubstitute
 nuget Expecto
 
-github TheAngryByrd/FSharp.Control.WebSockets src/FSharp.Control.Websockets.TPL/FSharp.Control.Websockets.TPL.fs
+github TheAngryByrd/FSharp.Control.WebSockets src/FSharp.Control.Websockets/FSharp.Control.Websockets.fs
 nuget System.Threading.Tasks.Dataflow
 
 group Build

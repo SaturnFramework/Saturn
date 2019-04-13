@@ -1,7 +1,7 @@
 namespace Saturn
 
 open FSharp.Control.Tasks.V2
-open FSharp.Control.Websockets.TPL
+open FSharp.Control.Websockets
 open Giraffe.Serialization.Json
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Http.Extensions
@@ -43,7 +43,7 @@ module Channels =
 
       let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) (ctok: CancellationToken) = task {
         let text = serializer.SerializeToString msg
-        let! result =  Socket.sendMessageAsUTF8 socket ctok text
+        let! result =  Socket.sendMessageAsUTF8 socket text
         match result with
         | Socket.MessageResult.Ok () -> return ()
         | Error exn -> return exn.Throw()
@@ -87,45 +87,42 @@ module Channels =
                     match ctx.WebSockets.IsWebSocketRequest with
                     | true ->
                         let logger = ctx.RequestServices.GetRequiredService<ILogger<SocketMiddleware>>()
-                        logger.LogInformation("Promoted websocket request")
+                        logger.LogTrace("Promoted websocket request")
                         let! joinResult = channel.Join ctx
                         match joinResult with
                         | Ok ->
-                            logger.LogInformation("Joined channel {path}", path)
-                            let ctok = ctx.RequestAborted
+                            logger.LogTrace("Joined channel {path}", path)
                             let! webSocket = ctx.WebSockets.AcceptWebSocketAsync()
-                            let wrappedSocket = Socket.createFromWebSocket (Dataflow.DataflowBlockOptions()) webSocket // TODO: figure out what our datablock options should be
+                            let wrappedSocket = Socket.createFromWebSocket webSocket
                             let socketId = sockets.ConnectSocketToPath path wrappedSocket
 
-                            match! Socket.receiveMessageAsUTF8 wrappedSocket ctok with
-                            | Core.Ok result ->
-                              logger.LogInformation("received echo message {0}", result)
-                              while wrappedSocket.State = WebSocketState.Open do
-                                match! Socket.receiveMessageAsUTF8 wrappedSocket ctx.RequestAborted with
-                                | Core.Ok msg when not (String.IsNullOrEmpty msg) ->
-                                  logger.LogInformation("received message {0}", msg)
+                            while wrappedSocket.State = WebSocketState.Open do
+                              match! Socket.receiveMessageAsUTF8 wrappedSocket with
+                              | Core.Ok null | Core.Ok "" ->
+                                ()
+                              | Core.Ok msg ->
+                                logger.LogTrace("received message {0}", msg)
+                                try
                                   let msg = serializer.Deserialize<Message> msg
                                   do! channel.HandleMessage(ctx, msg)
-                                  ()
-                                | Core.Ok _msg ->
-                                  logger.LogError("Got null message, swallowing")
-                                  ()
-                                | Core.Error exn ->
-                                  logger.LogError(exn.SourceException, "Error while receiving message")
-                                  () // TODO: ?
+                                with
+                                | ex ->
+                                  // typically a deserialization error, swallow
+                                  logger.LogTrace(ex, "got message that was unable to be deserialized into a 'Message'")
+                                ()
+                              | Core.Error exn ->
+                                logger.LogError(exn.SourceException, "Error while receiving message")
+                                () // TODO: ?
 
-                              do! channel.Terminate ctx
-                              sockets.DisconnectSocketForPath path socketId
-                              let! result =  Socket.close wrappedSocket ctok WebSocketCloseStatus.NormalClosure "Closing channel"
-                              match result with
-                              | Socket.MessageResult.Ok () ->
-                                logger.LogInformation("Closed socket")
-                                ()
-                              | Socket.MessageResult.Error exn ->
-                                logger.LogError(exn.SourceException, "Error while closing socket")
-                                ()
-                            | Core.Error exn ->
-                              logger.LogError(exn.SourceException, "Error while joining channel")
+                            do! channel.Terminate ctx
+                            sockets.DisconnectSocketForPath path socketId
+                            let! result =  Socket.close wrappedSocket WebSocketCloseStatus.NormalClosure "Closing channel"
+                            match result with
+                            | Socket.MessageResult.Ok () ->
+                              logger.LogTrace("Closed socket")
+                              ()
+                            | Socket.MessageResult.Error exn ->
+                              logger.LogError(exn.SourceException, "Error while closing socket")
                               ()
                         | Rejected msg ->
                             ctx.Response.StatusCode <- 400

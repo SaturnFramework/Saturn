@@ -15,4 +15,4 @@ Microsoft.AspNetCore.Antiforgery
 Microsoft.AspNetCore.WebSockets
 System.Threading.Tasks.Dataflow
 
-File: FSharp.Control.Websockets.TPL.fs
+File: FSharp.Control.Websockets.fs
