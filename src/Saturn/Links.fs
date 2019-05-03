@@ -13,7 +13,6 @@ module Links =
       | "" -> v
       | "edit" -> [| yield! v.[0 .. v.Length - 3 ]; yield "" |] //Remove 2 last parts of the path
       | _ -> [| yield! v.[0 .. v.Length - 2]; yield "" |] //Remove the last part of the path
-      |> String.concat "/"
     res
 
   ///Returns a link to the `add` action for the current model.
