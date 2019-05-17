@@ -131,8 +131,7 @@ module CORS =
                 >=> setAllowCredentialsHeader config
                 >=> setAllowOriginHeader originValue
                 >=> setStatusCode 204
-                >=> Giraffe.ResponseWriters.setBody [||]
-              composed nxt ctx
+              composed Common.halt ctx
             else
               succeed nxt ctx
 
