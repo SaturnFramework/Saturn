@@ -280,7 +280,7 @@ module Controller =
       let addToSiteMap v p = siteMap.AddPath p v
       let keyFormat =
         match state with
-        | { Show = None; Edit = None; Update = None; Delete = None; SubControllers = [] } -> None
+        | { Show = None; Edit = None; Update = None; Delete = None; Patch = None; SubControllers = [] } -> None
         | _ ->
           match typeof<'Key> with
           | k when k = typeof<bool> -> "/%b"
