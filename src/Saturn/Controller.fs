@@ -179,7 +179,7 @@ module Controller =
         {state with Plugs = newplugs}
 
       if actions |> List.contains All then
-        [Index; Show; Add; Edit; Create; Update; Delete;DeleteAll] |> List.fold (fun acc e -> addPlug acc e handler) state
+        [Index;Show;Add;Edit;Create;Update;Patch;Delete;DeleteAll] |> List.fold (fun acc e -> addPlug acc e handler) state
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
 
