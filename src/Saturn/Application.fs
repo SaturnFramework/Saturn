@@ -25,6 +25,7 @@ open System.Net.Http.Headers
 open Newtonsoft.Json.Linq
 open System.Threading.Tasks
 open Channels
+open Giraffe.Serialization.Json
 
 [<AutoOpen>]
 module Application =
@@ -64,6 +65,16 @@ module Application =
       // as we want to add middleware to our pipeline, we can add it here and we'll fold across it in the end
       let useParts = ResizeArray<IApplicationBuilder -> IApplicationBuilder>()
 
+      let wbhst =
+        // Explicit null removes unnecessary handlers.
+        WebHost.CreateDefaultBuilder(Option.toObj state.CliArguments)
+        |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
+
+      wbhst.ConfigureServices(fun svcs ->
+        let services = svcs.AddGiraffe()
+        state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore) |> ignore)
+      |> ignore // need giraffe (with user customizations) in place so that I can get an IJsonSerializer for the channels
+
       /// error handler first so that errors are caught
       match state.ErrorHandler with
       | Some err -> useParts.Add (fun app -> app.UseGiraffeErrorHandler(err))
@@ -73,8 +84,19 @@ module Application =
       match state.Channels with
       | [] -> ()
       | channels ->
-        useParts.Add(fun (ab: IApplicationBuilder) -> ab.UseWebSockets())
+        // we have to build the provider so we can get a serializer so we can make a singleton instance of the hub to register
+        // as both the interface _and_ itself, so that users can use `ISocketHub` without getting the add/remove socket members
+        wbhst.ConfigureServices(fun svcs ->
+          let provider = svcs.BuildServiceProvider()
+          let serializer = provider.GetRequiredService(typeof<IJsonSerializer>) :?> IJsonSerializer
+          let hub = Channels.SocketHub(serializer)
+          svcs
+            .AddSingleton<Channels.ISocketHub>(hub)
+            .AddSingleton<Channels.SocketHub>(hub)
+            |> ignore
+        ) |> ignore
 
+        useParts.Add(fun (ab: IApplicationBuilder) -> ab.UseWebSockets())
         channels
         |> List.iter (fun (url, chnl) -> useParts.Add (fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl)))
 
@@ -83,18 +105,6 @@ module Application =
 
       /// finally Giraffe itself
       useParts.Add (fun app -> app.UseGiraffe router; app)
-
-      /// configs can happen whenever
-      let serviceConfigs (services : IServiceCollection) =
-        let services = services.AddGiraffe()
-        state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore)
-
-      let wbhst =
-        // Explicit null removes unnecessary handlers.
-        WebHost.CreateDefaultBuilder(Option.toObj state.CliArguments)
-        |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
-
-      wbhst.ConfigureServices(Action<IServiceCollection> serviceConfigs) |> ignore
 
       let wbhst =
         if not (state.Urls |> List.isEmpty) then

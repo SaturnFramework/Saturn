@@ -13,3 +13,6 @@ Microsoft.AspNetCore.Authentication.OAuth
 Microsoft.AspNetCore.Authorization
 Microsoft.AspNetCore.Antiforgery
 Microsoft.AspNetCore.WebSockets
+System.Threading.Tasks.Dataflow
+
+File: FSharp.Control.Websockets.fs
