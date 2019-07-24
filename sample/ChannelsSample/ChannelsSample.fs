@@ -23,8 +23,8 @@ let browserRouter = router {
 }
 
 let sampleChannel = channel {
-    join (fun ctx -> task {
-      ctx.GetLogger().LogInformation("Connected!")
+    join (fun ctx id -> task {
+      ctx.GetLogger().LogInformation("Connected! Socket Id: " + id.ToString())
       return Ok
     })
 

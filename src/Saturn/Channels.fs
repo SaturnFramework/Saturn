@@ -19,7 +19,7 @@ module Channels =
 
     type Message<'a> = { Topic: string; Ref: string; Payload: 'a}
     type Message = Message<obj>
-    type SocketId = string
+    type SocketId = Guid
     type ChannelPath = string
     type Topic = string
 
@@ -28,7 +28,7 @@ module Channels =
         | Rejected of reason: string
 
     type IChannel =
-        abstract member Join: HttpContext -> Task<JoinResult>
+        abstract member Join: HttpContext * SocketId -> Task<JoinResult>
         abstract member HandleMessage: HttpContext * Message -> Task<unit>
         abstract member Terminate: HttpContext -> Task<unit>
 
@@ -38,7 +38,7 @@ module Channels =
 
     /// A type that wraps access to connected websockets by endpoint
     type SocketHub(serializer: IJsonSerializer) =
-      let sockets = Dictionary<string, ConcurrentDictionary<string, Socket.ThreadSafeWebSocket>>()
+      let sockets = Dictionary<ChannelPath, ConcurrentDictionary<SocketId, Socket.ThreadSafeWebSocket>>()
 
       let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) (ctok: CancellationToken) = task {
         let text = serializer.SerializeToString msg
@@ -53,8 +53,7 @@ module Channels =
         | true, _path -> ()
         | false, _ -> sockets.[path] <- ConcurrentDictionary()
 
-      member __.ConnectSocketToPath path socket =
-        let id = Guid.NewGuid().ToString()
+      member __.ConnectSocketToPath path id socket =
         sockets.[path].AddOrUpdate(id, socket, fun _ _ -> socket) |> ignore
         id
 
@@ -87,13 +86,14 @@ module Channels =
                     | true ->
                         let logger = ctx.RequestServices.GetRequiredService<ILogger<SocketMiddleware>>()
                         logger.LogTrace("Promoted websocket request")
-                        let! joinResult = channel.Join ctx
+                        let socketId =  Guid.NewGuid()
+                        let! joinResult = channel.Join(ctx, socketId)
                         match joinResult with
                         | Ok ->
                             logger.LogTrace("Joined channel {path}", path)
                             let! webSocket = ctx.WebSockets.AcceptWebSocketAsync()
                             let wrappedSocket = Socket.createFromWebSocket webSocket
-                            let socketId = sockets.ConnectSocketToPath path wrappedSocket
+                            let socketId = sockets.ConnectSocketToPath path socketId wrappedSocket
 
                             while wrappedSocket.State = WebSocketState.Open do
                               match! Socket.receiveMessageAsUTF8 wrappedSocket with
@@ -137,7 +137,7 @@ module ChannelBuilder =
     open Channels
 
     type ChannelBuilderState = {
-        Join: (HttpContext -> Task<JoinResult>) option
+        Join: (HttpContext -> SocketId -> Task<JoinResult>) option
         Handlers: Map<string, (HttpContext -> Message -> Task<unit>)>
         Terminate: (HttpContext -> Task<unit>) option
         NotFoundHandler: (HttpContext -> Message -> Task<unit>) option
@@ -207,7 +207,7 @@ module ChannelBuilder =
 
 
             { new IChannel with
-                member __.Join(ctx) = join ctx
+                member __.Join(ctx,id) = join ctx id
 
                 member __.Terminate(ctx) = terminate ctx
 
