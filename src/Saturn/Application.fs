@@ -40,6 +40,7 @@ module Application =
     ServicesConfig: (IServiceCollection -> IServiceCollection) list
     CliArguments: string array option
     CookiesAlreadyAdded: bool
+    NoRouter: bool
     Channels: (string * IChannel) list
   }
 
@@ -50,17 +51,18 @@ module Application =
       let errorHandler (ex : Exception) (logger : ILogger) =
         logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
-
-
-      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; Channels = [] }
+      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false; Channels = [] }
 
     member __.Run(state: ApplicationState) : IWebHostBuilder =
       /// to build the app we have to separate our configurations and our pipelines.
       /// we can only call `Configure` once, so we have to apply our pipelines in the end
-      match state.Router with
-      | None -> failwith "Router needs to be defined in Saturn application"
-      | Some router ->
-      let router = (succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> router
+      let router =
+        match state.Router with
+        | None ->
+          if not state.NoRouter then printfn "Router needs to be defined in Saturn application. If you're building channels-only application, or gRPC application you may disable this message with `no_router` flag in your `application` block"
+          None
+        | Some router ->
+          Some ((succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> router)
 
       // as we want to add middleware to our pipeline, we can add it here and we'll fold across it in the end
       let useParts = ResizeArray<IApplicationBuilder -> IApplicationBuilder>()
@@ -104,7 +106,9 @@ module Application =
       state.AppConfigs |> List.iter (useParts.Add)
 
       /// finally Giraffe itself
-      useParts.Add (fun app -> app.UseGiraffe router; app)
+      match router with
+      | None -> ()
+      | Some router -> useParts.Add (fun app -> app.UseGiraffe router; app)
 
       let wbhst =
         if not (state.Urls |> List.isEmpty) then
@@ -128,6 +132,11 @@ module Application =
     [<CustomOperation("use_router")>]
     member __.Router(state, handler) =
       {state with Router = Some handler}
+
+    ///Disable warning message about lack of `router` definition. Should be used for channels-only or gRPC applications.
+    [<CustomOperation("use_router")>]
+    member __.NoRouter(state) =
+      {state with NoRouter = true}
 
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]
