@@ -4,7 +4,6 @@ open FSharp.Control.Tasks.V2
 open FSharp.Control.Websockets
 open Giraffe.Serialization.Json
 open Microsoft.AspNetCore.Http
-open Microsoft.AspNetCore.Http.Extensions
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 open System
@@ -14,7 +13,7 @@ open System.Net.WebSockets
 open System.Threading
 open System.Threading.Tasks
 
-module Socket = ThreadSafeWebsocket
+module Socket = ThreadSafeWebSocket
 
 module Channels =
 
@@ -45,7 +44,7 @@ module Channels =
         let text = serializer.SerializeToString msg
         let! result =  Socket.sendMessageAsUTF8 socket text
         match result with
-        | Socket.MessageResult.Ok () -> return ()
+        | Result.Ok () -> return ()
         | Error exn -> return exn.Throw()
       }
 
@@ -98,9 +97,9 @@ module Channels =
 
                             while wrappedSocket.State = WebSocketState.Open do
                               match! Socket.receiveMessageAsUTF8 wrappedSocket with
-                              | Core.Ok null | Core.Ok "" ->
+                              | Result.Ok (WebSocket.ReceiveUTF8Result.String "") | Result.Ok (WebSocket.ReceiveUTF8Result.Closed(_)) ->
                                 ()
-                              | Core.Ok msg ->
+                              | Result.Ok (WebSocket.ReceiveUTF8Result.String msg) ->
                                 logger.LogTrace("received message {0}", msg)
                                 try
                                   let msg = serializer.Deserialize<Message> msg
@@ -110,7 +109,7 @@ module Channels =
                                   // typically a deserialization error, swallow
                                   logger.LogTrace(ex, "got message that was unable to be deserialized into a 'Message'")
                                 ()
-                              | Core.Error exn ->
+                              | Error exn ->
                                 logger.LogError(exn.SourceException, "Error while receiving message")
                                 () // TODO: ?
 
@@ -118,10 +117,10 @@ module Channels =
                             sockets.DisconnectSocketForPath path socketId
                             let! result =  Socket.close wrappedSocket WebSocketCloseStatus.NormalClosure "Closing channel"
                             match result with
-                            | Socket.MessageResult.Ok () ->
+                            | Result.Ok () ->
                               logger.LogTrace("Closed socket")
                               ()
-                            | Socket.MessageResult.Error exn ->
+                            | Error exn ->
                               logger.LogError(exn.SourceException, "Error while closing socket")
                               ()
                         | Rejected msg ->

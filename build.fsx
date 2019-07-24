@@ -89,11 +89,11 @@ Target.create "AssemblyInfo" (fun _ ->
         )
 )
 
-Target.create "InstallDotNetCLI" (fun _ ->
-    let version = DotNet.CliVersion.Version dotnetcliVersion
-    let options = DotNet.Options.Create()
-    DotNet.install (fun opts -> { opts with Version = version }) options |> ignore
-    )
+// Target.create "InstallDotNetCLI" (fun _ ->
+//     let version = DotNet.CliVersion.Version dotnetcliVersion
+//     let options = DotNet.Options.Create()
+//     DotNet.install (fun opts -> { opts with Version = version }) options |> ignore
+//     )
 
 Target.create "Restore" (fun _ ->
     DotNet.restore id ""
@@ -176,7 +176,7 @@ Target.create "Default" DoNothing
 Target.create "Release" DoNothing
 
 "Clean"
-  ==> "InstallDotNetCLI"
+//   ==> "InstallDotNetCLI"
   ==> "AssemblyInfo"
   ==> "Restore"
   ==> "Build"

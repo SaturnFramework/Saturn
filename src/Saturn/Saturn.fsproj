@@ -8,10 +8,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\paket-files\TheAngryByrd\FSharp.Control.WebSockets\src\FSharp.Control.Websockets\FSharp.Control.Websockets.fs">
-      <Paket>True</Paket>
-      <Link>paket-files/FSharp.Control.Websockets.fs</Link>
-    </Compile>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Utils.fs" />
     <Compile Include="Common.fs" />
