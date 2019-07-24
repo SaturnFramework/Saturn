@@ -134,7 +134,7 @@ module Application =
       {state with Router = Some handler}
 
     ///Disable warning message about lack of `router` definition. Should be used for channels-only or gRPC applications.
-    [<CustomOperation("use_router")>]
+    [<CustomOperation("no_router")>]
     member __.NoRouter(state) =
       {state with NoRouter = true}
 
