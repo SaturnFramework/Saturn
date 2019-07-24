@@ -539,6 +539,28 @@ module Application =
       { state with
           Channels = (url, channel) :: state.Channels }
 
+    /// Turns on the developer exception page, if the environment is in development mode.
+    [<CustomOperation "use_developer_exceptions">]
+    member __.ActivateDeveloperExceptions (state: ApplicationState) =
+        let config (app:IApplicationBuilder) (env:IHostingEnvironment) =
+            if env.IsDevelopment() then app.UseDeveloperExceptionPage()
+            else app
+
+        let middleware (app:IApplicationBuilder) =
+          let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+          config app env
+
+        {state with AppConfigs=middleware::state.AppConfigs}
+
+    /// Listens on `::1` and `127.0.0.1` with the given port. Requesting a dynamic port by specifying `0` is not supported for this type of endpoint
+    [<CustomOperation "listen_local">]
+    member __.ListenLocal (state:ApplicationState, portNumber, listenOptions : Server.Kestrel.Core.ListenOptions -> unit) =
+        let config (webHostBuilder:IWebHostBuilder) =
+            webHostBuilder
+               .ConfigureKestrel(fun options -> options.ListenLocalhost(portNumber, Action<Server.Kestrel.Core.ListenOptions> listenOptions))
+
+        {state with HostConfigs = config::state.HostConfigs}
+
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
 
