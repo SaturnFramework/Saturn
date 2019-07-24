@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Saturn\Saturn.fsproj" />
+    <ProjectReference Include="..\..\src\Saturn.Extensions.gRPC\Saturn.Extensions.gRPC.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shared.fs" />
+    <Compile Include="gRpcSample.fs" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>
