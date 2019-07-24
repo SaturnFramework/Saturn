@@ -33,14 +33,14 @@ module Channels =
         abstract member Terminate: HttpContext -> Task<unit>
 
     type ISocketHub =
-        abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> CancellationToken -> Task<unit>
-        abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> CancellationToken -> Task<unit>
+        abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> Task<unit>
+        abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
     type SocketHub(serializer: IJsonSerializer) =
       let sockets = Dictionary<ChannelPath, ConcurrentDictionary<SocketId, Socket.ThreadSafeWebSocket>>()
 
-      let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) (ctok: CancellationToken) = task {
+      let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) = task {
         let text = serializer.SerializeToString msg
         let! result =  Socket.sendMessageAsUTF8 socket text
         match result with
@@ -61,18 +61,18 @@ module Channels =
         sockets.[path].TryRemove socketId |> ignore
 
       interface ISocketHub with
-        member __.SendMessageToClients path topic payload ctok  = task {
+        member __.SendMessageToClients path topic payload  = task {
           let msg = { Topic = topic; Ref = ""; Payload = payload }
-          let tasks = [for kvp in sockets.[path] -> sendMessage msg kvp.Value ctok ]
+          let tasks = [for kvp in sockets.[path] -> sendMessage msg kvp.Value ]
           let! _results = Task.WhenAll tasks
           return ()
         }
 
-        member __.SendMessageToClient path clientId topic payload ctok = task {
+        member __.SendMessageToClient path clientId topic payload = task {
           match sockets.[path].TryGetValue clientId with
           | true, socket ->
             let msg = { Topic = topic; Ref = ""; Payload = payload }
-            do! sendMessage msg socket ctok
+            do! sendMessage msg socket
           | _ -> ()
         }
 
