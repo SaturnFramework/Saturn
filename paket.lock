@@ -58,6 +58,9 @@ NUGET
     Grpc.Core.Api (1.22) - restriction: >= netcoreapp3.0
       System.Interactive.Async (>= 3.2) - restriction: || (>= net45) (>= netstandard1.5)
       System.Memory (>= 4.5.2) - restriction: && (< net45) (>= netstandard2.0)
+    Grpc.Net.Client (0.1.22-pre2) - restriction: >= netcoreapp3.0
+      Grpc.Core.Api (>= 1.22.0-pre1) - restriction: >= netstandard2.1
+      Microsoft.Extensions.Logging.Abstractions (>= 2.1.1) - restriction: >= netstandard2.1
     Microsoft.AspNet.WebApi.Client (5.2.7) - restriction: && (< net46) (>= netstandard2.0)
       Newtonsoft.Json (>= 10.0.1) - restriction: && (< net45) (>= netstandard2.0)
       Newtonsoft.Json.Bson (>= 1.0.1) - restriction: && (< net45) (>= netstandard2.0)
@@ -585,6 +588,9 @@ NUGET
       System.Threading.Channels (>= 4.5) - restriction: || (>= net461) (>= netstandard2.0)
     protobuf-net.Grpc.AspNetCore (0.0.3-alpha.106)
       Grpc.AspNetCore.Server (>= 0.1.22-pre2) - restriction: >= netcoreapp3.0
+      protobuf-net.Grpc (>= 0.0.3-alpha.106) - restriction: >= netcoreapp3.0
+    protobuf-net.Grpc.HttpClient (0.0.3-alpha.106)
+      Grpc.Net.Client (>= 0.1.22-pre2) - restriction: >= netcoreapp3.0
       protobuf-net.Grpc (>= 0.0.3-alpha.106) - restriction: >= netcoreapp3.0
     runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net20) (>= netstandard1.6) (< netstandard2.0) (< win8) (< wpa81) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net20) (< netstandard1.2) (>= netstandard1.6) (< win8)) (&& (< monoandroid) (< net20) (< netstandard1.3) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< monoandroid) (< net20) (< netstandard1.4) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< monoandroid) (< net20) (< netstandard1.5) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< net20) (>= net46) (< netstandard1.3) (>= netstandard1.6)) (&& (< net20) (>= net46) (< netstandard1.4) (>= netstandard1.6)) (&& (< netstandard1.3) (>= netstandard1.6) (>= uap10.0)) (&& (< netstandard1.5) (>= netstandard1.6) (>= uap10.0))
     runtime.debian.9-x64.runtime.native.System.Security.Cryptography.OpenSsl (4.3.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net20) (>= netstandard1.6) (< netstandard2.0) (< win8) (< wpa81) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< net20) (< netstandard1.2) (>= netstandard1.6) (< win8)) (&& (< monoandroid) (< net20) (< netstandard1.3) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< monoandroid) (< net20) (< netstandard1.4) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< monoandroid) (< net20) (< netstandard1.5) (>= netstandard1.6) (< win8) (< wpa81)) (&& (< net20) (>= net46) (< netstandard1.3) (>= netstandard1.6)) (&& (< net20) (>= net46) (< netstandard1.4) (>= netstandard1.6)) (&& (< netstandard1.3) (>= netstandard1.6) (>= uap10.0)) (&& (< netstandard1.5) (>= netstandard1.6) (>= uap10.0))

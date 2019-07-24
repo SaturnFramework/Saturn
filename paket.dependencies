@@ -20,6 +20,7 @@ nuget Microsoft.AspNetCore.WebSockets >= 2.1
 nuget FSharp.Control.Websockets
 nuget System.Threading.Tasks.Dataflow
 nuget protobuf-net.Grpc.AspNetCore
+nuget protobuf-net.Grpc.HttpClient
 
 nuget Giraffe ~> 3.4
 
