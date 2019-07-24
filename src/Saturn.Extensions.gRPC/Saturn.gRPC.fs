@@ -5,10 +5,11 @@ open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
 open ProtoBuf.Grpc.Server
 
-type ApplicationBuilder with
+type Saturn.Application.ApplicationBuilder with
 
-    [<CustomOperation("use_gprc")>]
-    member __.UseGrpc<'a when 'a : not struct>(state) =
+    [<CustomOperation("use_grpc")>]
+    ///Adds gRPC Code First endpoint. Passed parameter should be parameter-less constructor of the gRPC service implementation.
+    member __.UseGrpc<'a when 'a : not struct>(state, cons: unit -> 'a) =
         let configureServices (services: IServiceCollection) =
             services.AddCodeFirstGrpc()
             services
@@ -23,4 +24,3 @@ type ApplicationBuilder with
             AppConfigs = configureApp::configureGrpcEndpoint::state.AppConfigs
             ServicesConfig = configureServices::state.ServicesConfig
         }
-
