@@ -8,8 +8,8 @@ open ProtoBuf.Grpc.Server
 type Saturn.Application.ApplicationBuilder with
 
     [<CustomOperation("use_grpc")>]
-    ///Adds gRPC Code First endpoint. Passed parameter should be parameter-less constructor of the gRPC service implementation.
-    member __.UseGrpc<'a when 'a : not struct>(state, cons: unit -> 'a) =
+    ///Adds gRPC Code First endpoint. Passed parameter should be any constructor of the gRPC service implementation.
+    member __.UseGrpc<'a, 'b when 'a : not struct>(state, cons: 'b -> 'a) =
         let configureServices (services: IServiceCollection) =
             services.AddCodeFirstGrpc()
             services
