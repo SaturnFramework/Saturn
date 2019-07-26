@@ -1,0 +1,26 @@
+name: $(Rev:r)
+jobs:
+- job: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  steps:
+  - script: dotnet tool install fake-cli --tool-path .
+    displayName: Install FAKE
+  - script: fake build
+    displayName: Run Build
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: build
+      artifactName: Saturn
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - script: dotnet tool install fake-cli --tool-path .
+    displayName: Install FAKE
+  - script: ./fake build
+    displayName: Run Build
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: build
+      artifactName: Saturn
