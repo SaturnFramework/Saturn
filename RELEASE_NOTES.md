@@ -1,3 +1,21 @@
+### 0.9.0 - 26.07.2019
+* Change `use_config` to accept `IConfiguration -> 'a` (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Case Insensitive support (`case_insensitive`) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* OAuth refactoring (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Add overloads for controller actions that automatically providing dependencies (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Controller key should always match up to a single path segment  (by [@NinoFloris](https://github.com/NinoFloris))
+* Add Chanel abstraction (websocket abstraction) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak) and [@baronfel](https://github.com/baronfel))
+* Add a tryCsrf handler as well as the CSRF handler (by [@baronfel](https://github.com/baronfel))
+* Add routing diagnostic page (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Don't use setBody on CORS 204 (by [@Titaye](https://github.com/Titaye))
+* Fix error on invalid key type if Patch is used (by [@Frassle](https://github.com/Frassle))
+* Controller plug All should affect Patch (by [@Frassle](https://github.com/Frassle))
+* Server channels design - SocketHub (by [@baronfel](https://github.com/baronfel))
+* Make application working without router and add `no_router` operation (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Add `use_developer_exceptions` and `listen_local` to application CE (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Add gRPC extension (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Update Saturn to Asp.Net Core 2.2 (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
 ### 0.8.0 - 05.12.2018
 * Updates Index and DeleteAll to not result in plugs fired twice. (by [@jeremyabbott](https://github.com/jeremyabbott))
 * Upgrade of Giraffe to 3.4, fixes breaking compilation errors. (by [@NinoFloris](https://github.com/NinoFloris))
