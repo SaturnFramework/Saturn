@@ -1,5 +1,7 @@
 # Saturn
 
+![Azure DevOps builds](https://img.shields.io/azure-devops/build/SaturnFramework/f6855c7f-1326-401f-8268-b21cb1a1d536/1?style=flat-square) ![GitHub last commit](https://img.shields.io/github/last-commit/SaturnFramework/Saturn?style=flat-square) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Saturn?style=flat-square)
+
 Saturn is a web development framework written in F# which implements the server-side MVC pattern. Many of its components and concepts will seem familiar to anyone with experience in other web frameworks like Ruby on Rails or Python’s Django.
 
 It's heavily inspired by Elixir's [Phoenix](http://phoenixframework.org/).
