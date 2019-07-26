@@ -16,19 +16,19 @@ jobs:
     inputs:
       pathtoPublish: build
       artifactName: Saturn
-- job: Linux
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:
-  - task: DotNetCoreInstaller@0
-    displayName: 'Install .net core 3.0 (preview)'
-    inputs:
-      version: '3.0.100-preview7-012821'
-  - script: dotnet tool install fake-cli --tool-path .
-    displayName: Install FAKE
-  - script: ./fake build
-    displayName: Run Build
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: build
-      artifactName: Saturn
+# - job: Linux
+#   pool:
+#     vmImage: 'ubuntu-16.04'
+#   steps:
+#   - task: DotNetCoreInstaller@0
+#     displayName: 'Install .net core 3.0 (preview)'
+#     inputs:
+#       version: '3.0.100-preview7-012821'
+#   - script: dotnet tool install fake-cli --tool-path .
+#     displayName: Install FAKE
+#   - script: ./fake build
+#     displayName: Run Build
+#   - task: PublishBuildArtifacts@1
+#     inputs:
+#       pathtoPublish: build
+#       artifactName: Saturn
