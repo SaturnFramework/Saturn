@@ -1,3 +1,6 @@
+### 0.9.1-dev - 26.07.2019
+* Update dependencies ranges in `paket.dependencies` file (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
 ### 0.9.0 - 26.07.2019
 * Change `use_config` to accept `IConfiguration -> 'a` (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
 * Case Insensitive support (`case_insensitive`) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))

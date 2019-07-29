@@ -2,27 +2,27 @@ source https://www.nuget.org/api/v2
 version 5.215.0
 
 nuget FSharp.Core >= 4.2.3
-nuget Microsoft.AspNetCore >= 2.2
-nuget Microsoft.AspNetCore.Session >= 2.2
-nuget Microsoft.AspNetCore.ResponseCompression >= 2.2
-nuget Microsoft.AspNetCore.StaticFiles >= 2.2
-nuget Microsoft.Extensions.Caching.Memory >= 2.2
-nuget Microsoft.AspNetCore.Rewrite >= 2.2
-nuget Microsoft.AspNetCore.Cors >= 2.2
-nuget Microsoft.AspNetCore.Authentication.JwtBearer >= 2.2
-nuget Microsoft.AspNetCore.Authentication.Cookies >= 2.2
-nuget Microsoft.AspNetCore.Authentication.Google >= 2.2
-nuget Microsoft.AspNetCore.Authentication.OAuth >= 2.2
-nuget Microsoft.AspNetCore.Authorization >= 2.2
-nuget Microsoft.AspNetCore.Antiforgery >= 2.2
-nuget Microsoft.AspNetCore.Server.HttpSys >= 2.2
-nuget Microsoft.AspNetCore.WebSockets >= 2.2
-nuget FSharp.Control.Websockets
-nuget System.Threading.Tasks.Dataflow
-nuget protobuf-net.Grpc.AspNetCore
-nuget protobuf-net.Grpc.HttpClient
-
 nuget Giraffe ~> 3.4
+nuget Microsoft.AspNetCore ~> 2.2
+nuget Microsoft.AspNetCore.Session ~> 2.2
+nuget Microsoft.AspNetCore.ResponseCompression ~> 2.2
+nuget Microsoft.AspNetCore.StaticFiles ~> 2.2
+nuget Microsoft.Extensions.Caching.Memory ~> 2.2
+nuget Microsoft.AspNetCore.Rewrite ~> 2.2
+nuget Microsoft.AspNetCore.Cors ~> 2.2
+nuget Microsoft.AspNetCore.Authentication.JwtBearer ~> 2.2
+nuget Microsoft.AspNetCore.Authentication.Cookies ~> 2.2
+nuget Microsoft.AspNetCore.Authentication.Google ~> 2.2
+nuget Microsoft.AspNetCore.Authentication.OAuth ~> 2.2
+nuget Microsoft.AspNetCore.Authorization ~> 2.2
+nuget Microsoft.AspNetCore.Antiforgery ~> 2.2
+nuget Microsoft.AspNetCore.Server.HttpSys ~> 2.2
+nuget Microsoft.AspNetCore.WebSockets ~> 2.2
+nuget FSharp.Control.Websockets == 0.2
+nuget protobuf-net.Grpc.AspNetCore == 0.0.3-alpha.106
+nuget protobuf-net.Grpc.HttpClient == 0.0.3-alpha.106
+
+
 
 nuget Microsoft.NET.Sdk.Functions >= 1.0.24
 nuget Newtonsoft.Json == 12.0.1
