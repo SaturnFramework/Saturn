@@ -115,6 +115,9 @@ NUGET
     Microsoft.AspNetCore.Authentication.OAuth (2.2)
       Microsoft.AspNetCore.Authentication (>= 2.2) - restriction: >= netstandard2.0
       Newtonsoft.Json (>= 11.0.2) - restriction: >= netstandard2.0
+    Microsoft.AspNetCore.Authentication.OpenIdConnect (2.2)
+      Microsoft.AspNetCore.Authentication.OAuth (>= 2.2) - restriction: >= netstandard2.0
+      Microsoft.IdentityModel.Protocols.OpenIdConnect (>= 5.3) - restriction: >= netstandard2.0
     Microsoft.AspNetCore.Authorization (2.2)
       Microsoft.Extensions.Logging.Abstractions (>= 2.2) - restriction: >= netstandard2.0
       Microsoft.Extensions.Options (>= 2.2) - restriction: >= netstandard2.0
