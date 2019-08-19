@@ -15,6 +15,7 @@ nuget Microsoft.AspNetCore.Authentication.Google >= 2.2
 nuget Microsoft.AspNetCore.Authentication.OAuth >= 2.2
 nuget Microsoft.AspNetCore.Authorization >= 2.2
 nuget Microsoft.AspNetCore.Antiforgery >= 2.2
+nuget Microsoft.AspNetCore.Authentication.OpenIdConnect >= 2.2
 nuget Microsoft.AspNetCore.Server.HttpSys >= 2.2
 nuget Microsoft.AspNetCore.WebSockets >= 2.2
 nuget FSharp.Control.Websockets
