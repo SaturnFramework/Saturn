@@ -23,7 +23,7 @@ nuget System.Threading.Tasks.Dataflow
 nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
 
-nuget Giraffe ~> 3.4
+nuget Giraffe ~> 4.0
 
 nuget Microsoft.NET.Sdk.Functions >= 1.0.24
 nuget Newtonsoft.Json == 12.0.1
