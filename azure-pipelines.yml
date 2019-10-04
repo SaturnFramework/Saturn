@@ -5,9 +5,9 @@ jobs:
     vmImage: 'vs2017-win2016'
   steps:
   - task: DotNetCoreInstaller@0
-    displayName: 'Install .net core 3.0 (preview)'
+    displayName: 'Install .net core 3.0'
     inputs:
-      version: '3.0.100-preview7-012821'
+      version: '3.0.100'
   - script: dotnet tool install fake-cli --tool-path .
     displayName: Install FAKE
   - script: fake build
