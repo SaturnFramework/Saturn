@@ -466,7 +466,7 @@ module Application =
           Action<AuthorizationPolicyBuilder>
             (fun builder -> builder.RequireAssertion evaluator |> ignore))
       let service (s : IServiceCollection) =
-        s.AddAuthorization (Action<AuthorizationOptions> policyBuilder)
+        s.AddAuthorizationCore (Action<AuthorizationOptions> policyBuilder)
       { state with
           ServicesConfig = service::state.ServicesConfig
       }
