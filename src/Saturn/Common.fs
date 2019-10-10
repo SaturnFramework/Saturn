@@ -63,7 +63,7 @@ module Common =
 
   let internal routefUnsafe (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
-        Giraffe.FormatExpressions.tryMatchInput path (getPath ctx) false
+        Giraffe.FormatExpressions.tryMatchInput path FormatExpressions.MatchOptions.IgnoreCaseExact (getPath ctx)
         |> function
             | None      -> System.Threading.Tasks.Task.FromResult None
             | Some args -> routeHandler args next ctx
@@ -81,14 +81,14 @@ module Common =
                         if String.IsNullOrEmpty elem
                         then state
                         else sprintf "%s/%s" state elem) ""
-                Giraffe.FormatExpressions.tryMatchInput path subPath false
+                Giraffe.FormatExpressions.tryMatchInput path FormatExpressions.MatchOptions.IgnoreCaseExact subPath
                 |> function
                     | None      -> abort
                     | Some args -> handlerWithRootedPath subPath (routeHandler args) next ctx
 
   let internal routefUnsafeCi (path : PrintfFormat<_,_,_,_, 'T>) (routeHandler : 'T -> HttpHandler) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->
-        Giraffe.FormatExpressions.tryMatchInput path (getPath ctx) true
+        Giraffe.FormatExpressions.tryMatchInput path FormatExpressions.MatchOptions.IgnoreCaseExact (getPath ctx)
         |> function
             | None      -> System.Threading.Tasks.Task.FromResult None
             | Some args -> routeHandler args next ctx
@@ -106,7 +106,7 @@ module Common =
                         if String.IsNullOrEmpty elem
                         then state
                         else sprintf "%s/%s" state elem) ""
-                Giraffe.FormatExpressions.tryMatchInput path subPath true
+                Giraffe.FormatExpressions.tryMatchInput path FormatExpressions.MatchOptions.IgnoreCaseExact subPath
                 |> function
                     | None      -> abort
                     | Some args -> handlerWithRootedPath subPath (routeHandler args) next ctx
@@ -125,7 +125,7 @@ module Common =
                         if String.IsNullOrEmpty elem
                         then state
                         else sprintf "%s/%s" state elem) ""
-                Giraffe.FormatExpressions.tryMatchInput path subPath true
+                Giraffe.FormatExpressions.tryMatchInput path FormatExpressions.MatchOptions.IgnoreCaseExact subPath
                 |> function
                     | None      -> abort
                     | Some args -> SubRouting.routeWithPartialPath subPath (routeHandler args) next ctx
