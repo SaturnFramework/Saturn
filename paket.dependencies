@@ -18,8 +18,8 @@ nuget Microsoft.AspNetCore.Antiforgery >= 2.2
 nuget Microsoft.AspNetCore.Authentication.OpenIdConnect >= 2.2
 nuget Microsoft.AspNetCore.Server.HttpSys >= 2.2
 nuget Microsoft.AspNetCore.WebSockets >= 2.2
-nuget FSharp.Control.Websockets
-nuget System.Threading.Tasks.Dataflow
+nuget FSharp.Control.Websockets >= 0.2
+nuget System.Threading.Tasks.Dataflow >= 4.9
 nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
 
