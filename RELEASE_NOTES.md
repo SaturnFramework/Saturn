@@ -1,3 +1,10 @@
+### 0.10.0 - 17.10.2019
+* add OpenId Saturn extension (by [@gfritz](https://github.com/gfritz))
+* updated Giraffe to version 4 (by [@brase](https://github.com/brase))
+* fix for signature of tryMatchInput (by [@brase](https://github.com/brase))
+* renames AddAuthorization to AddAuthorizationCore (by [@brase](https://github.com/brase))
+* Add more constraints for package dependencies (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
 ### 0.9.0 - 26.07.2019
 * Change `use_config` to accept `IConfiguration -> 'a` (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
 * Case Insensitive support (`case_insensitive`) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
