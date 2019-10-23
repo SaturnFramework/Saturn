@@ -1,17 +1,4 @@
 FSharp.Core
 Giraffe
-Microsoft.AspNetCore
-Microsoft.AspNetCore.Session
-Microsoft.AspNetCore.StaticFiles
-Microsoft.AspNetCore.ResponseCompression
-Microsoft.Extensions.Caching.Memory
-Microsoft.AspNetCore.Rewrite
-Microsoft.AspNetCore.Cors
-Microsoft.AspNetCore.Authentication.JwtBearer
-Microsoft.AspNetCore.Authentication.Cookies
-Microsoft.AspNetCore.Authentication.OAuth
-Microsoft.AspNetCore.Authorization
-Microsoft.AspNetCore.Antiforgery
-Microsoft.AspNetCore.WebSockets
 System.Threading.Tasks.Dataflow
 FSharp.Control.Websockets
