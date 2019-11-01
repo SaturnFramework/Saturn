@@ -1,5 +1,5 @@
 source https://www.nuget.org/api/v2
-version 5.215.0
+version 5.226.0
 
 nuget FSharp.Core >= 4.2.3
 nuget Microsoft.AspNetCore >= 2.2
@@ -31,6 +31,10 @@ nuget Newtonsoft.Json == 12.0.1
 nuget NSubstitute
 nuget Expecto
 
+group GenericHost
+  source https://www.nuget.org/api/v2
+  nuget Microsoft.Extensions.Hosting >= 3.0
+  nuget TaskBuilder.fs >= 2.1
 
 group Build
   source https://www.nuget.org/api/v2
