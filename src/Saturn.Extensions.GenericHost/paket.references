@@ -1,0 +1,5 @@
+FSharp.Core
+
+group GenericHost
+  Microsoft.Extensions.Hosting
+  TaskBuilder.fs
