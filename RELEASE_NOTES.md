@@ -1,3 +1,6 @@
+### 0.10.1 - 25.11.2019
+* Update Giraffe to 4.0.1 (by [@mastoj](https://github.com/mastoj))
+
 ### 0.10.0 - 17.10.2019
 * add OpenId Saturn extension (by [@gfritz](https://github.com/gfritz))
 * updated Giraffe to version 4 (by [@brase](https://github.com/brase))
