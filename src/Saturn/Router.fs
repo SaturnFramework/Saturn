@@ -136,7 +136,7 @@ module Router =
 
       let gets, getsf = generateRoutes RouteType.Get
       let posts, postsf = generateRoutes RouteType.Post
-      let pathces, patchesf = generateRoutes RouteType.Patch
+      let patches, patchesf = generateRoutes RouteType.Patch
 
       let puts, putsf = generateRoutes RouteType.Put
       let deletes, deletesf = generateRoutes RouteType.Delete
@@ -174,7 +174,7 @@ module Router =
             yield! postsf
           ]
           yield PATCH >=> choose [
-            yield! pathces
+            yield! patches
             yield! patchesf
           ]
           yield PUT >=> choose [
