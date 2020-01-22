@@ -4,10 +4,10 @@ jobs:
   pool:
     vmImage: 'vs2017-win2016'
   steps:
-  - task: DotNetCoreInstaller@0
-    displayName: 'Install .net core 3.0'
+  - task: UseDotNet@2
+    displayName: 'Install .net core'
     inputs:
-      version: '3.0.100'
+      useGlobalJson: true
   - script: dotnet tool restore
     displayName: Install FAKE
   - script: dotnet fake build
