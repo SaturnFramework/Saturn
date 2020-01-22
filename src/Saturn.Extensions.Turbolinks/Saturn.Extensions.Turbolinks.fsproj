@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Turbolinks support for Saturn</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Saturn\Saturn.fsproj">
@@ -13,5 +14,10 @@
   <ItemGroup>
     <Compile Include="Turbolinks.fs" />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

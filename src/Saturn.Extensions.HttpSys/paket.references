@@ -1,2 +1,6 @@
-FSharp.Core
-Microsoft.AspNetCore.Server.HttpSys
+group netstandard2.0
+  FSharp.Core framework: netstandard2.0
+  Microsoft.AspNetCore.Server.HttpSys framework: netstandard2.0
+
+group netcoreapp3.0
+  FSharp.Core framework: netcoreapp3.0

@@ -40,19 +40,7 @@ type ApplicationBuilder with
         opt.ClaimActions.MapJsonSubKey("urn:google:image:url", "image", "url")
         let ev = opt.Events
 
-        ev.OnCreatingTicket <-
-          fun ctx ->
-            let tsk = task {
-              let req = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint)
-              req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue("application/json"))
-              req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", ctx.AccessToken)
-              let! (response : HttpResponseMessage) = ctx.Backchannel.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ctx.HttpContext.RequestAborted)
-              response.EnsureSuccessStatusCode () |> ignore
-              let! cnt = response.Content.ReadAsStringAsync()
-              let user = JObject.Parse cnt
-              ctx.RunClaimActions user
-            }
-            Task.Factory.StartNew(fun () -> tsk.Result)
+        ev.OnCreatingTicket <- Func<_,_> Saturn.Application.parseAndValidateOauthTicket
 
         ) |> ignore
         s
@@ -108,19 +96,7 @@ type ApplicationBuilder with
           jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(v,k) )
           let ev = opt.Events
 
-          ev.OnCreatingTicket <-
-            fun ctx ->
-              let tsk = task {
-                let req = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint)
-                req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue("application/json"))
-                req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", ctx.AccessToken)
-                let! (response : HttpResponseMessage) = ctx.Backchannel.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ctx.HttpContext.RequestAborted)
-                response.EnsureSuccessStatusCode () |> ignore
-                let! cnt = response.Content.ReadAsStringAsync()
-                let user = JObject.Parse cnt
-                ctx.RunClaimActions user
-              }
-              Task.Factory.StartNew(fun () -> tsk.Result)
+          ev.OnCreatingTicket <- Func<_,_> Saturn.Application.parseAndValidateOauthTicket
 
          ) |> ignore
         s
