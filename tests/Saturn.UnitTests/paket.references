@@ -1,4 +1,6 @@
-FSharp.Core
 Expecto
 NSubstitute
-Giraffe
+
+group netcoreapp3.0
+  FSharp.Core
+  Giraffe

@@ -1,4 +1,5 @@
-FSharp.Core
-Giraffe
-Microsoft.AspNetCore
 Microsoft.NET.Sdk.Functions
+
+group netcoreapp3.0
+  FSharp.Core
+  Giraffe

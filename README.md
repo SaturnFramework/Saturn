@@ -14,9 +14,9 @@ Saturn has nice [documentation](https://saturnframework.github.io/docs/) and I a
 
 ## How to build
 
-1. Install the .NET Core 3.0 preview 7 SDK from https://dotnet.microsoft.com/download/dotnet-core/3.0
-2. Install FAKE: `dotnet tool install fake-cli -g`
-3. Inside the repo directory, run `fake build`
+1. Install the .NET Core 3.1 SDK from https://dotnet.microsoft.com/download/dotnet-core/3.1
+2. Restore dotnet SDK tools: `dotnet tool restore`
+3. Inside the repo directory, run `dotnet fake build`
 
 ## How to contribute
 

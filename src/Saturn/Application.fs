@@ -45,6 +45,26 @@ module Application =
   }
 
   let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
+  // generic oauth parse and validate logic, shared with the auth extensions package
+  let parseAndValidateOauthTicket =
+    fun (ctx: OAuth.OAuthCreatingTicketContext) ->
+      let tsk = task {
+        let req = new HttpRequestMessage(HttpMethod.Get, ctx.Options.UserInformationEndpoint)
+        req.Headers.Accept.Add(MediaTypeWithQualityHeaderValue("application/json"))
+        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", ctx.AccessToken)
+        let! (response : HttpResponseMessage) = ctx.Backchannel.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ctx.HttpContext.RequestAborted)
+        response.EnsureSuccessStatusCode () |> ignore
+#if NETSTANDARD2_0
+        let! cnt = response.Content.ReadAsStringAsync()
+        let user = JObject.Parse cnt
+#endif
+#if NETCOREAPP3_0
+        let! responseStream = response.Content.ReadAsStreamAsync()
+        let! user = System.Text.Json.JsonSerializer.DeserializeAsync(responseStream)
+#endif
+        ctx.RunClaimActions user
+      }
+      Task.Factory.StartNew(fun () -> tsk.Result)
 
   type ApplicationBuilder internal () =
     member __.Yield(_) =
@@ -385,8 +405,14 @@ module Application =
                 req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", ctx.AccessToken)
                 let! (response : HttpResponseMessage) = ctx.Backchannel.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ctx.HttpContext.RequestAborted)
                 response.EnsureSuccessStatusCode () |> ignore
+#if NETSTANDARD2_0
                 let! cnt = response.Content.ReadAsStringAsync()
                 let user = JObject.Parse cnt
+#endif
+#if NETCOREAPP3_0
+                let! responseStream = response.Content.ReadAsStreamAsync()
+                let! user = System.Text.Json.JsonSerializer.DeserializeAsync(responseStream)
+#endif
                 ctx.RunClaimActions user
               }
               Task.Factory.StartNew(fun () -> tsk.Result)
@@ -466,7 +492,12 @@ module Application =
           Action<AuthorizationPolicyBuilder>
             (fun builder -> builder.RequireAssertion evaluator |> ignore))
       let service (s : IServiceCollection) =
+#if NETSTANDARD2_0
+        s.AddAuthorization (Action<AuthorizationOptions> policyBuilder)
+#endif
+#if NETCOREAPP3_0
         s.AddAuthorizationCore (Action<AuthorizationOptions> policyBuilder)
+#endif
       { state with
           ServicesConfig = service::state.ServicesConfig
       }

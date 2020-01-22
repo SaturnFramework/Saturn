@@ -112,15 +112,13 @@ Target.create "Test" (fun _ ->
 // --------------------------------------------------------------------------------------
 
 Target.create "Pack" (fun _ ->
-    Paket.pack (fun p ->
+    DotNet.pack (fun p ->
         { p with
-            BuildConfig = "Release";
-            OutputPath = buildDir;
-            Version = release.NugetVersion
-            ReleaseNotes = String.concat "\n" release.Notes
-            MinimumFromLockFile = false
+            Configuration = DotNet.BuildConfiguration.Release
+            OutputPath = Some buildDir
+            MSBuildParams = { p.MSBuildParams with Properties = [("Version", release.NugetVersion); ("ReleaseNotes", String.concat "\n" release.Notes)]}
         }
-    )
+    ) "Saturn.sln"
 )
 
 Target.create "ReleaseGitHub" (fun _ ->

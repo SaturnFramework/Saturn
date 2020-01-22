@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <!-- workaround to include pdbs -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Authors>Krzysztof Cieslak</Authors>
+    <Copyright>Copyright 2020 Lambda Factory</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://saturnframework.org/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SaturnFramework/Saturn</RepositoryUrl>
+    <PackageIconUrl>https://avatars0.githubusercontent.com/u/35305523?s=200</PackageIconUrl>
+    <PackageTags>F# web framework "ASP.Net Core" HTTP Service MVC functional</PackageTags>
+  </PropertyGroup>
+</Project>

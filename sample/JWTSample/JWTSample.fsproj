@@ -14,5 +14,8 @@
     <Compile Include="JWTSample.fs" />
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
