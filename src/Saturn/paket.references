@@ -20,7 +20,6 @@ group netstandard2.0
 
 group netcoreapp3.0
   Microsoft.AspNetCore.Authentication.JwtBearer framework: netcoreapp3.0
-  Microsoft.AspNetCore.Authentication.OAuth framework: netcoreapp3.0
   Microsoft.AspNetCore.Authorization framework: netcoreapp3.0
   Microsoft.Extensions.Caching.Memory framework: netcoreapp3.0
   FSharp.Control.Websockets framework: netcoreapp3.0

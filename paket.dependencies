@@ -5,7 +5,6 @@ storage: none
 framework: netstandard2.0, netcoreapp3.0
 
 nuget Expecto
-nuget Microsoft.NET.Sdk.Functions >= 1.0.24
 nuget Newtonsoft.Json
 nuget NSubstitute
 nuget protobuf-net.Grpc.HttpClient
@@ -38,7 +37,6 @@ group netstandard2.0
   nuget FSharp.Control.Websockets >= 0.2
   nuget FSharp.Core >= 4.2.3
 
-
 group netcoreapp3.0
   source https://api.nuget.org/v3/index.json
   storage: none
@@ -48,7 +46,6 @@ group netcoreapp3.0
 
   nuget Microsoft.AspNetCore.Authentication.JwtBearer < 3.1
   nuget Microsoft.AspNetCore.Authentication.Google < 3.1
-  nuget Microsoft.AspNetCore.Authentication.OAuth < 3.1
   nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.1
   nuget Microsoft.AspNetCore.Authorization < 3.1
   nuget Microsoft.Extensions.Caching.Memory < 3.1

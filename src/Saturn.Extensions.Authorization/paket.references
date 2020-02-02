@@ -7,5 +7,4 @@ group netstandard2.0
 group netcoreapp3.0
   FSharp.Core framework: netcoreapp3.0
   Microsoft.AspNetCore.Authentication.Google framework: netcoreapp3.0
-  Microsoft.AspNetCore.Authentication.OAuth framework: netcoreapp3.0
 
