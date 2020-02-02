@@ -2,7 +2,7 @@ version 5.241.6
 source https://api.nuget.org/v3/index.json
 
 storage: none
-framework: netstandard2.0, netcoreapp3.0
+framework: netstandard2.0, netcoreapp3.1
 
 nuget Expecto
 nuget Newtonsoft.Json
@@ -37,10 +37,10 @@ group netstandard2.0
   nuget FSharp.Control.Websockets >= 0.2
   nuget FSharp.Core >= 4.2.3
 
-group netcoreapp3.0
+group netcoreapp3.1
   source https://api.nuget.org/v3/index.json
   storage: none
-  framework: netcoreapp3.0
+  framework: netcoreapp3.1
 
   nuget Giraffe ~> 4.0
 

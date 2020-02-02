@@ -1,5 +1,5 @@
 protobuf-net.Grpc.HttpClient
 
-group netcoreapp3.0
+group netcoreapp3.1
   FSharp.Core
   TaskBuilder.fs
