@@ -58,7 +58,7 @@ module Application =
         let! cnt = response.Content.ReadAsStringAsync()
         let user = JObject.Parse cnt
 #endif
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
         let! responseStream = response.Content.ReadAsStreamAsync()
         let! user = System.Text.Json.JsonSerializer.DeserializeAsync(responseStream)
 #endif
@@ -409,7 +409,7 @@ module Application =
                 let! cnt = response.Content.ReadAsStringAsync()
                 let user = JObject.Parse cnt
 #endif
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
                 let! responseStream = response.Content.ReadAsStreamAsync()
                 let! user = System.Text.Json.JsonSerializer.DeserializeAsync(responseStream)
 #endif
@@ -495,7 +495,7 @@ module Application =
 #if NETSTANDARD2_0
         s.AddAuthorization (Action<AuthorizationOptions> policyBuilder)
 #endif
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
         s.AddAuthorizationCore (Action<AuthorizationOptions> policyBuilder)
 #endif
       { state with

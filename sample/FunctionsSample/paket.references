@@ -1,4 +1,4 @@
-group netcoreapp3.0
+group netcoreapp3.1
   FSharp.Core
   Giraffe
   Microsoft.NET.Sdk.Functions
