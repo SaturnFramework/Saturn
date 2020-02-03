@@ -47,8 +47,6 @@ group netcoreapp3.0
   nuget Microsoft.AspNetCore.Authentication.JwtBearer < 3.1
   nuget Microsoft.AspNetCore.Authentication.Google < 3.1
   nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.1
-  nuget Microsoft.AspNetCore.Authorization < 3.1
-  nuget Microsoft.Extensions.Caching.Memory < 3.1
   nuget Microsoft.NET.Sdk.Functions < 3.1
   nuget protobuf-net.Grpc.AspNetCore
   nuget FSharp.Control.Websockets >= 0.2
