@@ -17,7 +17,7 @@ open Newtonsoft.Json.Linq
 
 let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
 
-type ApplicationBuilder with
+type Saturn.Application.ApplicationBuilder with
     ///Enables default Google OAuth authentication.
     ///`jsonToClaimMap` should contain sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
     ///For example: `["id", ClaimTypes.NameIdentifier; "displayName", ClaimTypes.Name]` where `id` and `displayName` are names of fields in the Google JSON response (https://developers.google.com/+/web/api/rest/latest/people#resource).
