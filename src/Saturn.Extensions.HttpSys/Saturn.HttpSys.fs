@@ -5,7 +5,7 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.AspNetCore.Server.HttpSys
 
-type ApplicationBuilder with
+type Saturn.Application.ApplicationBuilder with
 
     [<CustomOperation("use_httpsys")>]
     member __.UseHttpSys(state) =

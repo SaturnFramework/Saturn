@@ -48,7 +48,7 @@ type TurbolinksMiddleware (next: RequestDelegate) =
     ), ctx)
     next.Invoke(ctx)
 
-type ApplicationBuilder with
+type Saturn.Application.ApplicationBuilder with
 
   [<CustomOperation("use_turbolinks")>]
   ///Enable turbolinks supports for whole application (all endpoints)

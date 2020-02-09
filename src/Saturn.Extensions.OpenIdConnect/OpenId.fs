@@ -16,7 +16,7 @@ module OpenId =
             c.AddCookie() |> ignore
 
     // Extend Saturn's application { ... } computation expression
-    type ApplicationBuilder with
+    type Saturn.Application.ApplicationBuilder with
         /// Enables OpenId authentication with custom configuration
         [<CustomOperation("use_open_id_auth_with_config")>]
         member __.UseOpenIdAuthWithConfig(state: ApplicationState, (config: Action<OpenIdConnect.OpenIdConnectOptions>)) =
