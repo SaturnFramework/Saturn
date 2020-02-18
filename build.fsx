@@ -116,7 +116,7 @@ Target.create "Pack" (fun _ ->
         { p with
             Configuration = DotNet.BuildConfiguration.Release
             OutputPath = Some buildDir
-            MSBuildParams = { p.MSBuildParams with Properties = [("Version", release.NugetVersion); ("ReleaseNotes", String.concat "\n" release.Notes)]}
+            MSBuildParams = { p.MSBuildParams with Properties = [("Version", release.NugetVersion); ("PackageReleaseNotes", String.concat "\n" release.Notes)]}
         }
     ) "Saturn.sln"
 )
