@@ -127,3 +127,40 @@ type Saturn.Application.ApplicationBuilder with
           AppConfigs = middleware::state.AppConfigs
           CookiesAlreadyAdded = true
       }
+
+    ///Enalbes Azure Active Directory authentication.
+    ///`scopes` must be at least on of the scopes defined in https://docs.microsoft.com/en-us/graph/permissions-reference, for instance "User.Read".
+    ///`jsonToClaimMap` should contain sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
+    ///For example: `["name", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"; "name", "fullName"]` where `login` and `name` are names of fields in GitHub JSON response (https://developer.github.com/v3/users/#get-the-authenticated-user).
+    [<CustomOperation("use_azuread_oauth")>]
+    member __.UseAzureADAuth(state: ApplicationState, tenantId : string, clientId : string, clientSecret: string, callbackPath : string, scopes : string seq, jsonToClaimMap : (string * string) seq) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let c = s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- "AzureAD")
+        addCookie state c
+        c.AddOAuth("AzureAD", fun (opt : Authentication.OAuth.OAuthOptions) ->
+          opt.ClientId <- clientId
+          opt.ClientSecret <- clientSecret
+          opt.CallbackPath <- PathString(callbackPath)
+          opt.AuthorizationEndpoint <-  sprintf "https://login.microsoftonline.com/%s/oauth2/v2.0/authorize" tenantId
+          opt.TokenEndpoint <- sprintf "https://login.microsoftonline.com/%s/oauth2/v2.0/token" tenantId
+          opt.UserInformationEndpoint <- "https://graph.microsoft.com/oidc/userinfo"
+          jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(v,k) )
+          scopes |> Seq.iter (opt.Scope.Add)
+          let ev = opt.Events
+
+          ev.OnCreatingTicket <- Func<_,_> Saturn.Application.parseAndValidateOauthTicket
+
+         ) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = true
+      }
