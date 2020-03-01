@@ -131,7 +131,7 @@ type Saturn.Application.ApplicationBuilder with
     ///Enalbes Azure Active Directory authentication.
     ///`scopes` must be at least on of the scopes defined in https://docs.microsoft.com/en-us/graph/permissions-reference, for instance "User.Read".
     ///`jsonToClaimMap` should contain sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
-    ///For example: `["name", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"; "name", "fullName"]` where `login` and `name` are names of fields in GitHub JSON response (https://developer.github.com/v3/users/#get-the-authenticated-user).
+    ///For example: `["name", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" ]` where `name` is the names of a field in Azure AD's JSON response (see https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens or inspect tokens with https://jwt.ms).
     [<CustomOperation("use_azuread_oauth")>]
     member __.UseAzureADAuth(state: ApplicationState, tenantId : string, clientId : string, clientSecret: string, callbackPath : string, scopes : string seq, jsonToClaimMap : (string * string) seq) =
       let middleware (app : IApplicationBuilder) =
