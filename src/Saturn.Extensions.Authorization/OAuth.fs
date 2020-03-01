@@ -128,7 +128,7 @@ type Saturn.Application.ApplicationBuilder with
           CookiesAlreadyAdded = true
       }
 
-    ///Enalbes Azure Active Directory authentication.
+    ///Enalbes default Azure AD OAuth authentication.
     ///`scopes` must be at least on of the scopes defined in https://docs.microsoft.com/en-us/graph/permissions-reference, for instance "User.Read".
     ///`jsonToClaimMap` should contain sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
     ///For example: `["name", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" ]` where `name` is the names of a field in Azure AD's JSON response (see https://docs.microsoft.com/en-us/azure/active-directory/develop/id-tokens or inspect tokens with https://jwt.ms).
@@ -157,6 +157,27 @@ type Saturn.Application.ApplicationBuilder with
           ev.OnCreatingTicket <- Func<_,_> Saturn.Application.parseAndValidateOauthTicket
 
          ) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = true
+      }
+
+    ///Enables AzureAD OAuth authentication with custom configuration
+    [<CustomOperation("use_azuread_oauth_with_config")>]
+    member __.UseAzureADAuthWithConfig(state: ApplicationState, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let c = s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- "AzureAD")
+        addCookie state c
+        c.AddOAuth("AzureAD",config) |> ignore
         s
 
       { state with
