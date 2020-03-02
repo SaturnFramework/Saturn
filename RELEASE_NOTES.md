@@ -1,3 +1,6 @@
+### 0.12.1 - 18.02.2020
+* Add support for AzureAD OAuth (by [@ChrSteinert](https://github.com/ChrSteinert)))
+
 ### 0.12.0 - 18.02.2020
 * bump TFM to netcoreapp3.1 (by [@baronfel](https://github.com/baronfel))
 * fully-qualify applicationbuilder type to use the saturn type instead of aspnetcore (by [@baronfel](https://github.com/baronfel))
