@@ -20,6 +20,10 @@ module Channels =
     type Message<'a> = { Topic: string; Ref: string; Payload: 'a}
     type Message = Message<obj>
     type SocketId = Guid
+    type SocketInfo = { SocketId: SocketId }
+        with
+            static member New socketId =
+                { SocketId = socketId }
     type ChannelPath = string
     type Topic = string
 
@@ -28,9 +32,9 @@ module Channels =
         | Rejected of reason: string
 
     type IChannel =
-        abstract member Join: HttpContext * SocketId -> Task<JoinResult>
-        abstract member HandleMessage: HttpContext * Message -> Task<unit>
-        abstract member Terminate: HttpContext -> Task<unit>
+        abstract member Join: HttpContext * SocketInfo -> Task<JoinResult>
+        abstract member HandleMessage: HttpContext * SocketInfo * Message -> Task<unit>
+        abstract member Terminate: HttpContext * SocketInfo -> Task<unit>
 
     type ISocketHub =
         abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> Task<unit>
@@ -87,7 +91,8 @@ module Channels =
                         let logger = ctx.RequestServices.GetRequiredService<ILogger<SocketMiddleware>>()
                         logger.LogTrace("Promoted websocket request")
                         let socketId =  Guid.NewGuid()
-                        let! joinResult = channel.Join(ctx, socketId)
+                        let socketInfo = SocketInfo.New socketId
+                        let! joinResult = channel.Join(ctx, socketInfo)
                         match joinResult with
                         | Ok ->
                             logger.LogTrace("Joined channel {path}", path)
@@ -103,7 +108,7 @@ module Channels =
                                 logger.LogTrace("received message {0}", msg)
                                 try
                                   let msg = serializer.Deserialize<Message> msg
-                                  do! channel.HandleMessage(ctx, msg)
+                                  do! channel.HandleMessage(ctx, socketInfo, msg)
                                 with
                                 | ex ->
                                   // typically a deserialization error, swallow
@@ -113,7 +118,7 @@ module Channels =
                                 logger.LogError(exn.SourceException, "Error while receiving message")
                                 () // TODO: ?
 
-                            do! channel.Terminate ctx
+                            do! channel.Terminate (ctx, socketInfo)
                             sockets.DisconnectSocketForPath path socketId
                             let! result =  Socket.close wrappedSocket WebSocketCloseStatus.NormalClosure "Closing channel"
                             match result with
@@ -137,16 +142,16 @@ module ChannelBuilder =
     open Channels
 
     type ChannelBuilderState = {
-        Join: (HttpContext -> SocketId -> Task<JoinResult>) option
-        Handlers: Map<string, (HttpContext -> Message -> Task<unit>)>
-        Terminate: (HttpContext -> Task<unit>) option
-        NotFoundHandler: (HttpContext -> Message -> Task<unit>) option
-        ErrorHandler: HttpContext -> Message -> Exception -> Task<unit>
+        Join: (HttpContext -> SocketInfo -> Task<JoinResult>) option
+        Handlers: Map<string, (HttpContext-> SocketInfo -> Message -> Task<unit>)>
+        Terminate: (HttpContext -> SocketInfo -> Task<unit>) option
+        NotFoundHandler: (HttpContext -> SocketInfo -> Message -> Task<unit>) option
+        ErrorHandler: HttpContext -> SocketInfo -> Message -> Exception -> Task<unit>
     }
 
     type ChannelBuilder internal () =
         member __.Yield(_) : ChannelBuilderState =
-            {Join = None; Handlers = Map.empty; Terminate = None; NotFoundHandler = None; ErrorHandler = fun _ _ ex -> raise ex }
+            {Join = None; Handlers = Map.empty; Terminate = None; NotFoundHandler = None; ErrorHandler = fun _ _ _ ex -> raise ex }
 
         [<CustomOperation("join")>]
         member __.Join(state, handler) =
@@ -176,13 +181,13 @@ module ChannelBuilder =
             let terminate =
                 match state.Terminate with
                 | Some v -> v
-                | None -> fun _ -> task {return ()}
+                | None -> fun _ _ -> task {return ()}
 
             let findHandler msgTopic =
                 state.Handlers.TryFind msgTopic
 
             let handler =
-                fun (ctx: HttpContext) (msg : Message) -> task {
+                fun (ctx: HttpContext) (si: SocketInfo) (msg : Message) -> task {
                     let logger = ctx.RequestServices.GetRequiredService<ILogger<IChannel>>()
                     logger.LogInformation("got message {message}", msg)
                     try
@@ -191,28 +196,28 @@ module ChannelBuilder =
                             logger.LogInformation("no handler for topic {topic}", msg.Topic)
                             match state.NotFoundHandler with
                             | Some nfh ->
-                                return! nfh ctx msg
+                                return! nfh ctx si msg
                             | None ->
                               logger.LogInformation("no not found handler for topic {topic}", msg.Topic)
                               return ()
                         | Some hdl ->
                             logger.LogInformation("found handler for topic {topic}", msg.Topic)
-                            return! hdl ctx msg
+                            return! hdl ctx si msg
                     with
                     | ex ->
                         logger.LogError(ex, "error while handling message {message}", msg)
-                        return! state.ErrorHandler ctx msg ex
+                        return! state.ErrorHandler ctx si msg ex
                 }
 
 
 
             { new IChannel with
-                member __.Join(ctx,id) = join ctx id
+                member __.Join(ctx, si) = join ctx si
 
-                member __.Terminate(ctx) = terminate ctx
+                member __.Terminate(ctx, si) = terminate ctx si
 
-                member __.HandleMessage(ctx, msg) =
-                    handler ctx msg
+                member __.HandleMessage(ctx, si, msg) =
+                    handler ctx si msg
             }
 
     let channel = ChannelBuilder()
