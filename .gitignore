@@ -393,3 +393,5 @@ packages
 
 release.cmd
 .ionide/
+_public
+temp
