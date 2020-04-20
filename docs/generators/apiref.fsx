@@ -77,7 +77,7 @@ let generateType ctx (page: ApiPageInfo<Type>) =
                 yield! t.UnionCases |> List.map formatMember
             ]
         ]
-    t.UrlName, Layout.layout ctx [body] ""
+    t.UrlName, Layout.layout ctx [body] t.Name
 
 let generateModule ctx (page: ApiPageInfo<Module>) =
     let m = page.Info
@@ -147,7 +147,7 @@ let generateModule ctx (page: ApiPageInfo<Module>) =
                     yield! m.TypeExtensions |> List.map formatMember
                 ]
         ]
-    m.UrlName, Layout.layout ctx [body] ""
+    m.UrlName, Layout.layout ctx [body] m.Name
 
 let generateNamespace ctx (n: Namespace)  =
     let body =
@@ -185,7 +185,7 @@ let generateNamespace ctx (n: Namespace)  =
                         ]
                 ]
         ]
-    n.Name, Layout.layout ctx [body] ""
+    n.Name, Layout.layout ctx [body] (n.Name)
 
 
 let generate' (ctx : SiteContents)  =
@@ -221,9 +221,9 @@ let generate' (ctx : SiteContents)  =
             for (n, _) in namespaces do
                 a [Href (sprintf "%s.html"  n)] [!!n]
                 br []
-        ] ""
+        ] "Saturn API Reference"
 
-    [("ApiRef", ref); yield! namespaces; yield! modules; yield! types]
+    [("api-ref", ref); yield! namespaces; yield! modules; yield! types]
 
 let generate (ctx : SiteContents) (projectRoot: string) (page: string) =
     try

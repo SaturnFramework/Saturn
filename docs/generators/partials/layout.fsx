@@ -37,9 +37,9 @@ let injectWebsocketCode (webpage:string) =
 let layout (ctx : SiteContents) bodyCnt (page: string) =
 
     html [Class "js csstransforms3d"] [
-        Header.header ctx
+        Header.header ctx page
         body [] [
-          Menu.menu ctx
+          Menu.menu ctx page
           section [Id "body"] [
             div [Id "overlay"] []
             div [ Class "padding highlightable"] [

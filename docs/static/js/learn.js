@@ -379,7 +379,12 @@ jQuery(window).on('load', function() {
     $(".highlightable").highlight(sessionStorage.getItem('search-value'), { element: 'mark' });
 
 
-
+    $(".menu-group-link").click(function (e) {
+      $(".submenu").removeClass("submenu-active")
+      let submenu = "sub" + e.currentTarget.id
+      console.log("SUBMENU", submenu, $(submenu))
+      $("#" + submenu).addClass("submenu-active")
+    })
 
 
 });

@@ -4,15 +4,13 @@ type SiteInfo = {
     title: string
     description: string
     theme_variant: string option
-    numbers_in_menu: bool
     root_url: string
 }
 
 let config = {
     title = "Saturn"
-    description = "Description of FancyApp project"
+    description = "Saturn - F# MVC Web Framework built on top of ASP .Net Core"
     theme_variant = Some "blue"
-    numbers_in_menu = true
     root_url = "http://localhost:8080"
 }
 
