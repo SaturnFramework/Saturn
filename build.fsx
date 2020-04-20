@@ -111,6 +111,11 @@ Target.create "Publish" (fun _ ->
     )
 )
 
+Target.create "Docs" (fun _ ->
+  Shell.cleanDirs ["docs\\_public";]
+  exec "dotnet"  @"fornax build" "docs"
+)
+
 Target.create "Test" (fun _ ->
     exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj" "."
 )
@@ -190,6 +195,7 @@ Target.create "Release" DoNothing
 "Clean"
  ==> "AssemblyInfo"
  ==> "Publish"
+ ==> "Docs"
 
 "Default"
   ==> "Pack"
