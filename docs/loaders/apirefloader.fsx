@@ -34,7 +34,6 @@ let loader (projectRoot: string) (siteContet: SiteContents) =
         |> List.collect (fun n ->
             List.collect (collectModules n.Name n.Name n.Name n.Name) n.Modules
         )
-    printfn "ALL MODULES: %A" output.ModuleInfos.Length
 
     let allTypes =
         [

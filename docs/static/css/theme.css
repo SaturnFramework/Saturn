@@ -1139,6 +1139,7 @@ option {
     font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif !important;
     color: white !important;
     margin-bottom: 0;
+    text-transform: uppercase;
 }
 
 .searchbox i {
@@ -1174,4 +1175,31 @@ option {
 
 .submenu {
   margin-top: 30px !important;
+  padding-left: 13px !important;
+  display: none;
 }
+
+.submenu-active {
+  display: block;
+}
+
+.active-link {
+  text-decoration: underline;
+}
+
+.menu-group-link a{
+  padding-left: 10px !important;
+  border-left: 3px solid transparent;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.menu-group-link a:hover{
+  border-left: 3px solid #0082a7;
+}
+
+.menu-group-link-active {
+  border-left: 3px solid #0082a7;
+}
+
+

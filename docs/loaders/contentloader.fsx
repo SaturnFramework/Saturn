@@ -8,17 +8,33 @@ open System.IO
 type PostConfig = {
     disableLiveRefresh: bool
 }
+
+///This is following documentation structure described here https://documentation.divio.com/
+type PostCategory =
+  | Tutorial
+  | Explanation
+  | HowTo
+  | TopLevel
+  | ApiRef
+
+with
+  static member Parse x =
+    match x with
+    | "tutorial" -> Tutorial
+    | "explanation" -> Explanation
+    | "how-to" -> HowTo
+    | "top-level" -> TopLevel
+    | _ -> failwith "Unsupported category"
+
 type Post = {
     file: string
     link : string
     title: string
-    author: string option
-    published: System.DateTime option
-    tags: string list
     content: string
     text: string
     menu_order: int
     hide_menu: bool
+    category: PostCategory
 }
 
 
@@ -68,24 +84,10 @@ let loadFile projectRoot n =
 
     let (text, content) = getContent text
 
-    let file = relative projectRoot n
-        // let relativePath
-        // System.IO.Path.Combine("content", (n |> System.IO.Path.GetFileNameWithoutExtension) + ".md").Replace("\\", "/")
+    let file = relative (Path.Combine(projectRoot, "content") + "\\") n
     let link = Path.ChangeExtension(file, ".html")
 
     let title = config |> List.find (fun n -> n.ToLower().StartsWith "title" ) |> fun n -> n.Split(':').[1] |> trimString
-
-    let author =
-        try
-            config |> List.tryFind (fun n -> n.ToLower().StartsWith "author" ) |> Option.map (fun n -> n.Split(':').[1] |> trimString)
-        with
-        | _ -> None
-
-    let published =
-        try
-            config |> List.tryFind (fun n -> n.ToLower().StartsWith "published" ) |> Option.map (fun n -> n.Split(':').[1] |> trimString |> System.DateTime.Parse)
-        with
-        | _ -> None
 
     let menu_order =
         try
@@ -101,41 +103,19 @@ let loadFile projectRoot n =
         with
         | _ -> false
 
+    let category =
+        let n = config |> List.find (fun n -> n.ToLower().StartsWith "category" )
+        n.Split(':').[1] |> trimString |> PostCategory.Parse
 
-    let tags =
-        try
-            let x =
-                config
-                |> List.tryFind (fun n -> n.ToLower().StartsWith "tags" )
-                |> Option.map (fun n -> n.Split(':').[1] |> trimString |> fun n -> n.Split ',' |> Array.toList )
-            defaultArg x []
-        with
-        | _ -> []
 
     { file = file
       link = link
       title = title
-      author = author
-      published = published
-      tags = tags
       content = content
       menu_order = menu_order
       hide_menu = hide
-      text = text }
-
-type FsTree = Node of (string * FsTree) list
-
-let rec addPath (p : string list)   (Node ns) =
-    match p with
-    | []       -> Node                    ns
-    | hp :: tp -> Node (addHeadPath hp tp ns)
-
-and addHeadPath hp tp ns =
-    match ns with
-    | []                          -> [hp, addPath tp (Node[]) ]
-    | (nn, st) :: tn when nn = hp -> (nn, addPath tp st       ) ::                   tn
-    | hn       :: tn              -> hn                         :: addHeadPath hp tp tn
-
+      text = text
+      category = category }
 
 let loader (projectRoot: string) (siteContet: SiteContents) =
     try
@@ -148,15 +128,9 @@ let loader (projectRoot: string) (siteContet: SiteContents) =
         posts
         |> Array.iter (fun p -> siteContet.Add p)
 
-        let tree =
-            (Node [], posts)
-            ||> Seq.fold (fun acc e ->
-                let path = e.link.Replace("content/", "").Split('/') |> List.ofArray
-                addPath path acc)
-
-        siteContet.Add(tree)
         siteContet.Add({disableLiveRefresh = true})
     with
     | ex -> printfn "EX: %A" ex
 
     siteContet
+

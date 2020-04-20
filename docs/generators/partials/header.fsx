@@ -7,14 +7,14 @@
 
 open Html
 
-let header (ctx : SiteContents) =
+let header (ctx : SiteContents) page =
     let siteInfo = ctx.TryGetValue<Globalloader.SiteInfo>().Value
     let rootUrl = siteInfo.root_url
 
     head [] [
         meta [CharSet "utf-8"]
         meta [Name "viewport"; Content "width=device-width, initial-scale=1"]
-        title [] [!! siteInfo.title]
+        title [] [!! (siteInfo.title + " | " + page)]
         link [Rel "icon"; Type "image/png"; Sizes "32x32"; Href (rootUrl + "/static/images/favicon.png")]
         link [Rel "stylesheet"; Href (rootUrl + "/static/css/nucleus.css")]
         link [Rel "stylesheet"; Href (rootUrl + "/static/css/fontawesome-all.min.css")]
