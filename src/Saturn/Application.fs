@@ -66,6 +66,7 @@ module Application =
       }
       Task.Factory.StartNew(fun () -> tsk.Result)
 
+  ///Test
   type ApplicationBuilder internal () =
     member __.Yield(_) =
       let errorHandler (ex : Exception) (logger : ILogger) =
@@ -74,8 +75,8 @@ module Application =
       {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false; Channels = [] }
 
     member __.Run(state: ApplicationState) : IWebHostBuilder =
-      /// to build the app we have to separate our configurations and our pipelines.
-      /// we can only call `Configure` once, so we have to apply our pipelines in the end
+      // to build the app we have to separate our configurations and our pipelines.
+      // we can only call `Configure` once, so we have to apply our pipelines in the end
       let router =
         match state.Router with
         | None ->

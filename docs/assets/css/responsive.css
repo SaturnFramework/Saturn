@@ -1,0 +1,197 @@
+/* ----------------------------------------------------------------------------------------
+* Author        : Coderspoint
+* Template Name : Planhost - Html5 Hosting Landing page
+* File          : Planhost Responsive CSS file
+* Version       : 1.0
+* ---------------------------------------------------------------------------------------- */
+
+
+/* Medium Layout */
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+    .home-services .service-box {
+        padding: 30px 15px;
+    }
+}
+
+
+/* Tablet Layout */
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .caption h1 {
+        font-size: 35px;
+    }
+    .navbar-nav li a {
+        padding: 15px 5px;
+    }
+
+    .portfolio-caption h4 {
+        margin-top: 80px;
+    }
+    .testimonial-item i.fa {
+        margin-top: 20px;
+    }
+
+    .contact-info,
+    .video-area .accordion {
+        margin-top: 30px;
+    }
+
+    .action-area .btn {
+        margin-top: 15px;
+    }
+
+    .tab-margin-bottom {
+        margin-bottom: 50px;
+    }
+
+    .choose-box i.fa {
+        width: 50px;
+        padding: 5px 0px;
+    }
+    .choose-box.left i.fa {
+        text-align: right;
+    }
+    .choose-box.right i.fa {
+        text-align: left;
+    }
+
+    .testimonial-content {
+        margin-bottom: 30px;
+        text-align: left;
+    }
+
+}
+
+
+/* Mobile Layout */
+
+@media only screen and (max-width: 767px) {
+    body, p {
+        line-height: 25px;
+    }
+    h4 {
+    }
+    .section-big {
+        padding: 50px 0px;
+    }
+
+    .section-title {
+        margin-bottom: 50px;
+    }
+    .section-title h2 {
+        line-height: 30px;
+    }
+
+    .btn, input[type='submit'] {
+        margin-bottom: 0px;
+        padding: 8px 20px;
+    }
+    img {
+        max-width: 100%;
+    }
+    .skill-area {
+        padding-top: 0px;
+    }
+
+    .navbar-toggle {
+        margin-right: 0px;
+    }
+    .navbar-fixed-bottom .navbar-collapse,
+    .navbar-fixed-top .navbar-collapse {
+        background: #fff;
+    }
+    .navbar {
+        min-height: 0px;
+    }
+    .mainmenu .navbar-nav {
+        margin: 0;
+    }
+    .mainmenu .navbar-nav li {
+        float: none;
+        display: block;
+    }
+    .mainmenu .navbar-nav li a {
+        padding: 11px 15px;
+        color: inherit;
+    }
+
+    .navbar-fixed-bottom .navbar-collapse,
+    .navbar-fixed-top .navbar-collapse {
+        max-height: 420px;
+        margin-top: 15px;
+        box-shadow: 0px 20px 50px 0px rgba(141, 167, 244, 0.5);  
+    }
+
+    .navbar-toggle {}
+    a.about-button {
+        margin-top: 0;
+    }
+
+    .about-text h2,
+    .single-service h2,
+    .testimonial-item h2,
+    .follow-me h2 {
+        font-size: 22px;
+    }
+
+
+    /* Portfolio area */
+    .work-items .item {
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-bottom: 15px;
+    }
+
+    .section-title h2 {
+        font-size: 30px;
+    }
+
+    .contact-info,
+    .video-area .accordion {
+        margin-top: 30px;
+    }
+
+    .action-area .btn {
+        margin-top: 15px;
+    }
+
+    .price-item p.level {
+        margin-bottom: 60px;
+    }
+    .price-item p.price {
+        padding-bottom: 20px;
+    }
+    .price-item a.btn {
+        display: inline-block;
+    }
+
+    .fun-fact {
+        margin-bottom: 50px;
+    }
+
+    .choose-box.left {
+        text-align: left;
+    }
+    .choose-box.left i.fa {
+        float: left;
+    }
+
+    .testimonial-content {
+        margin-bottom: 30px;
+        text-align: left;
+    }
+    .why-choose-area img {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+}
+
+
+/* Small Mobile Layout */
+
+@media only screen and (max-width: 480px) {
+    .social-links li {
+        margin-bottom: 10px;
+    }
+}

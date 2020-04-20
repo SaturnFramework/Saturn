@@ -52,9 +52,24 @@ group netcoreapp3.1
   nuget FSharp.Control.Websockets >= 0.2
   nuget FSharp.Core >= 4.2.3
 
+group Docs
+  source https://api.nuget.org/v3/index.json
+  framework: netstandard2.0
+  storage: symlink
+
+  nuget FSharp.Formatting prerelease
+  nuget Markdig
+  nuget Newtonsoft.Json
+
+group DocsAsp
+  source https://api.nuget.org/v3/index.json
+  framework: netcoreapp3.1
+  storage: symlink
+
+  nuget Microsoft.AspNetCore.App.Ref
+
 group Build
   source https://api.nuget.org/v3/index.json
-
   framework: netstandard2.0
   storage: none
 

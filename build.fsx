@@ -30,7 +30,7 @@ let gitHome = "https://github.com/" + gitOwner
 // --------------------------------------------------------------------------------------
 
 let buildDir  = "./build/"
-let dotnetcliVersion = DotNet.getSDKVersionFromGlobalJson()
+let tempDir  = "./temp/"
 
 System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 let release = ReleaseNotes.parse (System.IO.File.ReadAllLines "RELEASE_NOTES.md")
@@ -59,7 +59,7 @@ let DoNothing = ignore
 // --------------------------------------------------------------------------------------
 
 Target.create "Clean" (fun _ ->
-    Shell.cleanDirs [buildDir]
+    Shell.cleanDirs [buildDir; tempDir]
 )
 
 Target.create "AssemblyInfo" (fun _ ->
@@ -89,11 +89,6 @@ Target.create "AssemblyInfo" (fun _ ->
         )
 )
 
-// Target.create "InstallDotNetCLI" (fun _ ->
-//     let version = DotNet.CliVersion.Version dotnetcliVersion
-//     let options = DotNet.Options.Create()
-//     DotNet.install (fun opts -> { opts with Version = version }) options |> ignore
-//     )
 
 Target.create "Restore" (fun _ ->
     DotNet.restore id ""
@@ -101,6 +96,19 @@ Target.create "Restore" (fun _ ->
 
 Target.create "Build" (fun _ ->
     DotNet.build id ""
+)
+
+Target.create "Publish" (fun _ ->
+    !! "src/**/*.??proj"
+    |> Seq.iter (fun n ->
+        DotNet.publish (fun c ->
+            {c with
+                OutputPath = Some tempDir
+                Configuration = DotNet.BuildConfiguration.Release
+                Framework = Some "netcoreapp3.1"
+            }
+        ) n
+    )
 )
 
 Target.create "Test" (fun _ ->
@@ -174,12 +182,14 @@ Target.create "Default" DoNothing
 Target.create "Release" DoNothing
 
 "Clean"
-//   ==> "InstallDotNetCLI"
   ==> "AssemblyInfo"
-  ==> "Restore"
   ==> "Build"
   ==> "Test"
   ==> "Default"
+
+"Clean"
+ ==> "AssemblyInfo"
+ ==> "Publish"
 
 "Default"
   ==> "Pack"
