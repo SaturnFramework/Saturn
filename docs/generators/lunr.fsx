@@ -28,7 +28,7 @@ let generate (ctx : SiteContents) (projectRoot: string) (page: string) =
     let gen =
         let ctn =
             sprintf "%s \n %s" generatorOutput.AssemblyGroup.Name (generatorOutput.AssemblyGroup.Namespaces |> Seq.map (fun n -> n.Name) |> String.concat " ")
-        {uri = (rootUrl + "/Reference/ApiRef.html"); title = "API Reference"; content = ctn }
+        {uri = (rootUrl + "/reference/api-ref.html"); title = "API Reference"; content = ctn }
 
 
     let entries =
@@ -50,7 +50,7 @@ let generate (ctx : SiteContents) (projectRoot: string) (page: string) =
                     (m.TypeExtensions |> List.map (fun m -> m.Name + " " + m.Comment.FullText ) |> String.concat " ")
 
 
-            {uri = rootUrl + sprintf "/Reference/%s.html" m.UrlName ; title = m.Name; content = cnt }
+            {uri = rootUrl + sprintf "/reference/%s.html" m.UrlName ; title = m.Name; content = cnt }
         )
 
     let tsGen =
@@ -64,7 +64,7 @@ let generate (ctx : SiteContents) (projectRoot: string) (page: string) =
                     (m.AllMembers |> List.map (fun m -> m.Name + " " + m.Comment.FullText ) |> String.concat " ")
 
 
-            {uri = rootUrl + sprintf "/Reference/%s.html" m.UrlName ; title = m.Name; content = cnt }
+            {uri = rootUrl + sprintf "/reference/%s.html" m.UrlName ; title = m.Name; content = cnt }
         )
 
     [|yield! entries; gen; yield! mdlsGen; yield! tsGen|]
