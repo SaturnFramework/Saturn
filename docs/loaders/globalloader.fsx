@@ -11,7 +11,7 @@ let config = {
     title = "Saturn"
     description = "Saturn - F# MVC Web Framework built on top of ASP .Net Core"
     theme_variant = Some "blue"
-    root_url = "http://localhost:8080"
+    root_url = "https://saturnframework.org/"
 }
 
 let loader (projectRoot: string) (siteContet: SiteContents) =
