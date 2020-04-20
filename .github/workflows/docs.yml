@@ -1,0 +1,32 @@
+name: Release docs
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Restore tools
+      run: dotnet tool restore
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Run Fornax
+      run: dotnet fake build -t Docs
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        personal_token: ${{ secrets.PERSONAL_TOKEN }}
+        publish_dir: ./docs/_public
+        publish_branch: gh-pages
+        force_orphan: true
+        cname: saturnframework.org
