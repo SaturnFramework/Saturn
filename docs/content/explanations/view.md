@@ -1,8 +1,10 @@
 ---
-title: Views
+title: View Engine
 category: explanation
-menu_order: 5
+menu_order: 6
 ---
+
+# View Engine
 
 > This post has been originally part of the [Giraffe documentation](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md#giraffe-view-engine)
 

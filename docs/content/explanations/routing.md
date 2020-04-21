@@ -1,7 +1,7 @@
 ---
 title: Router
 category: explanation
-menu_order: 4
+menu_order: 5
 ---
 
 # Routing
@@ -192,4 +192,6 @@ Notice that `getf` is used instead of get. This is a separate version of get tha
 
     You can use format strings with "forward" too by using "forwardf"
 
-There are a lot of functionalities within routers and you can view all of them [here](../api/router).
+## API Reference
+
+Full API reference for `router` CE can be found [here](../reference/saturn-router-routerbuilder.html)

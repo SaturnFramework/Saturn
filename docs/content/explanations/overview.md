@@ -18,12 +18,12 @@ Saturn is made up of a number of distinct parts, each with its own purpose and r
     - provides a core set of plugs to apply to all requests
     - dispatches requests into a router
     - enables application and hosting configuration
- - Router
+ - [Router](routing.html)
     - parses incoming requests and dispatches them to the correct controller/action, passing parameters as needed
     - provides helpers to generate route paths or urls to resources
     - defines named pipelines through which we may pass our requests
     - allows easy application of groups of plugs to a set of routes
- - Controllers
+ - [Controllers](controller.html)
     - provide functions, called *actions*, to handle requests
     - actions:
         - prepare data and pass it into views
@@ -31,14 +31,14 @@ Saturn is made up of a number of distinct parts, each with its own purpose and r
         - perform redirects
         - return data as JSON or XML
         - and much more
- - Views
+ - [Views](view.html)
     - render templates
     - act as a presentation layer
     - define helper functions, available in templates, to decorate data for presentation
  - Channels
     - manage sockets for easy realtime communication
     - are analogous to controllers except that they allow bi-directional communication with persistent connections
- - Scaffolding scripts
+ - [Scaffolding scripts](scaffolding.html)
     - `dotnet new` template providing good starting point for new applications - [https://github.com/SaturnFramework/Saturn.Template](https://github.com/SaturnFramework/Saturn.Template)
     - `dotnet saturn` CLI tool that controls migrations and let you easily scaffold new parts of application - [https://github.com/SaturnFramework/Saturn.Dotnet](https://github.com/SaturnFramework/Saturn.Dotnet)
 
@@ -49,11 +49,11 @@ Saturn itself is the top layer of a multi-layer system designed to create a flex
 
 #### Kestrel and ASP.NET Core
 
-ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected applications. Kestrel is a cross-platform web server for ASP.NET Core based on `libuv`, a cross-platform asynchronous I/O library
+ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected applications. Kestrel is a cross-platform web server for ASP.NET Core based on `libuv`, a cross-platform asynchronous I/O library. ASP.NET Core documentation can be found [here](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-3.1)
 
 #### [Giraffe](https://github.com/giraffe-fsharp/Giraffe)
 
-Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to [Suave](https://suave.io), but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. Giraffe applications are composed of so-called HttpHandler functions which can be thought of as a mixture of Suave's WebParts and ASP.NET Core's middleware.
+Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to [Suave](https://suave.io), but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. Giraffe applications are composed of so-called HttpHandler functions which can be thought of as a mixture of Suave's WebParts and ASP.NET Core's middleware. As Saturn shares many basic helper functions with Giraffe it's highly recommended to also check out [Giraffe documentation](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md)
 
 ### Saturn moons
 

@@ -17,9 +17,7 @@ After creating a new Saturn project, let's take a deeper look into what files ar
     |   ├── Migrations
     |   └── SaturnSample
     ├── .gitignore
-    ├── build.cmd
     ├── build.fsx
-    ├── build.sh
     ├── global.json
     ├── paket.dependencies
     ├── paket.lock
@@ -27,11 +25,13 @@ After creating a new Saturn project, let's take a deeper look into what files ar
 
 At this level most of it is basic configuration files to help with running Saturn. From looking at the `.paket`, `paket-files`, `paket.dependencies`, `paket.lock` folders and files, you can see that by default Saturn uses [paket](https://fsprojects.github.io/Paket/) to handle package management. You won't be working with these files directly but rather through the command line tools instead.
 
-Saturn also uses [FAKE](https://fake.build/) to build the project. You can see how it is set up by looking at the `.fake` folder and the `build.cmd`, `build.fsx`, `build.sh` files.
+Saturn also uses [FAKE](https://fake.build/) to build the project. You can see how it is set up by looking at the `.fake` folder and `build.fsx` file.
 
 Saturn also provides a `.gitignore` file that prevents some folders from being tracked by git when they don't need to.
 
 Lastly, there is the `SaturnSample.sln` solution file so you can open the project in an IDE like Visual Sudio and a `global.json` file to configure the solution file.
+
+### Project structure
 
 Most of the work you will do in this project however, will be in `src/SaturnSample`, which looks like the following when expanded:
 
@@ -68,7 +68,7 @@ Your static files like css, js, and images should be inside the `static` folder.
 
 `Database.fs` contains functions to execute SQL queries within the program through [Dapper](https://stackexchange.github.io/Dapper/).
 
-If you did not run `dotnet saturn migration` as in the [how to start guide](how-to-start.md), you might not see `database.sqlite`, but that is the database file that your Saturn project is using to store data.
+If you did not run `dotnet saturn migration` as in the [how to start guide](../tutorials/how-to-start.html), you might not see `database.sqlite`, but that is the database file that your Saturn project is using to store data.
 
 `paket.references` shows the packages that your project is using.
 
