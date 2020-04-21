@@ -28,7 +28,10 @@ open Channels
 open Giraffe.Serialization.Json
 
 [<AutoOpen>]
+///Module containing `application` computation expression
 module Application =
+
+  ///Type representing internal state of the `application` computation expression
   type ApplicationState = {
     Router: HttpHandler option
     ErrorHandler: ErrorHandler option
@@ -45,7 +48,8 @@ module Application =
   }
 
   let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
-  // generic oauth parse and validate logic, shared with the auth extensions package
+
+  /// generic oauth parse and validate logic, shared with the auth extensions package
   let parseAndValidateOauthTicket =
     fun (ctx: OAuth.OAuthCreatingTicketContext) ->
       let tsk = task {
@@ -66,7 +70,23 @@ module Application =
       }
       Task.Factory.StartNew(fun () -> tsk.Result)
 
-  ///Test
+
+  /// Computation expression used to configure Saturn application.
+  /// Under the hood it's using ASP.NET application configurations interfaces such as `IWebHostBuilder`, `IServiceCollection`, `IApplicationBuilder` and others.
+  /// It aims to hide cumbersome ASP.NET application configuration and enable high level, declarative application configuration using feature toggles.
+  ///
+  /// **Example:**
+  ///
+  /// ```fsharp
+  /// let app = application {
+  ///     pipe_through endpointPipe
+  ///     use_router topRouter
+  ///     url "http://0.0.0.0:8085/"
+  ///     memory_cache
+  ///     use_static "static"
+  ///     use_gzip
+  /// }
+  /// ```
   type ApplicationBuilder internal () =
     member __.Yield(_) =
       let errorHandler (ex : Exception) (logger : ILogger) =

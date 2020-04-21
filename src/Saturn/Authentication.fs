@@ -14,6 +14,7 @@ module ChallengeType =
     | Cookies
     | Custom of string
 
+///Module containing types to be use with `use_oauth_with_settings`
 module OAuth =
 
   ///Record type representing simple OAuth configuration to be used with `use_oauth_with_settings`.
@@ -36,6 +37,7 @@ module OAuth =
     Claims : (string * string) seq
   }
 
+///Module with some useful helpers functions that can be used for authentication, such as creating JWT tokens, or `HttpHandlers` checking if request is authenticated.
 module Auth =
   let private mapChallengeTypeToScheme = function
     | JWT -> Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme

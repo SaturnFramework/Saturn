@@ -10,8 +10,10 @@ open Microsoft.Net.Http.Headers
 open Microsoft.Extensions.Primitives
 
 [<AutoOpen>]
+///Module containing helpers for `controller` actions
 module ControllerHelpers =
 
+  ///Module containing helpers for `controller` actions
   module Controller =
 
     ///Returns to the client content serialized to JSON.

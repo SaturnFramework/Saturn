@@ -1,6 +1,7 @@
 namespace Saturn
 open Giraffe.Core
 
+///Module defining CORS `HttpHandler`
 module CORS =
 
   open Utils

@@ -5,6 +5,7 @@ open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives
 
 [<AutoOpen>]
+///Module with some helper functions used in Saturn, mostly for internal usage
 module Common =
   open Giraffe
   open FSharp.Control.Tasks.V2.ContextInsensitive

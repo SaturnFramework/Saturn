@@ -14,9 +14,27 @@ open FSharp.Control.Tasks.ContextInsensitive
 open Microsoft.AspNetCore.Authorization
 
 [<AutoOpen>]
+///Module containing `pipeline` computation expression
 module Pipeline =
 
-
+  /// Computation expression used to combine `HttpHandlers` in a declarative manner.
+  ///
+  /// The result of the computation expression is a standard Giraffe `HttpHandler` which means that it's easily composable with other parts of the Giraffe ecosystem.
+  ///
+  /// **Example:**
+  ///
+  /// ```fsharp
+  /// let headerPipe = pipeline {
+  ///     set_header "myCustomHeader" "abcd"
+  ///     set_header "myCustomHeader2" "zxcv"
+  /// }
+  ///
+  /// let endpointPipe = pipeline {
+  ///     plug fetchSession
+  ///     plug head
+  ///     plug requestId
+  /// }
+  /// ```
   type PipelineBuilder internal () =
     member __.Yield(_) : HttpHandler = succeed
 
@@ -136,6 +154,7 @@ module Pipeline =
   let pipeline = PipelineBuilder()
 
 [<AutoOpen>]
+///Module containing helper functions that can be used with `pipeline` computation expression
 module PipelineHelpers =
 
   ///Accepts `application/json`
