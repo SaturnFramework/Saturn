@@ -1,5 +1,6 @@
 #r "../../_lib/Fornax.Core.dll"
 #if !FORNAX
+#load "../../loaders/apirefloader.fsx"
 #load "../../loaders/contentloader.fsx"
 #load "../../loaders/pageloader.fsx"
 #load "../../loaders/globalloader.fsx"
@@ -10,7 +11,7 @@ open Html
 
 let menu (ctx : SiteContents) (page: string) =
   let shortcuts = ctx.GetValues<Pageloader.Shortcut> ()
-  let references = ctx.GetValues<Pageloader.ApiReferences> ()
+  let all = ctx.GetValues<Apirefloader.AssemblyEntities>()
 
   let content = ctx.GetValues<Contentloader.Post> ()
   let siteInfo = ctx.TryGetValue<Globalloader.SiteInfo>().Value
@@ -88,10 +89,10 @@ let menu (ctx : SiteContents) (page: string) =
 
   let renderRefs =
     ul [Id "submenu-refs"; if group = None then Class "submenu submenu-active" else Class "submenu"; ] [
-      for r in references ->
+      for r in all ->
         li [] [
-          a [Href (rootUrl + "/" +  r.link); if r.title = page then Class "active-link padding" else Class "padding" ] [
-            !! r.title
+          a [Href (rootUrl + "/reference/" +  r.Label + "/index.html"); if r.Label = page then Class "active-link padding" else Class "padding" ] [
+            !! r.Label
           ]
         ]
     ]

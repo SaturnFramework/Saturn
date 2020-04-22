@@ -189,41 +189,40 @@ let generateNamespace ctx (n: Namespace)  =
 
 
 let generate' (ctx : SiteContents)  =
-    let generatorOutput = ctx.TryGetValue<GeneratorOutput>().Value
-    let allModules = ctx.TryGetValues<ApiPageInfo<Module>>()
-    let allTypes = ctx.TryGetValues<ApiPageInfo<Type>>()
+    let all = ctx.TryGetValues<AssemblyEntities>()
+    match all with
+    | None -> []
+    | Some all ->
+      all
+      |> Seq.toList
+      |> List.collect (fun n ->
+        let name = n.GeneratorOutput.AssemblyGroup.Name
+        let namespaces =
+          n.GeneratorOutput.AssemblyGroup.Namespaces
+          |> List.map (generateNamespace ctx)
 
+        let modules =
+          n.Modules
+          |> Seq.map (generateModule ctx)
 
-    let name = generatorOutput.AssemblyGroup.Name
-    let namespaces =
-        generatorOutput.AssemblyGroup.Namespaces
-        |> List.map (generateNamespace ctx)
+        let types =
+          n.Types
+          |> Seq.map (generateType ctx)
 
-    let modules =
-        match allModules with
-        | Some allModules ->
-            allModules
-            |> Seq.map (generateModule ctx)
-        | _ -> Seq.empty
-
-    let types =
-        match allTypes with
-        | Some allTypes ->
-            allTypes
-            |> Seq.map (generateType ctx)
-        | _ -> Seq.empty
-
-    let ref =
-        Layout.layout ctx [
+        let ref =
+          Layout.layout ctx [
             h1 [] [!! name ]
             b [] [!! "Declared namespaces"]
             br []
             for (n, _) in namespaces do
                 a [Href (sprintf "%s.html"  n)] [!!n]
                 br []
-        ] "Saturn API Reference"
+          ] n.Label
 
-    [("api-ref", ref); yield! namespaces; yield! modules; yield! types]
+        [("index" , ref); yield! namespaces; yield! modules; yield! types]
+        |> List.map (fun (x, y) -> (sprintf "%s/%s" n.Label x), y)
+      )
+
 
 let generate (ctx : SiteContents) (projectRoot: string) (page: string) =
     try

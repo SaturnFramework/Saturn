@@ -27,8 +27,8 @@ let endpointPipe = pipeline {
 
 ## API Reference
 
-Full API reference for `pipeline` CE can be found [here](../reference/saturn-pipeline-pipelinebuilder.html)
+Full API reference for `pipeline` CE can be found [here](../reference/Saturn/saturn-pipeline-pipelinebuilder.html)
 
-Full API reference for `PipelineHelpers` module containing useful helpers can be found [here](../reference/saturn-pipelinehelers.html)
+Full API reference for `PipelineHelpers` module containing useful helpers can be found [here](../reference/Saturn/saturn-pipelinehelers.html)
 
 You can also use in pipelines (using `plug`) any `HttpHandler` defined in Giraffe - documentation can be found [here](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md)

@@ -194,4 +194,4 @@ Notice that `getf` is used instead of get. This is a separate version of get tha
 
 ## API Reference
 
-Full API reference for `router` CE can be found [here](../reference/saturn-router-routerbuilder.html)
+Full API reference for `router` CE can be found [here](../reference/Saturn/saturn-router-routerbuilder.html)
