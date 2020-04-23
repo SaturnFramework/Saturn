@@ -22,6 +22,19 @@ let updateAction id ctx subId =
     | None -> sprintf "Update %i" subId
     |> Controller.text ctx
 
+let showAction ctx id =
+  sprintf "Create %i" id
+  |> Controller.text ctx
+
+let editAction ctx id =
+  sprintf "Edit %i" id
+  |> Controller.text ctx
+
+let addAction ctx =
+  "Add"
+  |> Controller.text ctx
+
+
 let testSubController (id: int) = controller {
   create (createAction (Some id))
   update (updateAction (Some id))
@@ -32,6 +45,10 @@ let testController = controller {
 
   create (createAction None)
   update (updateAction None)
+
+  show showAction
+  edit editAction
+  add addAction
 }
 
 let testPathSegmentController = controller {
@@ -63,6 +80,16 @@ let routingTests =
 
         testCase "Update PUT works" <|
           responseTestCaseDefault "PUT" "/1" "Update 1"
+
+        testCase "Add works" <|
+          responseTestCaseDefault "GET" "/add" "Add"
+
+        testCase "Show works" <|
+          responseTestCaseDefault "GET" "/1" "Create 1"
+
+        testCase "Edit worsk" <|
+          responseTestCaseDefault "GET" "/1/edit" "Edit 1"
+
 
         testCase "deleteAll works" <| fun _ ->
             let expectedStatusCode = 204
@@ -297,3 +324,42 @@ let automaticDiTest =
         testCase "can inject tupple" <|
             responseTestCase "GET" "/add" "2"
     ]
+
+//---------------------------Routing tests with string id----------------------------------------
+
+let showActionStrng ctx id =
+  sprintf "Create %s" id
+  |> Controller.text ctx
+
+let editString ctx id =
+  sprintf "Edit %s" id
+  |> Controller.text ctx
+
+let addString ctx =
+  "Add"
+  |> Controller.text ctx
+
+
+let testStringController = controller {
+  show showActionStrng
+  edit editString
+  add addString
+}
+
+
+[<Tests>]
+let routingStringTests =
+    let responseTestCaseDefault = responseTestCase testStringController
+
+    testList "Controller Routing with String Tests" [
+        testCase "controller add works" <|
+          responseTestCaseDefault "GET" "/add" "Add"
+
+        testCase "controller show works" <|
+          responseTestCaseDefault "GET" "/abcde" "Create abcde"
+
+        testCase "controller edit worsk" <|
+          responseTestCaseDefault "GET" "/abcde/edit" "Edit abcde"
+
+
+]

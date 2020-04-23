@@ -302,8 +302,10 @@ module Controller =
       let routeHandler (actionHandler: 'Key -> HttpHandler) =
         let routeHandler = x.FormattedRouteFunc state (PrintfFormat<_,_,_,_,'Key> route) actionHandler
         // All 'Key types except string don't match "/" so they always stay within a single path segment by design.
-        if not (typeof<'Key> = typeof<string>)
-        then routeHandler else
+        // Edit actions also needs to be handled normally even for the string id, without extra processing for the strings.
+        if not (typeof<'Key> = typeof<string>) || action = Action.Edit then
+          routeHandler
+        else
           let segmentRouteHandler =
             // Open issue in Giraffe for a routStartsWithf https://github.com/giraffe-fsharp/Giraffe/issues/341
             x.FormattedRouteFunc state (PrintfFormat<_,_,_,_,'Key * string> (route + "/%s")) (fst >> actionHandler)
