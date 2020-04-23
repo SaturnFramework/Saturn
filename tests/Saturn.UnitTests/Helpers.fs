@@ -45,14 +45,22 @@ let getEmptyContext (method: string) (path : string) =
   ctx.Features.ReturnsForAnyArgs(FeatureCollection()) |> ignore
 
   ctx.Response.Body <- new MemoryStream()
+
   ctx.RequestServices
      .GetService(typeof<Json.IJsonSerializer>)
      .Returns(new NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings))
-  |> ignore
+    |> ignore
+
   ctx.RequestServices
     .GetService(typeof<IDependency>)
     .Returns(dependency ())
-  |> ignore
+    |> ignore
+
+  ctx.RequestServices
+    .GetService(typeof<INegotiationConfig>)
+    .Returns(DefaultNegotiationConfig())
+    |> ignore
+
   ctx
 
 let next : HttpFunc = Some >> Task.FromResult
