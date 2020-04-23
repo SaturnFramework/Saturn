@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Saturn\Saturn.fsproj">
       <Name>Saturn.fsproj</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Saturn.Extensions.Authorization\Saturn.Extensions.Authorization.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OpenId.fs" />
