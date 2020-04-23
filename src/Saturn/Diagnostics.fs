@@ -58,21 +58,25 @@ module SiteMap =
 
     let internal add hm = state.Add(hm)
     let internal generate () =
-        match state |> Seq.tryLast with
-        | None -> ()
-        | Some s ->
-        let z = s.CollectPaths "" None state
-        let typ = typeof<HandlerMap>
-        let asm = typ.Assembly.Location
-        let p = Path.Combine(Path.GetDirectoryName(asm), "site.map")
-        let cnt =
-            z
-            |> Seq.map (fun (a,b,c) ->
-                let c = (c |> function Some v -> v.ToString() | None -> "")
-                sprintf "%s, %s, %s" a b c
-            )
-            |> String.concat "\n"
-        File.WriteAllText(p, cnt)
+        try
+          match state |> Seq.tryLast with
+          | None -> ()
+          | Some s ->
+          let z = s.CollectPaths "" None state
+          let typ = typeof<HandlerMap>
+          let asm = typ.Assembly.Location
+          let p = Path.Combine(Path.GetDirectoryName(asm), "site.map")
+          let cnt =
+              z
+              |> Seq.map (fun (a,b,c) ->
+                  let c = (c |> function Some v -> v.ToString() | None -> "")
+                  sprintf "%s, %s, %s" a b c
+              )
+              |> String.concat "\n"
+          File.WriteAllText(p, cnt)
+        with
+        | _ ->
+          printfn "WARN - Couldn't write diagnostic `site.map` file"
 
     let getPaths () =
         match state |> Seq.tryLast with
