@@ -15,16 +15,43 @@ open Html
 open Apirefloader
 
 let formatMember (m: Member) =
+    let attributes =
+      m.Attributes
+      |> List.filter (fun a -> a.FullName <> "Microsoft.FSharp.Core.CustomOperationAttribute")
+
+    let hasCustomOp =
+      m.Attributes
+      |> List.exists (fun a -> a.FullName = "Microsoft.FSharp.Core.CustomOperationAttribute")
+
+    let customOp =
+      if hasCustomOp then
+        m.Attributes
+        |> List.tryFind (fun a -> a.FullName = "Microsoft.FSharp.Core.CustomOperationAttribute")
+        |> Option.bind (fun a ->
+          a.ConstructorArguments
+          |> Seq.tryFind (fun x -> x :? string)
+          |> Option.map (fun x -> x.ToString())
+        )
+        |> Option.defaultValue ""
+      else
+        ""
+
     tr [] [
         td [] [
             code [] [!! m.Name]
             br []
+
+            if hasCustomOp then
+              b [] [!! "CE Custom Operation: "]
+              code [] [!!customOp]
+              br []
+            br []
             b [] [!! "Signature: "]
             !!m.Details.Signature
             br []
-            if not (m.Attributes.IsEmpty) then
+            if not (attributes.IsEmpty) then
                 b [] [!! "Attributes:"]
-                for a in m.Attributes do
+                for a in attributes do
                     code [] [!! (a.Name)]
         ]
         td [] [!! m.Comment.FullText]
