@@ -48,7 +48,7 @@ let getEmptyContext (method: string) (path : string) =
 
   ctx.RequestServices
      .GetService(typeof<Json.IJsonSerializer>)
-     .Returns(new NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings))
+     .Returns(NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings))
     |> ignore
 
   ctx.RequestServices

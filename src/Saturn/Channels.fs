@@ -17,31 +17,46 @@ module Socket = ThreadSafeWebSocket
 
 module Channels =
 
-    type Message<'a> = { Topic: string; Ref: string; Payload: 'a}
-    type Message = Message<obj>
+    ///Url (relative to root application url) on which channel is hosted. Type alias for `string`
+    type ChannelPath = string
+
+    ///Topic of the channel. Type alias for `string`
+    type Topic = string
+
+    /// Types representing channels message.
+    /// It always includes topic, reference id of the message (random GUID), and payload object.
+    type Message<'a> = { Topic: Topic; Ref: string; Payload: 'a}
+
+    ///Socket Id. Type alias for `Guid`
     type SocketId = Guid
-    type SocketInfo = { SocketId: SocketId }
+
+    ///Type representing information about client that has executed some channel action
+    ///It's passed as an argument in channel actions (`join`, `handle`, `terminate`)
+    type ClientInfo = { SocketId: SocketId }
         with
             static member New socketId =
                 { SocketId = socketId }
-    type ChannelPath = string
-    type Topic = string
 
+    ///Type representing result of `join` action. It can be either succesful (`Ok`) or you can reject client connection (`Rejected`)
     type JoinResult =
         | Ok
         | Rejected of reason: string
 
+    /// Interface of the internal representation of the channel.
+    /// Shouldn't be used manually, you get its instance from the `channel` Computation Expression
     type IChannel =
-        abstract member Join: HttpContext * SocketInfo -> Task<JoinResult>
-        abstract member HandleMessage: HttpContext * SocketInfo * Message -> Task<unit>
-        abstract member Terminate: HttpContext * SocketInfo -> Task<unit>
+        abstract member Join: HttpContext * ClientInfo -> Task<JoinResult>
+        abstract member HandleMessage: HttpContext * ClientInfo * IJsonSerializer * string -> Task<unit>
+        abstract member Terminate: HttpContext * ClientInfo -> Task<unit>
 
+    /// Interface representing server side Socket Hub, giving you ability to brodcast messages (either to particular socket or to all sockets).
+    /// You can get instance of it with `ctx.GetService&lt;Saturn.Channels.ISocketHub>()` from any place that has access to HttpContext instance (`controller` actions, `channel` actions, normal `HttpHandler`)
     type ISocketHub =
         abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> Task<unit>
         abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
-    type SocketHub(serializer: IJsonSerializer) =
+    type internal SocketHub(serializer: IJsonSerializer) =
       let sockets = Dictionary<ChannelPath, ConcurrentDictionary<SocketId, Socket.ThreadSafeWebSocket>>()
 
       let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) = task {
@@ -80,7 +95,7 @@ module Channels =
           | _ -> ()
         }
 
-    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
+    type internal SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
         do sockets.NewPath path
 
         member __.Invoke(ctx : HttpContext) =
@@ -91,7 +106,7 @@ module Channels =
                         let logger = ctx.RequestServices.GetRequiredService<ILogger<SocketMiddleware>>()
                         logger.LogTrace("Promoted websocket request")
                         let socketId =  Guid.NewGuid()
-                        let socketInfo = SocketInfo.New socketId
+                        let socketInfo = ClientInfo.New socketId
                         let! joinResult = channel.Join(ctx, socketInfo)
                         match joinResult with
                         | Ok ->
@@ -107,8 +122,7 @@ module Channels =
                               | Result.Ok (WebSocket.ReceiveUTF8Result.String msg) ->
                                 logger.LogTrace("received message {0}", msg)
                                 try
-                                  let msg = serializer.Deserialize<Message> msg
-                                  do! channel.HandleMessage(ctx, socketInfo, msg)
+                                  do! channel.HandleMessage(ctx, socketInfo, serializer, msg)
                                 with
                                 | ex ->
                                   // typically a deserialization error, swallow
@@ -138,40 +152,117 @@ module Channels =
 
 
 [<AutoOpen>]
+///Module with `channel` computation expression
 module ChannelBuilder =
     open Channels
 
+    ///Type representing internal state of the `channel` computation expression
     type ChannelBuilderState = {
-        Join: (HttpContext -> SocketInfo -> Task<JoinResult>) option
-        Handlers: Map<string, (HttpContext-> SocketInfo -> Message -> Task<unit>)>
-        Terminate: (HttpContext -> SocketInfo -> Task<unit>) option
-        NotFoundHandler: (HttpContext -> SocketInfo -> Message -> Task<unit>) option
-        ErrorHandler: HttpContext -> SocketInfo -> Message -> Exception -> Task<unit>
+        Join: (HttpContext -> ClientInfo -> Task<JoinResult>) option
+        Handlers: Map<string, (IJsonSerializer -> HttpContext-> ClientInfo -> string -> Task<unit>)>
+        Terminate: (HttpContext -> ClientInfo -> Task<unit>) option
+        NotFoundHandler: (HttpContext -> ClientInfo -> Message<obj> -> Task<unit>) option
+        ErrorHandler: HttpContext -> ClientInfo -> Message<obj> -> Exception -> Task<unit>
     }
 
+    ///Computation expression used to create channels - an `controller`-like abstraction over WebSockets allowing real-time, and push-based communication between server and the client
+    /// The messages handled by channels should be json-encoded, in a following form: `{Topic = "my topic"; Ref = "unique-message-id"; Payload = {...} }`
+    ///
+    ///The result of the computation expression is the `IChannel` instance that can be registered in the `application` computation expression using `add_channel` operation.
+    ///
+    ///**Example:**
+    ///
+    /// ```fsharp
+    ///
+    /// let browserRouter = router {
+    ///   get "/ping" (fun next ctx -> task {
+    ///     let hub = ctx.GetService&lt;Saturn.Channels.ISocketHub>()
+    ///     match ctx.TryGetQueryStringValue "message" with
+    ///     | None ->
+    ///       do! hub.SendMessageToClients "/channel" "greeting" "hello"
+    ///     | Some message ->
+    ///       do! hub.SendMessageToClients "/channel" "greeting" (sprintf "hello, %s" message)
+    ///     return! Successful.ok (text "Pinged the clients") next ctx
+    ///    })
+    ///   }
+    ///
+    /// let sampleChannel = channel {
+    ///   join (fun ctx si -> task {
+    ///     ctx.GetLogger().LogInformation("Connected! Socket Id: " + si.SocketId.ToString())
+    ///     return Ok
+    ///   })
+    ///
+    ///   handle "topic" (fun ctx si msg ->
+    ///     task {
+    ///        let logger = ctx.GetLogger()
+    ///        logger.LogInformation("got message {message} from client with Socket Id: {socketId}", msg, si.SocketId)
+    ///        return ()
+    ///   })
+    /// }
+    ///
+    /// let app = application {
+    ///   use_router browserRouter
+    ///   url "http://localhost:8085/"
+    ///   add_channel "/channel" sampleChannel
+    /// }
+    /// ```
     type ChannelBuilder internal () =
         member __.Yield(_) : ChannelBuilderState =
             {Join = None; Handlers = Map.empty; Terminate = None; NotFoundHandler = None; ErrorHandler = fun _ _ _ ex -> raise ex }
 
         [<CustomOperation("join")>]
+        ///Action executed when client tries to join the channel.
+        ///You can either return `Ok` if channel allows join, or reject it with `Rejected`
+        ///Typical cases for rejection may include authorization/authentication,
+        ///not being able to handle more connections or other business logic reasons.
+        ///
+        /// As arguments, `join` action gets:
+        /// *  current `HttpContext` for the request
+        /// * `ClientInfo` instance representing additional information about client sending request
         member __.Join(state, handler) =
             {state with Join= Some handler}
 
         [<CustomOperation("handle")>]
-        member __.Handle(state, topic, handler) =
-            {state with Handlers=state.Handlers.Add(topic, handler)}
+        ///Action executed when client sends a message to the channel to the given topic.
+        ///
+        /// As arguments, `handle` action gets:
+        /// *  current `HttpContext` for the request
+        /// * `ClientInfo` instance representing additional information about client sending request
+        /// * `Message<'a>` instance representing message sent from client to the channel
+        member __.Handle<'a>(state, topic, (handler : HttpContext -> ClientInfo -> Message<'a> -> Task<unit>)) =
+            let objHandler = fun (serializer: IJsonSerializer) ctx ci (msg: string) ->
+              let nmsg = serializer.Deserialize<Message<'a>> msg
+              handler ctx ci nmsg
+
+            {state with Handlers=state.Handlers.Add(topic, objHandler)}
 
         [<CustomOperation("terminate")>]
+        ///Action executed when client disconnects from the channel
+        ///
+        /// As arguments, `join` action gets:
+        /// *  current `HttpContext` for the request
+        /// * `ClientInfo` instance representing additional information about client sending request
         member __.Terminate(state, handler) =
             {state with Terminate= Some handler}
 
         [<CustomOperation("not_found_handler")>]
-        member __.NotFoundHandler(state : ChannelBuilderState, handler) =
-            {state with NotFoundHandler= Some handler}
+        ///Action executed when clients sends a message to the topic for which `handle` was not registered
+        ///
+        /// As arguments, `not_found_handler` action gets:
+        /// *  current `HttpContext` for the request
+        /// * `ClientInfo` instance representing additional information about client sending request
+        /// * `Message<'a>` instance representing message sent from client to the channel
+        member __.NotFoundHandler(state, handler) =
+            {state with ChannelBuilderState.NotFoundHandler= Some handler}
 
         [<CustomOperation("error_handler")>]
-        member __.ErrorHandler(state : ChannelBuilderState, handler) =
-            {state with ErrorHandler= handler}
+        ///Action executed when unhandled exception happens in the
+        /// As arguments, `not_found_handler` action gets:
+        /// *  current `HttpContext` for the request
+        /// * `ClientInfo` instance representing additional information about client sending request
+        /// * `Message<'a>` instance representing message sent from client to the channel
+        member __.ErrorHandler(state, handler) =
+            {state with ChannelBuilderState.ErrorHandler= handler}
 
         member __.Run(state: ChannelBuilderState) : IChannel =
             if state.Join.IsNone then failwith "Join is required operation for any channel. Please use `join` operation in your `channel` CE to define it."
@@ -187,8 +278,9 @@ module ChannelBuilder =
                 state.Handlers.TryFind msgTopic
 
             let handler =
-                fun (ctx: HttpContext) (si: SocketInfo) (msg : Message) -> task {
+                fun (serializer: IJsonSerializer) (ctx: HttpContext) (si: ClientInfo) (rawMsg : string) -> task {
                     let logger = ctx.RequestServices.GetRequiredService<ILogger<IChannel>>()
+                    let msg = serializer.Deserialize<Message<obj>> rawMsg
                     logger.LogInformation("got message {message}", msg)
                     try
                         match findHandler msg.Topic with
@@ -202,7 +294,7 @@ module ChannelBuilder =
                               return ()
                         | Some hdl ->
                             logger.LogInformation("found handler for topic {topic}", msg.Topic)
-                            return! hdl ctx si msg
+                            return! hdl serializer ctx si rawMsg
                     with
                     | ex ->
                         logger.LogError(ex, "error while handling message {message}", msg)
@@ -216,8 +308,9 @@ module ChannelBuilder =
 
                 member __.Terminate(ctx, si) = terminate ctx si
 
-                member __.HandleMessage(ctx, si, msg) =
-                    handler ctx si msg
+                member __.HandleMessage(ctx, si, serializer, msg) =
+                    handler serializer ctx si msg
             }
 
+    ///Computation expression used to create channels
     let channel = ChannelBuilder()

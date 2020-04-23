@@ -8,9 +8,8 @@ open Saturn.Channels
 open Microsoft.Extensions.Logging
 open Giraffe.HttpStatusCodeHandlers
 
-
+//Normal router for Http request, brodcasting messages to all connected clients
 let browserRouter = router {
-    get "/" (text "Hello world")
     get "/ping" (fun next ctx -> task {
       let hub = ctx.GetService<Saturn.Channels.ISocketHub>()
       match ctx.TryGetQueryStringValue "message" with
@@ -22,13 +21,24 @@ let browserRouter = router {
     })
 }
 
+//Sample channel implementation
 let sampleChannel = channel {
     join (fun ctx si -> task {
       ctx.GetLogger().LogInformation("Connected! Socket Id: " + si.SocketId.ToString())
       return Ok
     })
 
-    handle "topic" (fun ctx si msg ->
+    //Handles can be typed if needed.
+    handle "topic" (fun ctx si (msg: Message<string>) ->
+        task {
+            let logger = ctx.GetLogger()
+            logger.LogInformation("got message {message} from client with Socket Id: {socketId}", msg, si.SocketId)
+            return ()
+        }
+    )
+
+    //Handles can specifiy it's own payload type - different topic in one channel may have different payloads
+    handle "othertopic" (fun ctx si (msg: Message<int>) ->
         task {
             let logger = ctx.GetLogger()
             logger.LogInformation("got message {message} from client with Socket Id: {socketId}", msg, si.SocketId)
