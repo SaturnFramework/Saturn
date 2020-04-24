@@ -19,21 +19,6 @@ module OpenId =
     type Saturn.Application.ApplicationBuilder with
         /// Enables OpenId authentication with custom configuration
         [<CustomOperation("use_open_id_auth_with_config")>]
-        member __.UseOpenIdAuthWithConfig(state: ApplicationState, (config: Action<OpenIdConnect.OpenIdConnectOptions>)) =
-            let middleware (app : IApplicationBuilder) =
-                app.UseAuthentication()
-
-            let service (s: IServiceCollection) =
-                let authBuilder = s.AddAuthentication(fun authConfig ->
-                    authConfig.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
-                    authConfig.DefaultChallengeScheme <- OpenIdConnectDefaults.AuthenticationScheme
-                    authConfig.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
-                addCookie state authBuilder
-                authBuilder.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, config) |> ignore
-
-                s
-
-            { state with
-                ServicesConfig = service::state.ServicesConfig
-                AppConfigs = middleware::state.AppConfigs
-                CookiesAlreadyAdded = true }
+        [<Obsolete("This operation has been moved to the Saturn.Extensions.Authorization project.")>]
+        member this.UseOpenIdAuthWithConfig_Obsolete(state: ApplicationState, (config: Action<OpenIdConnect.OpenIdConnectOptions>)) =
+            this.UseOpenIdAuthWithConfig(state, config)

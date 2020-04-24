@@ -1,19 +1,17 @@
 module Saturn
 
-open Saturn
-open FSharp.Control.Tasks.V2.ContextInsensitive
+open System
+
 open Microsoft.AspNetCore
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Authentication.Cookies
-open Microsoft.AspNetCore.Http
-open System.Threading.Tasks
-open System
-open Microsoft.AspNetCore.Authentication.Google
 open Microsoft.AspNetCore.Authentication
-open System.Net.Http
-open System.Net.Http.Headers
-open Newtonsoft.Json.Linq
+open Microsoft.AspNetCore.Authentication.Cookies
+open Microsoft.AspNetCore.Authentication.Google
+open Microsoft.AspNetCore.Authentication.OpenIdConnect
+open Microsoft.AspNetCore.Http
+
+open Saturn
 
 let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
 
@@ -185,3 +183,25 @@ type Saturn.Application.ApplicationBuilder with
           AppConfigs = middleware::state.AppConfigs
           CookiesAlreadyAdded = true
       }
+
+    /// Enables OpenId authentication with custom configuration
+    [<CustomOperation("use_open_id_auth_with_config")>]
+    member __.UseOpenIdAuthWithConfig(state: ApplicationState, (config: Action<OpenIdConnect.OpenIdConnectOptions>)) =
+        let middleware (app : IApplicationBuilder) =
+            app.UseAuthentication()
+
+        let service (s: IServiceCollection) =
+            let authBuilder = s.AddAuthentication(fun authConfig ->
+                authConfig.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+                authConfig.DefaultChallengeScheme <- OpenIdConnectDefaults.AuthenticationScheme
+                authConfig.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme)
+            addCookie state authBuilder
+            authBuilder.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, config) |> ignore
+
+            s
+
+        { state with
+            ServicesConfig = service::state.ServicesConfig
+            AppConfigs = middleware::state.AppConfigs
+            CookiesAlreadyAdded = true }
+
