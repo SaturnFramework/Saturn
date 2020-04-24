@@ -28,48 +28,52 @@ let rec collectModules pn pu nn nu (m: Module) =
 
 
 let loader (projectRoot: string) (siteContet: SiteContents) =
-    let dlls =
-      [
-        "Saturn", Path.Combine(projectRoot, "..", "temp", "Saturn.dll")
-        "Saturn.AzureFunctions", Path.Combine(projectRoot, "..", "temp", "Saturn.AzureFunctions.dll")
-        "Saturn.Extensions.Authorization", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Authorization.dll")
-        "Saturn.Extensions.gRPC", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.gRPC.dll")
-        "Saturn.Extensions.HttpSys", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.HttpSys.dll")
-        "Saturn.Extensions.OpenIdConnect", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.OpenIdConnect.dll")
-        "Saturn.Extensions.Turbolinks", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Turbolinks.dll")
-      ]
-    let libs =
-      [
-        Path.Combine (projectRoot, "..", "temp")
-        Path.Combine (projectRoot, "..", "packages", "docsasp", "Microsoft.AspNetCore.app.ref", "ref", "netcoreapp3.1")
-      ]
-    for (label, dll) in dlls do
-      let output = MetadataFormat.Generate(dll, markDownComments = true, publicOnly = true, libDirs = libs)
+    try
+      let dlls =
+        [
+          "Saturn", Path.Combine(projectRoot, "..", "temp", "Saturn.dll")
+          "Saturn.AzureFunctions", Path.Combine(projectRoot, "..", "temp", "Saturn.AzureFunctions.dll")
+          "Saturn.Extensions.Authorization", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Authorization.dll")
+          "Saturn.Extensions.gRPC", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.gRPC.dll")
+          "Saturn.Extensions.HttpSys", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.HttpSys.dll")
+          "Saturn.Extensions.OpenIdConnect", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.OpenIdConnect.dll")
+          "Saturn.Extensions.Turbolinks", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Turbolinks.dll")
+        ]
+      let libs =
+        [
+          Path.Combine (projectRoot, "..", "temp")
+          Path.Combine (projectRoot, "..", "packages", "docsasp", "Microsoft.AspNetCore.app.ref", "ref", "netcoreapp3.1")
+        ]
+      for (label, dll) in dlls do
+        let output = MetadataFormat.Generate(dll, markDownComments = true, publicOnly = true, libDirs = libs)
 
-      let allModules =
-          output.AssemblyGroup.Namespaces
-          |> List.collect (fun n ->
-              List.collect (collectModules n.Name n.Name n.Name n.Name) n.Modules
-          )
+        let allModules =
+            output.AssemblyGroup.Namespaces
+            |> List.collect (fun n ->
+                List.collect (collectModules n.Name n.Name n.Name n.Name) n.Modules
+            )
 
-      let allTypes =
-          [
-              yield!
-                  output.AssemblyGroup.Namespaces
-                  |> List.collect (fun n ->
-                      n.Types |> List.map (fun t -> {ParentName = n.Name; ParentUrlName = n.Name; NamespaceName = n.Name; NamespaceUrlName = n.Name; Info = t} )
-                  )
-              yield!
-                  allModules
-                  |> List.collect (fun n ->
-                      n.Info.NestedTypes |> List.map (fun t -> {ParentName = n.Info.Name; ParentUrlName = n.Info.UrlName; NamespaceName = n.NamespaceName; NamespaceUrlName = n.NamespaceUrlName; Info = t}) )
-          ]
-      let entities = {
-        Label = label
-        Modules = allModules
-        Types = allTypes
-        GeneratorOutput = output
-      }
-      siteContet.Add entities
+        let allTypes =
+            [
+                yield!
+                    output.AssemblyGroup.Namespaces
+                    |> List.collect (fun n ->
+                        n.Types |> List.map (fun t -> {ParentName = n.Name; ParentUrlName = n.Name; NamespaceName = n.Name; NamespaceUrlName = n.Name; Info = t} )
+                    )
+                yield!
+                    allModules
+                    |> List.collect (fun n ->
+                        n.Info.NestedTypes |> List.map (fun t -> {ParentName = n.Info.Name; ParentUrlName = n.Info.UrlName; NamespaceName = n.NamespaceName; NamespaceUrlName = n.NamespaceUrlName; Info = t}) )
+            ]
+        let entities = {
+          Label = label
+          Modules = allModules
+          Types = allTypes
+          GeneratorOutput = output
+        }
+        siteContet.Add entities
+    with
+    | ex ->
+      printfn "%A" ex
 
     siteContet
