@@ -1,4 +1,5 @@
 #r "../_lib/Fornax.Core.dll"
+#r "../../packages/docs/Markdig/lib/netstandard2.0/Markdig.dll"
 #r "../../packages/docs/Newtonsoft.Json/lib/netstandard2.0/Newtonsoft.Json.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.MetadataFormat.dll"
 
@@ -8,11 +9,25 @@
 
 #load "partials/layout.fsx"
 
-
 open System
 open FSharp.MetadataFormat
 open Html
 open Apirefloader
+open Markdig
+
+let markdownPipeline =
+    MarkdownPipelineBuilder()
+        .UsePipeTables()
+        .UseGridTables()
+        .Build()
+
+let getComment (c: Comment) =
+  let t =
+    c.RawData
+    |> List.map (fun n -> n.Value)
+    |> String.concat "\n\n"
+  Markdown.ToHtml(t, markdownPipeline)
+
 
 let formatMember (m: Member) =
     let attributes =
@@ -54,7 +69,7 @@ let formatMember (m: Member) =
                 for a in attributes do
                     code [] [!! (a.Name)]
         ]
-        td [] [!! m.Comment.FullText]
+        td [] [!! (getComment m.Comment)]
     ]
 
 let generateType ctx (page: ApiPageInfo<Type>) =
@@ -67,7 +82,7 @@ let generateType ctx (page: ApiPageInfo<Type>) =
             br []
             b [] [!! "Parent: "]
             a [Href (sprintf "%s.html" page.ParentUrlName)] [!! page.ParentName]
-            span [] [!! t.Comment.FullText]
+            span [] [!! (getComment t.Comment)]
             br []
             if not (String.IsNullOrWhiteSpace t.Category) then
                 b [] [!! "Category:"]
@@ -116,7 +131,7 @@ let generateModule ctx (page: ApiPageInfo<Module>) =
             br []
             b [] [!! "Parent: "]
             a [Href (sprintf "%s.html" page.ParentUrlName)] [!! page.ParentName]
-            span [] [!! m.Comment.FullText]
+            span [] [!! (getComment m.Comment)]
             br []
             if not (String.IsNullOrWhiteSpace m.Category) then
                 b [] [!! "Category:"]
@@ -133,7 +148,7 @@ let generateModule ctx (page: ApiPageInfo<Module>) =
                     for t in m.NestedTypes do
                         tr [] [
                             td [] [a [Href (sprintf "%s.html" t.UrlName )] [!! t.Name ]]
-                            td [] [!! t.Comment.FullText]
+                            td [] [!! (getComment t.Comment)]
                         ]
                 ]
                 br []
@@ -148,7 +163,7 @@ let generateModule ctx (page: ApiPageInfo<Module>) =
                     for t in m.NestedModules do
                         tr [] [
                             td [] [a [Href (sprintf "%s.html" t.UrlName )] [!! t.Name ]]
-                            td [] [!! t.Comment.FullText]
+                            td [] [!! (getComment t.Comment)]
                         ]
                 ]
                 br []
@@ -192,7 +207,7 @@ let generateNamespace ctx (n: Namespace)  =
                     for t in n.Types do
                         tr [] [
                             td [] [a [Href (sprintf "%s.html" t.UrlName )] [!! t.Name ]]
-                            td [] [!! t.Comment.FullText]
+                            td [] [!!(getComment t.Comment)]
                         ]
                 ]
                 br []
@@ -208,7 +223,7 @@ let generateNamespace ctx (n: Namespace)  =
                     for t in n.Modules do
                         tr [] [
                             td [] [a [Href (sprintf "%s.html" t.UrlName )] [!! t.Name ]]
-                            td [] [!! t.Comment.FullText]
+                            td [] [!! (getComment t.Comment)]
                         ]
                 ]
         ]
