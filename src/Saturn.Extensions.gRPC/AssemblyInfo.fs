@@ -5,13 +5,13 @@ open System.Reflection
 [<assembly: AssemblyTitleAttribute("Saturn.Extensions.gRPC")>]
 [<assembly: AssemblyProductAttribute("Saturn")>]
 [<assembly: AssemblyDescriptionAttribute("Opinionated, web development framework for F# which implements the server-side, functional MVC pattern")>]
-[<assembly: AssemblyVersionAttribute("0.12.1")>]
-[<assembly: AssemblyFileVersionAttribute("0.12.1")>]
+[<assembly: AssemblyVersionAttribute("0.13.0")>]
+[<assembly: AssemblyFileVersionAttribute("0.13.0")>]
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "Saturn.Extensions.gRPC"
     let [<Literal>] AssemblyProduct = "Saturn"
     let [<Literal>] AssemblyDescription = "Opinionated, web development framework for F# which implements the server-side, functional MVC pattern"
-    let [<Literal>] AssemblyVersion = "0.12.1"
-    let [<Literal>] AssemblyFileVersion = "0.12.1"
+    let [<Literal>] AssemblyVersion = "0.13.0"
+    let [<Literal>] AssemblyFileVersion = "0.13.0"

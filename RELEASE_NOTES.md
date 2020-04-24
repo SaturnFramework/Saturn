@@ -1,3 +1,11 @@
+### 0.13.0 - 24.04.2020
+* Allow all functions in a channel to see the socketId (by [@robertpi](https://github.com/robertpi))
+* Add exception handler for site.map generation (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Fix edit action in controller (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Moves `use_open_id_auth_with_config` to the Saturn.Extensions.Authorization project, obsoletes the old member and forwards it to the new project. (by [@ChrSteinert](https://github.com/ChrSteinert)))
+* Channel improvements (typed `handle` action) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Doc generation and infrastructure updates (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
 ### 0.12.1 - 18.02.2020
 * Add support for AzureAD OAuth (by [@ChrSteinert](https://github.com/ChrSteinert)))
 
