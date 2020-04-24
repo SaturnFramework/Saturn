@@ -392,6 +392,7 @@ packages
 *.sln.iml
 
 release.cmd
+releaseDocs.cmd
 .ionide/
 _public
 temp

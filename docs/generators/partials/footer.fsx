@@ -29,4 +29,9 @@ let footer (ctx : SiteContents)  =
         link [Rel "stylesheet"; Href (rootUrl + "/static/mermaid/mermaid.css")]
         script [Src (rootUrl + "/static/mermaid/mermaid.js")] []
         script [] [!! "mermaid.initialize({ startOnLoad: true });"]
+        script [Src "//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"] []
+        script [Src "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"] []
+        script [] [
+          !! "hljs.initHighlightingOnLoad()"
+        ]
     ]
