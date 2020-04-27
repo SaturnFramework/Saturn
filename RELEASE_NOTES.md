@@ -1,3 +1,6 @@
+### 0.13.1 - 27.04.2020
+* Make SocketMiddleware ~great~ public again (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
 ### 0.13.0 - 24.04.2020
 * Allow all functions in a channel to see the socketId (by [@robertpi](https://github.com/robertpi))
 * Add exception handler for site.map generation (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
