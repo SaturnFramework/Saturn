@@ -56,7 +56,7 @@ module Channels =
         abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
-    type internal SocketHub(serializer: IJsonSerializer) =
+    type SocketHub(serializer: IJsonSerializer) =
       let sockets = Dictionary<ChannelPath, ConcurrentDictionary<SocketId, Socket.ThreadSafeWebSocket>>()
 
       let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) = task {
@@ -95,7 +95,7 @@ module Channels =
           | _ -> ()
         }
 
-    type internal SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
+    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
         do sockets.NewPath path
 
         member __.Invoke(ctx : HttpContext) =
