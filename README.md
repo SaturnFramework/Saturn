@@ -10,7 +10,7 @@ Read more about why I've decided to create Saturn, and some of its design choice
 
 ## Documentation
 
-Saturn has nice [documentation](https://saturnframework.github.io/docs/) and I appreciate any help to improve it further by sending pull requests or just adding an issue with what you think is missing.
+Saturn has nice [documentation](https://saturnframework.org/explanations/overview.html) and I appreciate any help to improve it further by sending pull requests or just adding an issue with what you think is missing.
 
 ## How to build
 
