@@ -2,18 +2,17 @@
 {
 	"name": "F# (.NET Core Latest)",
 	"dockerFile": "Dockerfile",
-
 	// Uncomment the next line if you want to publish any ports.
 	// "appPort": [],
-
 	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "dotnet restore",
-
+	"postCreateCommand": "dotnet tool restore",
 	"extensions": [
-		"Ionide.Ionide-fsharp",
-		"ms-vscode.csharp"
+		"ionide.ionide-fsharp",
+		"ms-dotnettools.csharp"
 	],
 	"settings": {
-		"FSharp.fsacRuntime":"netcore"
-	}
+		"FSharp.fsacRuntime": "netcore",
+		"FSharp.useSdkScripts": true,
+  },
+  "remoteUser": "vscode"
 }
