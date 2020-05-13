@@ -8,6 +8,70 @@ menu_order: 2
 
 The previous chapter showed how to get started with a new application. 
 
-If you already have a working Giraffe webserver, you can gradually opt-in to Giraffe.
+If you already have a working Giraffe webserver, you can gradually opt-in to Saturn.
 
-..... Todo
+For example, if your existing app looks like this:
+
+```f#
+
+type Customer = {
+    Name : string
+    Address : string
+}
+
+let customers =
+    choose [
+      GET >=> (json { Name = "Mr. Smith"; Address = "Santa Monika"})
+      PUT >=> (bindJson<Customer> (fun customer -> printfn "Adding customer %A" customer; setStatusCode 200))
+    ]
+
+
+let webApp =
+    choose [
+        route "/"               >=> htmlFile "/pages/index.html"
+        route "/api/customers"   >=> customers
+    ]
+```
+
+and you need to add "vendor" functionality, you could implement it as a Saturn ``router`` while keeping everything else intact:
+
+
+```f#
+// the new Saturn router
+let vendors = router {
+    getf "/%i" (fun vendorId -> (json (readVendorFromDb vendorId)))
+    post "/" (bindJson<Vendor> (fun customer -> addVendor vendor; setStatusCode 200))
+}
+
+let webApp =
+    choose [
+        route "/"                >=> htmlFile "/pages/index.html"
+        route "/api/customers"   >=> customers
+        // plug the new Saturn router into the Giraffe app
+        route "/api/vendors"     >=> vendors
+    ]
+```
+
+# Embedding Giraffe Handlers into Saturn
+
+Of course the other way around also works.
+
+For example, [Elmish.Bridge](https://github.com/Nhowka/Elmish.Bridge) does not provide a specialized implementation for Saturn. And it doesn't need to, because we can just use the Giraffe implementation!
+
+```f#
+
+open Elmish
+open Elmish.Bridge
+
+let elmishBridgeHandler : HttpHandler =
+  Bridge.mkServer Shared.endpoint init update
+  |> Bridge.run Giraffe.server
+
+// our existing Saturn router
+let router = router {
+
+    // ...
+
+    forward "" elmishBridgeHandler
+}
+```
