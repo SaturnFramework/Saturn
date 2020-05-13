@@ -29,7 +29,7 @@ The easiest way to get started is to use the provided template:
 
 If you want to start from scratch with a minimal Saturn webserver:
 
-1. Create a new F# Project
+1. Create a new F# Project (for example with `dotnet new console -lang F#`)
 2. Add the `Saturn` NuGet Package
 
 ```f#
@@ -44,4 +44,3 @@ run app
 ```
 
 If you compile and run this application, it will unconditionally return the text regardless of the path.
-
