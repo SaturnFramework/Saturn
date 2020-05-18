@@ -1,7 +1,7 @@
 ---
 title: Adding Pages
 category: tutorial
-menu_order: 2
+menu_order: 3
 ---
 
 # Adding Pages
