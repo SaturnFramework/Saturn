@@ -52,7 +52,7 @@ module Channels =
     /// You can get instance of it with `ctx.GetService&lt;Saturn.Channels.ISocketHub>()` from any place that has access to HttpContext instance (`controller` actions, `channel` actions, normal `HttpHandler`)
     type ISocketHub =
         abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> Task<unit>
-        abstract member SendMessageToClient: SocketId -> Topic -> 'a -> Task<unit>
+        abstract member SendMessageToClient: ClientInfo -> Topic -> 'a -> Task<unit>
         abstract member SendMessageToClientsFilter: (ClientInfo -> bool) -> Topic -> 'a -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
@@ -99,9 +99,8 @@ module Channels =
           return ()
         }
 
-        member __.SendMessageToClient path clientId topic payload = task {
-          let ci = {SocketId = clientId; ChannelPath = path}
-          match sockets.TryGetValue ci with
+        member __.SendMessageToClient clientInfo topic payload = task {
+          match sockets.TryGetValue clientInfo with
           | true, socket ->
             let msg = { Topic = topic; Ref = ""; Payload = payload }
             do! sendMessage msg socket
