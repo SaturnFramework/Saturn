@@ -23,25 +23,34 @@ let browserRouter = router {
 
 //Sample channel implementation
 let sampleChannel = channel {
-    join (fun ctx si -> task {
-      ctx.GetLogger().LogInformation("Connected! Socket Id: " + si.SocketId.ToString())
+    join (fun ctx ci -> task {
+      ctx.GetLogger().LogInformation("Connected! Socket Id: " + ci.SocketId.ToString())
       return Ok
     })
 
     //Handles can be typed if needed.
-    handle "topic" (fun ctx si (msg: Message<string>) ->
+    handle "topic" (fun ctx ci (msg: Message<string>) ->
         task {
             let logger = ctx.GetLogger()
-            logger.LogInformation("got message {message} from client with Socket Id: {socketId}", msg, si.SocketId)
+            logger.LogInformation("got string message {message} from client with Socket Id: {socketId}", msg, ci.SocketId)
+            let hub = ctx.GetService<Saturn.Channels.ISocketHub>()
+            do! hub.SendMessageToClients "/channel" "echo" (sprintf "payload was: %s" msg.Payload)
             return ()
         }
     )
 
     //Handles can specifiy it's own payload type - different topic in one channel may have different payloads
-    handle "othertopic" (fun ctx si (msg: Message<int>) ->
+    handle "othertopic" (fun ctx ci (msg: Message<int>) ->
         task {
             let logger = ctx.GetLogger()
-            logger.LogInformation("got message {message} from client with Socket Id: {socketId}", msg, si.SocketId)
+            logger.LogInformation("got int message {message} from client with Socket Id: {socketId}", msg, ci.SocketId)
+            return ()
+        }
+    )
+    error_handler(fun ctx ci msg ex ->
+        task {
+            let logger = ctx.GetLogger()
+            logger.LogError(ex.Message);
             return ()
         }
     )
@@ -52,6 +61,7 @@ let app = application {
     use_router browserRouter
     url "http://localhost:8085/"
     add_channel "/channel" sampleChannel
+    use_static ""
 }
 
 [<EntryPoint>]

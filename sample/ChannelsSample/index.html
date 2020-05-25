@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>WebSocket Tests</title>
+<body>
+<h2>WebSocket Echo Test</h2>
+<div id="output1"></div>
+<hr />
+<h2>WebSocket Sample Test</h2>
+<a href="/ping" target="_blank">Saturn Ping</a>
+<div id="output2"></div>
+
+<script>
+    // create a guid in javascript, taken from: https://stackoverflow.com/questions/105034/how-to-create-guid-uuid
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+    function writeToScreen(name,domElement){
+        return msg => {
+            console.log(name,msg);
+            let p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.innerHTML = msg;
+            domElement.appendChild(p);
+        }
+    }
+
+    let doSend = (ws,writer,msg) => {
+        let display = typeof msg == "string" ? msg || typeof msg == "number" : JSON.stringify(msg);
+        writer('Sending: ' + display);
+        ws.send(display);
+        writer('Sent: ' + display);
+    };
+
+    let makeOnOpenDelegate = (ws,writer,onOpenMessage) => _evt => {
+        console.log('onOpen called');
+        writer('Connected');
+        doSend(ws,writer, onOpenMessage);
+    };
+
+    let onClose = (ws,writer) => evt => { writer('Disconnected');};
+    let onMessage = (ws,writer,doClose) => evt => {
+        writer('<span style="color: blue;">Response: ' + evt.data + '</span>');
+        // normally you don't want to close on the first message
+        if(doClose){
+            ws.close();
+        }
+    };
+    let onError = writer => evt => {
+        console.error(evt);
+        writer('<span style="color:red;">Error:</span> <pre>' + (evt != null && evt.data != null ? evt.data : evt || 'no event info') + '</pre>' );
+    };
+
+    let connect = (name,wsUri,outputId,onOpenMessage,closeOnFirstMessage) => {
+        let output = document.getElementById(outputId);
+        console.log(output);
+        // since we can't hook up events before the open attempt, hack around it
+        let evented = false;
+        // we don't want our onOpen to run if the event that should have happened was an error
+        let initerror = false;
+        let ws = new WebSocket(wsUri);
+        console.info('readyState,closed,closing', ws.readyState, ws.CLOSED, ws.CLOSING);
+        let writer = writeToScreen(name,output);
+        let opened = makeOnOpenDelegate(ws,writer,onOpenMessage);
+        ws.onopen = x => {
+            evented = true;
+            opened(x);
+        };
+        ws.onclose = x => {
+            evented = true;
+            onClose(ws,writer);
+        };
+        ws.onmessage = onMessage(ws,writer,closeOnFirstMessage);
+        ws.onerror = x => {initerror = true;evented = true; onError(writer);}
+
+        if (!evented && ws.readyState != 0 && (ws.CLOSED == 1 || ws.CLOSING == 1)) {
+            console.info('state changed before events hooked up')
+            console.info('readyState,closed,closing', ws.readyState, ws.CLOSED, ws.CLOSING);
+            if(!initerror){
+                opened();
+            }
+        }
+    }
+
+    function init () {
+        connect('echosite','ws://echo.websocket.org/','output1',onOpenMessage='WebSocket rocks',closeOnFirstMessage=true);
+        var saturnmsg={Topic:'topic',Ref:uuidv4(),Payload:'Saturn Channels rock'};
+        connect('sample','ws://localhost:8085/channel','output2',onOpenMessage=saturnmsg,closeOnFirstMessage=false);
+    }
+
+    window.addEventListener('load',init, false);
+    </script>
+</body>
