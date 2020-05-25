@@ -30,7 +30,7 @@
     let doSend = (ws,writer,msg) => {
         let display = typeof msg == "string" ? msg || typeof msg == "number" : JSON.stringify(msg);
         writer('Sending: ' + display);
-        ws.send(msg);
+        ws.send(display);
         writer('Sent: ' + display);
     };
 
