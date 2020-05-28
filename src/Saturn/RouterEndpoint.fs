@@ -108,11 +108,6 @@ module Router =
 
     member __.Run(state : RouterState) : Endpoint list =
 
-      // let route = if state.CaseInsensitive then routeCi else route
-      // let routefUnsafe = if state.CaseInsensitive then routefUnsafeCi else routefUnsafe
-      // let subRoute = if state.CaseInsensitive then subRouteCi else subRoute
-      // let subRoutefUnsafe = if state.CaseInsensitive then subRoutefUnsafeCi else subRoutefUnsafe
-
       let generateRoutes typ =
         let addPipeline hndl = (Saturn.PipelineHelpers.fetchUrl |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> hndl
 
@@ -152,29 +147,6 @@ module Router =
         |> Seq.map (fun (KeyValue (p, lst)) ->
           subRoute p lst
         )
-
-      // let forwards, forwardsf = state.GetRoutes RouteType.Forward
-      // let forwards =
-      //   forwards
-      //   |> Seq.map (fun (p, lst) ->
-      //     lst |> Seq.iter (fun l -> siteMap.Forward p "" l)
-      //     subRoute p (choose lst))
-
-      // let forwardsf =
-      //   forwardsf |> Seq.map (fun (p, lst) ->
-      //     lst |> Seq.iter (fun l ->
-      //       try
-      //         siteMap.Forward p "" ( tryDummy l)
-      //       with
-      //       | _ -> ())
-      //     let pf = PrintfFormat<_,_,_,_,_> p
-      //     let chooseF = fun o ->
-      //       lst
-      //       |> List.map (fun f -> f o)
-      //       |> choose
-      //     subRoutefUnsafe pf chooseF
-      //   )
-
 
       let lst =
         [

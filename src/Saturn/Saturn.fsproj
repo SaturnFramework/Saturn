@@ -19,6 +19,7 @@
     <Compile Include="RouterEndpoint.fs" />
     <Compile Include="ControllerHelpers.fs" />
     <Compile Include="Controller.fs" />
+    <Compile Include="ControllerEndpoint.fs" />
     <Compile Include="Authentication.fs" />
     <Compile Include="Channels.fs" />
     <Compile Include="Application.fs" />
