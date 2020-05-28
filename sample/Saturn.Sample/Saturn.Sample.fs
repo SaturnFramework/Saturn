@@ -112,7 +112,8 @@ let userController = controller {
 
 let topRouter = router {
     pipe_through headerPipe
-    not_found_handler (SiteMap.page)
+    //TODO
+    // not_found_handler (SiteMap.page)
 
     get "/" helloWorld
     get "/a" helloWorld2

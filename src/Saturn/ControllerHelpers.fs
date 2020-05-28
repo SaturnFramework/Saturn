@@ -37,9 +37,10 @@ module ControllerHelpers =
     let html (ctx: HttpContext) template =
       ctx.WriteHtmlStringAsync template
 
-    ///Returns to the client rendered html template.
-    let renderHtml (ctx: HttpContext) template =
-      ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderHtmlDocument template)
+    //TODO
+    // ///Returns to the client rendered html template.
+    // let renderHtml (ctx: HttpContext) template =
+    //   ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderHtmlDocument template)
 
     ///Returns to the client static file.
     let file (ctx: HttpContext) path =
@@ -76,8 +77,9 @@ module ControllerHelpers =
         match typeof<'a>, stringType with
         | k, Some s when k = typeof<string> && htmlMediaType.IsSubsetOf s -> html ctx (unbox<string> output)
         | k, Some s when k = typeof<string> && plainMediaType.IsSubsetOf s -> text ctx (unbox<string> output)
-        | k, _ when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
-          renderHtml ctx (unbox<_> output)
+        //TODO
+        // | k, _ when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+        //   renderHtml ctx (unbox<_> output)
         | _ ->
           if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then json ctx output
           elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then xml ctx output
@@ -89,16 +91,18 @@ module ControllerHelpers =
         match typeof<'a> with
         | k when k = typeof<string> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) -> html ctx (unbox<string> output)
         | k when k = typeof<string> && mediaTypes |> Seq.exists (plainMediaType.IsSubsetOf) -> text ctx (unbox<string> output)
-        | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
-          renderHtml ctx (unbox<_> output)
+        //TODO
+        // | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> && mediaTypes |> Seq.exists (htmlMediaType.IsSubsetOf) ->
+        //   renderHtml ctx (unbox<_> output)
         | _ ->
           if mediaTypes |> Seq.exists (jsonMediaType.IsSubsetOf) then json ctx output
           elif mediaTypes |> Seq.exists (xmlMediaType.IsSubsetOf) then xml ctx output
           else failwithf "Couldn't recognize any known Content-Type type"
       | _ ->
         match typeof<'a> with
-        | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> ->
-          renderHtml ctx (unbox<_> output)
+        //TODO
+        // | k when k = typeof<Giraffe.GiraffeViewEngine.XmlNode> ->
+        //   renderHtml ctx (unbox<_> output)
         | k when k = typeof<string>  -> ctx.WriteTextAsync(unbox<string> output)
         | _ -> json ctx output
 
