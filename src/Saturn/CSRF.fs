@@ -96,24 +96,25 @@ or
 
   let getRequestTokens (ctx: HttpContext) = ctx.GetService<IAntiforgery>().GetAndStoreTokens(ctx)
 
-  /// Contains view helpers for csrf tokens for various view engines.
-  module View =
-    module Giraffe =
-      open Giraffe.GiraffeViewEngine
+  //TODO
+  // /// Contains view helpers for csrf tokens for various view engines.
+  // module View =
+  //   module Giraffe =
+  //     open Giraffe.GiraffeViewEngine
 
-      ///Creates a csrf token form input of the kind: <input type="hidden" name="TOKEN_NAME" value="TOKEN_VALUE" />
-      let csrfTokenInput (ctx: HttpContext) =
-        match ctx.GetService<IAntiforgery>() with
-        | null ->
-          logMissingAntiforgeryFeature ctx
-          input [ _name "Missing Antiforgery Feature"
-                  _value "No Antiforgery Token Available, check your application configuration"
-                  _type "text" ]
-        | antiforgery ->
-          let tokens = antiforgery.GetAndStoreTokens(ctx)
-          input [ _name tokens.FormFieldName
-                  _value tokens.RequestToken
-                  _type "hidden" ]
+  //     ///Creates a csrf token form input of the kind: <input type="hidden" name="TOKEN_NAME" value="TOKEN_VALUE" />
+  //     let csrfTokenInput (ctx: HttpContext) =
+  //       match ctx.GetService<IAntiforgery>() with
+  //       | null ->
+  //         logMissingAntiforgeryFeature ctx
+  //         input [ _name "Missing Antiforgery Feature"
+  //                 _value "No Antiforgery Token Available, check your application configuration"
+  //                 _type "text" ]
+  //       | antiforgery ->
+  //         let tokens = antiforgery.GetAndStoreTokens(ctx)
+  //         input [ _name tokens.FormFieldName
+  //                 _value tokens.RequestToken
+  //                 _type "hidden" ]
 
-      ///View helper for creating a form that implicitly inserts a CSRF token hidden form input.
-      let protectedForm ctx attrs children = form attrs (csrfTokenInput ctx :: children)
+  //     ///View helper for creating a form that implicitly inserts a CSRF token hidden form input.
+  //     let protectedForm ctx attrs children = form attrs (csrfTokenInput ctx :: children)

@@ -134,9 +134,10 @@ module Pipeline =
     [<CustomOperation("html_file")>]
     member __.HtmlFile(state, fileName) : HttpHandler  = state >=> (htmlFile fileName)
 
-    ///`render_html` is a more functional way of generating HTML by composing HTML elements in F# to generate a rich Model-View output.
-    [<CustomOperation("render_html")>]
-    member __.RenderHtml(state, cnt) : HttpHandler  = state >=> (htmlView cnt)
+    //TODO
+    // ///`render_html` is a more functional way of generating HTML by composing HTML elements in F# to generate a rich Model-View output.
+    // [<CustomOperation("render_html")>]
+    // member __.RenderHtml(state, cnt) : HttpHandler  = state >=> (htmlView cnt)
 
     ///`redirect_to` uses a 302 or 301 (when permanent) HTTP response code to redirect the client to the specified location. It takes in two parameters, a boolean flag denoting whether the redirect should be permanent or not and the location to redirect to.
     [<CustomOperation("redirect_to")>]
