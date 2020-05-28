@@ -404,7 +404,7 @@ module Controller =
           if state.Show.IsSome then
             yield! this.AddKeyHandler state Show state.Show.Value
 
-        //POST
+        //POST && PUT
         if state.Create.IsSome then
           yield this.AddHandler state Create state.Create.Value
 
@@ -416,11 +416,6 @@ module Controller =
         if isKnownKey then
           if state.Patch.IsSome then
             yield! this.AddKeyHandler state Patch state.Patch.Value
-
-        //PUT
-        if isKnownKey then
-          if state.Update.IsSome then
-            yield! this.AddKeyHandler state Update state.Update.Value
 
         //DELETE
         if state.DeleteAll.IsSome then
