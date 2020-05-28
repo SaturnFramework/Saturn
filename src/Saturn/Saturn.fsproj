@@ -16,6 +16,7 @@
     <Compile Include="CSRF.fs" />
     <Compile Include="Pipelines.fs" />
     <Compile Include="Router.fs" />
+    <Compile Include="RouterEndpoint.fs" />
     <Compile Include="ControllerHelpers.fs" />
     <Compile Include="Controller.fs" />
     <Compile Include="Authentication.fs" />
