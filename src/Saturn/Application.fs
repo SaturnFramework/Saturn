@@ -236,7 +236,18 @@ module Application =
     member __.UseGZip(state : ApplicationState) =
       let service (s : IServiceCollection) =
         s.Configure<GzipCompressionProviderOptions>(fun (opts : GzipCompressionProviderOptions) -> opts.Level <- System.IO.Compression.CompressionLevel.Optimal)
-         .AddResponseCompression()
+         .AddResponseCompression(fun o ->
+              // Note: By default there is setting: o.EnableForHttps <- false
+              // If your SSL-site doesn't contain any user sensitive data, consider changing that to true.
+              o.MimeTypes <- Seq.append o.MimeTypes [|
+                "application/x-yaml";
+                "image/svg+xml";
+                "application/octet-stream";
+                "application/x-font-ttf";
+                "application/x-font-opentype";
+                "application/x-javascript";
+                "text/javascript";
+              |])
       let middleware (app : IApplicationBuilder) = app.UseResponseCompression()
 
       { state with
