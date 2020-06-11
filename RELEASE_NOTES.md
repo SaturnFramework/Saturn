@@ -1,3 +1,7 @@
+### 0.13.2 - 11.06.2020
+* Make RequestUrl fetching lazy (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Added a few more mime-types that should be compressed. (by [@Thorium](https://github.com/Thorium))
+
 ### 0.13.1 - 27.04.2020
 * Make SocketMiddleware ~great~ public again (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
 
