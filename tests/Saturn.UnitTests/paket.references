@@ -1,5 +1,6 @@
 Expecto
 NSubstitute
+BenchmarkDotNet
 
 group netcoreapp3.1
   FSharp.Core

@@ -7,8 +7,8 @@ framework: netstandard2.0, netcoreapp3.1
 nuget Expecto
 nuget Newtonsoft.Json
 nuget NSubstitute
-nuget protobuf-net.Grpc.HttpClient
 nuget System.Threading.Tasks.Dataflow >= 4.9
+nuget BenchmarkDotNet
 
 group netstandard2.0
   source https://api.nuget.org/v3/index.json
@@ -49,6 +49,7 @@ group netcoreapp3.1
   nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.1
   nuget Microsoft.NET.Sdk.Functions < 3.1
   nuget protobuf-net.Grpc.AspNetCore
+  nuget protobuf-net.Grpc.HttpClient
   nuget FSharp.Control.Websockets >= 0.2
   nuget FSharp.Core >= 4.2.3
 

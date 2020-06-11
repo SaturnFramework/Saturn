@@ -396,3 +396,6 @@ releaseDocs.cmd
 .ionide/
 _public
 temp
+BenchmarkDotNet.Artifacts/results/BenchmarkTests.Requesters-report-github.md
+BenchmarkDotNet.Artifacts/results/BenchmarkTests.Requesters-report.csv
+BenchmarkDotNet.Artifacts/results/BenchmarkTests.Requesters-report.html
