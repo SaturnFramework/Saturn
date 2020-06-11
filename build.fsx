@@ -117,7 +117,7 @@ Target.create "Docs" (fun _ ->
 )
 
 Target.create "Test" (fun _ ->
-    exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj" "."
+    exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj -c Release" "."
 )
 
 // --------------------------------------------------------------------------------------
