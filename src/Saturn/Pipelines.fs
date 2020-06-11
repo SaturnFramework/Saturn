@@ -212,12 +212,6 @@ module PipelineHelpers =
     return! nxt ctx
   }
 
-  let internal fetchUrl (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
-    if not (ctx.Items.ContainsKey "RequestUrl") then
-      ctx.Items.["RequestUrl"] <- ctx.Request.GetDisplayUrl()
-
-    nxt ctx
-
   ///Convert `HEAD` requests to `GET` requests.
   let head (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =
     if ctx.Request.Method = "HEAD" then ctx.Request.Method <- "GET"

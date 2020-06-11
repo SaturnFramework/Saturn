@@ -1,6 +1,7 @@
 namespace Saturn
 
 open Microsoft.AspNetCore.Http
+open Microsoft.AspNetCore.Http.Extensions
 open Giraffe.HttpStatusCodeHandlers
 open Giraffe.Core
 open Giraffe.ResponseWriters
@@ -157,7 +158,10 @@ module ControllerHelpers =
     let getUrl (ctx: HttpContext) =
       match ctx.Items.TryGetValue "RequestUrl" with
       | true, o -> Some (unbox<string> o)
-      | _ -> None
+      | _ ->
+        let url = ctx.Request.GetDisplayUrl()
+        ctx.Items.["RequestUrl"] <- url
+        Some url
 
     ///Gets the contents of the `Configuration` key in the HttpContext dictionary, unboxed as the given type.
     let getConfig<'a> (ctx: HttpContext) =
