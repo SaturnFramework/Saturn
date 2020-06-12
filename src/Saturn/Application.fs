@@ -26,6 +26,7 @@ open System.Threading.Tasks
 open Channels
 open Giraffe.Serialization.Json
 open Microsoft.Extensions.Hosting
+open Giraffe.EndpointRouting
 
 [<AutoOpen>]
 ///Module containing `application` computation expression
@@ -34,6 +35,7 @@ module Application =
   ///Type representing internal state of the `application` computation expression
   type ApplicationState = {
     Router: HttpHandler option
+    EndpointRouter: Endpoint list option
     ErrorHandler: ErrorHandler option
     Pipelines: HttpHandler list
     Urls: string list
@@ -88,17 +90,18 @@ module Application =
       let errorHandler (ex : Exception) (logger : ILogger) =
         logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
-      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; WebHostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false; NoWebhost = false; Channels = [] }
+      {Router = None; EndpointRouter = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; WebHostConfigs = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false;  NoWebhost = false; Channels = [] }
 
     member __.Run(state: ApplicationState) : IHostBuilder  =
       // to build the app we have to separate our configurations and our pipelines.
       // we can only call `Configure` once, so we have to apply our pipelines in the end
-      let router =
-        match state.Router with
-        | None ->
+      let oldRouter =
+        match state.Router, state.EndpointRouter with
+        | None, None ->
           if not state.NoRouter && not state.NoWebhost then printfn "Router needs to be defined in Saturn application. If you're building channels-only application, or gRPC application you may disable this message with `no_router` flag in your `application` block"
           None
-        | Some router ->
+        | _, Some er -> None
+        | Some router, None ->
           Some ((succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> router)
 
       // as we want to add middleware to our pipeline, we can add it here and we'll fold across it in the end
@@ -111,15 +114,19 @@ module Application =
 
       host.ConfigureServices(fun svcs ->
         let services = svcs.AddGiraffe()
+        let services =
+          match state.EndpointRouter with
+          | Some _ -> svcs.AddRouting ()
+          | None -> services
         state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore) |> ignore)
       |> ignore // need giraffe (with user customizations) in place so that I can get an IJsonSerializer for the channels
 
-      /// error handler first so that errors are caught
+      // error handler first so that errors are caught
       match state.ErrorHandler with
       | Some err -> useParts.Add (fun app -> app.UseGiraffeErrorHandler(err))
       | None -> ()
 
-      /// channels next so that they don't get swallowed by Giraffe
+      // channels next so that they don't get swallowed by Giraffe
       match state.Channels with
       | [] -> ()
       | channels ->
@@ -139,13 +146,21 @@ module Application =
         channels
         |> List.iter (fun (url, chnl) -> useParts.Add (fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl)))
 
-      /// user-provided middleware
+      // user-provided middleware
       state.AppConfigs |> List.iter (useParts.Add)
 
-      /// finally Giraffe itself
-      match router with
+      // finally Giraffe itself
+      match oldRouter with
       | None -> ()
       | Some router -> useParts.Add (fun app -> app.UseGiraffe router; app)
+
+      //Add endpoint router
+      match state.EndpointRouter with
+      | None -> ()
+      | Some endpoints ->
+        useParts.Add (fun app ->
+          app.UseRouting()
+             .UseEndpoints(fun e-> e.MapGiraffeEndpoints(endpoints)))
 
       if state.NoWebhost then
         host
@@ -170,6 +185,11 @@ module Application =
     [<CustomOperation("use_router")>]
     member __.Router(state, handler) =
       {state with Router = Some handler}
+
+    ///Defines top-level endpoint router used for the application
+    [<CustomOperation("use_endpoint_router")>]
+    member __.EndpointRouter(state, routes) =
+      {state with EndpointRouter = Some routes}
 
     ///Disable warning message about lack of `router` definition. Should be used for channels-only or gRPC applications.
     [<CustomOperation("no_router")>]
