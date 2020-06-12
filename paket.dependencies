@@ -10,7 +10,7 @@ nuget NSubstitute
 nuget System.Threading.Tasks.Dataflow >= 4.9
 nuget BenchmarkDotNet
 
-nuget Giraffe ~> 4.0
+nuget Giraffe prerelease
 nuget Microsoft.AspNetCore.Authentication.JwtBearer < 3.1
 nuget Microsoft.AspNetCore.Authentication.Google < 3.1
 nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.1
