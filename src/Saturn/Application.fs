@@ -22,10 +22,10 @@ open Microsoft.AspNetCore.Authentication
 open FSharp.Control.Tasks.V2
 open System.Net.Http
 open System.Net.Http.Headers
-open Newtonsoft.Json.Linq
 open System.Threading.Tasks
 open Channels
 open Giraffe.Serialization.Json
+open Microsoft.Extensions.Hosting
 
 [<AutoOpen>]
 ///Module containing `application` computation expression
@@ -591,12 +591,12 @@ module Application =
     /// Turns on the developer exception page, if the environment is in development mode.
     [<CustomOperation "use_developer_exceptions">]
     member __.ActivateDeveloperExceptions (state: ApplicationState) =
-        let config (app:IApplicationBuilder) (env:IHostingEnvironment) =
+        let config (app:IApplicationBuilder) (env:IWebHostEnvironment ) =
             if env.IsDevelopment() then app.UseDeveloperExceptionPage()
             else app
 
         let middleware (app:IApplicationBuilder) =
-          let env = app.ApplicationServices.GetService<IHostingEnvironment>()
+          let env = app.ApplicationServices.GetService<IWebHostEnvironment >()
           config app env
 
         {state with AppConfigs=middleware::state.AppConfigs}
