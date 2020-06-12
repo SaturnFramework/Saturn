@@ -1,25 +1,5 @@
 System.Threading.Tasks.Dataflow
-
-group netstandard2.0
-  Microsoft.AspNetCore framework: netstandard2.0
-  Microsoft.AspNetCore.Antiforgery framework: netstandard2.0
-  Microsoft.AspNetCore.Authentication.Cookies framework: netstandard2.0
-  Microsoft.AspNetCore.Authentication.JwtBearer framework: netstandard2.0
-  Microsoft.AspNetCore.Authentication.OAuth framework: netstandard2.0
-  Microsoft.AspNetCore.Authorization framework: netstandard2.0
-  Microsoft.AspNetCore.Cors framework: netstandard2.0
-  Microsoft.AspNetCore.ResponseCompression framework: netstandard2.0
-  Microsoft.AspNetCore.Rewrite framework: netstandard2.0
-  Microsoft.AspNetCore.Session framework: netstandard2.0
-  Microsoft.AspNetCore.StaticFiles framework: netstandard2.0
-  Microsoft.AspNetCore.WebSockets framework: netstandard2.0
-  Microsoft.Extensions.Caching.Memory  framework: netstandard2.0
-  FSharp.Control.Websockets framework: netstandard2.0
-  FSharp.Core framework: netstandard2.0
-  Giraffe framework: netstandard2.0
-
-group netcoreapp3.1
-  Microsoft.AspNetCore.Authentication.JwtBearer framework: netcoreapp3.1
-  FSharp.Control.Websockets framework: netcoreapp3.1
-  FSharp.Core framework: netcoreapp3.1
-  Giraffe framework: netcoreapp3.1
+Microsoft.AspNetCore.Authentication.JwtBearer
+FSharp.Control.Websockets
+FSharp.Core
+Giraffe

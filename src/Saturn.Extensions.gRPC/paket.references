@@ -1,3 +1,2 @@
-group netcoreapp3.1
-  FSharp.Core
-  protobuf-net.Grpc.AspNetCore
+FSharp.Core
+protobuf-net.Grpc.AspNetCore

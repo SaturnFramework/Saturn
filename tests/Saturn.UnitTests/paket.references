@@ -1,7 +1,5 @@
 Expecto
 NSubstitute
 BenchmarkDotNet
-
-group netcoreapp3.1
-  FSharp.Core
-  Giraffe
+FSharp.Core
+Giraffe
