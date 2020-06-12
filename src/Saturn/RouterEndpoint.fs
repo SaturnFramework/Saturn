@@ -109,7 +109,11 @@ module Router =
     member __.Run(state : RouterState) : Endpoint list =
 
       let generateRoutes typ =
-        let addPipeline hndl = (Saturn.PipelineHelpers.fetchUrl |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> hndl
+        let addPipeline hndl =
+          if state.Pipelines.IsEmpty then
+            hndl
+          else
+           (Saturn.Common.succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> hndl
 
         let v =
           match typ with
