@@ -2,7 +2,7 @@ version 5.241.6
 source https://api.nuget.org/v3/index.json
 
 storage: none
-framework: netstandard2.0, netcoreapp3.1
+framework: netcoreapp3.1
 
 nuget Expecto
 nuget Newtonsoft.Json
@@ -10,48 +10,15 @@ nuget NSubstitute
 nuget System.Threading.Tasks.Dataflow >= 4.9
 nuget BenchmarkDotNet
 
-group netstandard2.0
-  source https://api.nuget.org/v3/index.json
-  storage: none
-  framework: netstandard2.0
-
-  nuget Giraffe ~> 4.0
-
-  nuget Microsoft.AspNetCore < 3.0
-  nuget Microsoft.AspNetCore.Session < 3.0
-  nuget Microsoft.AspNetCore.ResponseCompression < 3.0
-  nuget Microsoft.AspNetCore.StaticFiles < 3.0
-  nuget Microsoft.AspNetCore.Rewrite < 3.0
-  nuget Microsoft.AspNetCore.Cors < 3.0
-  nuget Microsoft.AspNetCore.Authentication.Cookies < 3.0
-  nuget Microsoft.AspNetCore.Authentication.JwtBearer < 3.0
-  nuget Microsoft.AspNetCore.Authentication.Google < 3.0
-  nuget Microsoft.AspNetCore.Authentication.OAuth < 3.0
-  nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.0
-  nuget Microsoft.AspNetCore.Authorization < 3.0
-  nuget Microsoft.AspNetCore.Antiforgery < 3.0
-  nuget Microsoft.AspNetCore.Server.HttpSys < 3.0
-  nuget Microsoft.AspNetCore.WebSockets < 3.0
-  nuget Microsoft.Extensions.Caching.Memory < 3.0
-  nuget Microsoft.NET.Sdk.Functions < 3.0
-  nuget FSharp.Control.Websockets >= 0.2
-  nuget FSharp.Core >= 4.2.3
-
-group netcoreapp3.1
-  source https://api.nuget.org/v3/index.json
-  storage: none
-  framework: netcoreapp3.1
-
-  nuget Giraffe ~> 4.0
-
-  nuget Microsoft.AspNetCore.Authentication.JwtBearer < 3.1
-  nuget Microsoft.AspNetCore.Authentication.Google < 3.1
-  nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.1
-  nuget Microsoft.NET.Sdk.Functions < 3.1
-  nuget protobuf-net.Grpc.AspNetCore
-  nuget protobuf-net.Grpc.HttpClient
-  nuget FSharp.Control.Websockets >= 0.2
-  nuget FSharp.Core >= 4.2.3
+nuget Giraffe ~> 4.0
+nuget Microsoft.AspNetCore.Authentication.JwtBearer < 3.1
+nuget Microsoft.AspNetCore.Authentication.Google < 3.1
+nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.1
+nuget Microsoft.NET.Sdk.Functions < 3.1
+nuget protobuf-net.Grpc.AspNetCore
+nuget protobuf-net.Grpc.HttpClient
+nuget FSharp.Control.Websockets >= 0.2
+nuget FSharp.Core >= 4.2.3
 
 group Docs
   source https://api.nuget.org/v3/index.json

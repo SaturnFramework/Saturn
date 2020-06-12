@@ -1,8 +1,2 @@
-
-group netstandard2.0
-  FSharp.Core framework: netstandard2.0
-  Microsoft.AspNetCore.Authentication.OpenIdConnect framework: netstandard2.0
-
-group netcoreapp3.1
-  FSharp.Core framework: netcoreapp3.1
-  Microsoft.AspNetCore.Authentication.OpenIdConnect framework: netcoreapp3.1
+FSharp.Core
+Microsoft.AspNetCore.Authentication.OpenIdConnect

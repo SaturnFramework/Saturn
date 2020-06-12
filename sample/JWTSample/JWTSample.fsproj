@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JWTSample.fs" />
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
