@@ -2,6 +2,8 @@ module Sample
 
 open Saturn
 open Giraffe
+open Microsoft.Extensions.Hosting
+open Microsoft.AspNetCore.Builder
 
 //Saturn is using standard HttpHandlers from Giraffe
 
@@ -130,6 +132,8 @@ let topRouter = router {
 
     // same with controllers
     forward "/users" userController
+
+    forward "/error" (fun nxt ctx -> failwith "Sample error")
 }
 
 ///Saturn provides easy, declarative way to define application and hosting configuratiuon.
@@ -145,6 +149,14 @@ let app = application {
     memory_cache
     use_static "static"
     use_gzip
+
+    app_config (fun app ->
+      let env = Environment.getWebHostEnvironment app
+      if (env.IsDevelopment()) then
+          app.UseDeveloperExceptionPage()
+      else
+        app
+)
 }
 
 [<EntryPoint>]
