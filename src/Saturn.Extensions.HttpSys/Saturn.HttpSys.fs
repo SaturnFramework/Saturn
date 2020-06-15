@@ -15,7 +15,7 @@ type Saturn.Application.ApplicationBuilder with
         let host (builder: IWebHostBuilder) =
             builder.UseHttpSys ()
         { state with
-            HostConfigs = host::state.HostConfigs
+            WebHostConfigs = host::state.WebHostConfigs
         }
 
     /// HTTP.sys is a web server for ASP.NET Core that only runs on Windows. HTTP.sys is an alternative to Kestrel server and offers some features that Kestrel doesn't provide.
@@ -26,7 +26,7 @@ type Saturn.Application.ApplicationBuilder with
         let host (builder: IWebHostBuilder) =
             builder.UseHttpSys config
         { state with
-            HostConfigs = host::state.HostConfigs
+            WebHostConfigs = host::state.WebHostConfigs
         }
 
     /// HTTP.sys is a web server for ASP.NET Core that only runs on Windows. HTTP.sys is an alternative to Kestrel server and offers some features that Kestrel doesn't provide.
@@ -42,7 +42,7 @@ type Saturn.Application.ApplicationBuilder with
             builder.AddAuthentication HttpSysDefaults.AuthenticationScheme |> ignore
             builder
         { state with
-            HostConfigs = host::state.HostConfigs
+            WebHostConfigs = host::state.WebHostConfigs
             ServicesConfig = service::state.ServicesConfig
         }
 

@@ -39,11 +39,13 @@ module Application =
     Urls: string list
     MimeTypes: (string*string) list
     AppConfigs: (IApplicationBuilder -> IApplicationBuilder) list
-    HostConfigs: (IWebHostBuilder -> IWebHostBuilder) list
+    HostConfigs: (IHostBuilder -> IHostBuilder) list
+    WebHostConfigs: (IWebHostBuilder -> IWebHostBuilder) list
     ServicesConfig: (IServiceCollection -> IServiceCollection) list
     CliArguments: string array option
     CookiesAlreadyAdded: bool
     NoRouter: bool
+    NoWebhost: bool
     Channels: (string * IChannel) list
   }
 
@@ -86,15 +88,15 @@ module Application =
       let errorHandler (ex : Exception) (logger : ILogger) =
         logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
-      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false; Channels = [] }
+      {Router = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; WebHostConfigs = []; ServicesConfig = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false; NoWebhost = false; Channels = [] }
 
-    member __.Run(state: ApplicationState) : IWebHostBuilder =
+    member __.Run(state: ApplicationState) : IHostBuilder  =
       // to build the app we have to separate our configurations and our pipelines.
       // we can only call `Configure` once, so we have to apply our pipelines in the end
       let router =
         match state.Router with
         | None ->
-          if not state.NoRouter then printfn "Router needs to be defined in Saturn application. If you're building channels-only application, or gRPC application you may disable this message with `no_router` flag in your `application` block"
+          if not state.NoRouter || not state.NoWebhost then printfn "Router needs to be defined in Saturn application. If you're building channels-only application, or gRPC application you may disable this message with `no_router` flag in your `application` block"
           None
         | Some router ->
           Some ((succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> router)
@@ -102,12 +104,12 @@ module Application =
       // as we want to add middleware to our pipeline, we can add it here and we'll fold across it in the end
       let useParts = ResizeArray<IApplicationBuilder -> IApplicationBuilder>()
 
-      let wbhst =
+      let host =
         // Explicit null removes unnecessary handlers.
-        WebHost.CreateDefaultBuilder(Option.toObj state.CliArguments)
+        Host.CreateDefaultBuilder(Option.toObj state.CliArguments)
         |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
 
-      wbhst.ConfigureServices(fun svcs ->
+      host.ConfigureServices(fun svcs ->
         let services = svcs.AddGiraffe()
         state.ServicesConfig |> List.rev |> List.iter (fun fn -> fn services |> ignore) |> ignore)
       |> ignore // need giraffe (with user customizations) in place so that I can get an IJsonSerializer for the channels
@@ -123,7 +125,7 @@ module Application =
       | channels ->
         // we have to build the provider so we can get a serializer so we can make a singleton instance of the hub to register
         // as both the interface _and_ itself, so that users can use `ISocketHub` without getting the add/remove socket members
-        wbhst.ConfigureServices(fun svcs ->
+        host.ConfigureServices(fun svcs ->
           let provider = svcs.BuildServiceProvider()
           let serializer = provider.GetRequiredService(typeof<IJsonSerializer>) :?> IJsonSerializer
           let hub = Channels.SocketHub(serializer)
@@ -145,16 +147,25 @@ module Application =
       | None -> ()
       | Some router -> useParts.Add (fun app -> app.UseGiraffe router; app)
 
-      let wbhst =
-        if not (state.Urls |> List.isEmpty) then
-          wbhst.UseUrls(state.Urls |> List.toArray)
-        else wbhst
+      if state.NoWebhost then
+        host
+      else
+        host.ConfigureWebHostDefaults(fun wbhst ->
+          let wbhst = wbhst |> List.foldBack (fun e acc -> e acc ) state.WebHostConfigs
 
-      wbhst.Configure(fun ab ->
-        (ab, useParts)
-        ||> Seq.fold (fun ab part -> part ab)
-        |> ignore
-      )
+          let wbhst =
+            if not (state.Urls |> List.isEmpty) then
+              wbhst.UseUrls(state.Urls |> List.toArray)
+            else wbhst
+          let wbhst =
+            wbhst.Configure(fun ab ->
+              (ab, useParts)
+              ||> Seq.fold (fun ab part -> part ab)
+              |> ignore
+            )
+          ()
+        )
+
 
     ///Defines top-level router used for the application
     ///This construct is obsolete, use `use_router` instead
@@ -173,6 +184,11 @@ module Application =
     member __.NoRouter(state) =
       {state with NoRouter = true}
 
+    ///Disables any configuration of webhost. Could be used for generic `IHostBuilder` applications not using Kestrel/IIS
+    [<CustomOperation("no_webhost")>]
+    member __.NoWebhost(state) =
+      {state with NoWebhost = true}
+
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]
     member __.PipeThrough(state : ApplicationState, pipe) =
@@ -188,9 +204,14 @@ module Application =
     member __.AppConfig(state, config) =
       {state with AppConfigs = config::state.AppConfigs}
 
-    ///Adds custom host configuration step.
+    ///Adds custom generic host (`IHostBuilder`) configuration step. Conffuration for web host should use `webhost_config` instead.
     [<CustomOperation("host_config")>]
     member __.HostConfig(state, config) =
+      {state with HostConfigs = config::state.HostConfigs}
+
+    ///Adds custom web host configuration step.
+    [<CustomOperation("webhost_config")>]
+    member __.WebHostConfig(state, config) =
       {state with HostConfigs = config::state.HostConfigs}
 
     ///Adds custom service configuration step.
@@ -212,7 +233,7 @@ module Application =
     ///Adds logging configuration.
     [<CustomOperation("logging")>]
     member __.Logging(state, (config : ILoggingBuilder -> unit)) =
-      {state with HostConfigs = (fun (app : IWebHostBuilder)-> app.ConfigureLogging(config))::state.HostConfigs}
+      {state with HostConfigs = (fun (app : IHostBuilder)-> app.ConfigureLogging(config))::state.HostConfigs}
 
     ///Enables in-memory session cache
     [<CustomOperation("memory_cache")>]
@@ -266,7 +287,7 @@ module Application =
           .UseWebRoot(p)
       { state with
           AppConfigs = middleware::state.AppConfigs
-          HostConfigs = host::state.HostConfigs
+          WebHostConfigs = host::state.WebHostConfigs
       }
 
     [<CustomOperation("use_config")>]
@@ -503,7 +524,7 @@ module Application =
       let host (builder: IWebHostBuilder) =
         builder.UseIISIntegration()
       { state with
-          HostConfigs = host::state.HostConfigs
+          WebHostConfigs = host::state.WebHostConfigs
       }
 
     ///Add custom policy, taking an `AuthorizationHandlerContext -> bool`
@@ -608,12 +629,12 @@ module Application =
             webHostBuilder
                .ConfigureKestrel(fun options -> options.ListenLocalhost(portNumber, Action<Server.Kestrel.Core.ListenOptions> listenOptions))
 
-        {state with HostConfigs = config::state.HostConfigs}
+        {state with WebHostConfigs = config::state.WebHostConfigs}
 
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()
 
   ///Runs Saturn application
-  let run (app: IWebHostBuilder) =
+  let run (app: IHostBuilder) =
     if SiteMap.isDebug then SiteMap.generate ()
     app.Build().Run()
