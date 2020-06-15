@@ -239,7 +239,7 @@ module Application =
          .AddResponseCompression(fun o ->
               // Note: By default there is setting: o.EnableForHttps <- false
               // If your SSL-site doesn't contain any user sensitive data, consider changing that to true.
-              o.MimeTypes <- Seq.append o.MimeTypes [|
+              let additionalMime = [|
                 "application/x-yaml";
                 "image/svg+xml";
                 "application/octet-stream";
@@ -247,7 +247,9 @@ module Application =
                 "application/x-font-opentype";
                 "application/x-javascript";
                 "text/javascript";
-              |])
+              |]
+              o.MimeTypes <- if not (isNull o.MimeTypes) then  Seq.append o.MimeTypes additionalMime else Seq.ofArray (additionalMime)
+          )
       let middleware (app : IApplicationBuilder) = app.UseResponseCompression()
 
       { state with
