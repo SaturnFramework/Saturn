@@ -196,7 +196,7 @@ module Application =
     member __.AppConfig(state, config) =
       {state with AppConfigs = config::state.AppConfigs}
 
-    ///Adds custom generic host (`IHostBuilder`) configuration step. Conffuration for web host should use `webhost_config` instead.
+    ///Adds custom generic host (`IHostBuilder`) configuration step. Configuration for web host should use `webhost_config` instead.
     [<CustomOperation("host_config")>]
     member __.HostConfig(state, config) =
       {state with HostConfigs = config::state.HostConfigs}
@@ -204,7 +204,7 @@ module Application =
     ///Adds custom web host configuration step.
     [<CustomOperation("webhost_config")>]
     member __.WebHostConfig(state, config) =
-      {state with HostConfigs = config::state.HostConfigs}
+      {state with WebHostConfigs = config::state.WebHostConfigs}
 
     ///Adds custom service configuration step.
     [<CustomOperation("service_config")>]
