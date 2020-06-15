@@ -606,3 +606,12 @@ module Application =
   let run (app: IHostBuilder) =
     if SiteMap.isDebug then SiteMap.generate ()
     app.Build().Run()
+
+  ///Helpers for getting environment info
+  module Environment =
+
+    let getWebHostEnvironment (app: #IApplicationBuilder) = app.ApplicationServices.GetService<IWebHostEnvironment>()
+
+  ///Helpers for getting configuration
+  module Config =
+    let getConfinguration (services: #IServiceCollection) = services.BuildServiceProvider() .GetService<IConfiguration>()
