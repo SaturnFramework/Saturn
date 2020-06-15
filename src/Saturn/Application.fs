@@ -96,7 +96,7 @@ module Application =
       let router =
         match state.Router with
         | None ->
-          if not state.NoRouter || not state.NoWebhost then printfn "Router needs to be defined in Saturn application. If you're building channels-only application, or gRPC application you may disable this message with `no_router` flag in your `application` block"
+          if not state.NoRouter && not state.NoWebhost then printfn "Router needs to be defined in Saturn application. If you're building channels-only application, or gRPC application you may disable this message with `no_router` flag in your `application` block"
           None
         | Some router ->
           Some ((succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> router)
