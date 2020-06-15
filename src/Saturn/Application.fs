@@ -166,14 +166,6 @@ module Application =
           ()
         )
 
-
-    ///Defines top-level router used for the application
-    ///This construct is obsolete, use `use_router` instead
-    [<CustomOperation("router")>]
-    [<ObsoleteAttribute("This construct is obsolete, use use_router instead")>]
-    member __.RouterOld(state, handler) =
-      {state with Router = Some handler}
-
     ///Defines top-level router used for the application
     [<CustomOperation("use_router")>]
     member __.Router(state, handler) =
@@ -469,30 +461,6 @@ module Application =
           CookiesAlreadyAdded = true
       }
 
-    ///Enables custom OAuth authentication
-    [<CustomOperation("use_custom_oauth")>]
-    [<ObsoleteAttribute("This construct is obsolete, use `use_oauth_with_config` instead")>]
-    member __.UseCustomOAuth(state: ApplicationState, name : string, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
-      let mutable flag = state.CookiesAlreadyAdded
-      let middleware (app : IApplicationBuilder) =
-        app.UseAuthentication()
-
-      let service (s : IServiceCollection) =
-        let c = s.AddAuthentication(fun cfg ->
-          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
-          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
-          cfg.DefaultChallengeScheme <- name)
-        if not flag then
-          flag <- true
-          c.AddCookie() |> ignore
-        c.AddOAuth(name,config) |> ignore
-        s
-
-      { state with
-          ServicesConfig = service::state.ServicesConfig
-          AppConfigs = middleware::state.AppConfigs
-          CookiesAlreadyAdded = flag
-      }
 
     ///Enables OAuth authentication with custom configuration
     [<CustomOperation("use_oauth_with_config")>]

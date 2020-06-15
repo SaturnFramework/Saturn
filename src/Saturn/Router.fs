@@ -310,8 +310,5 @@ module Router =
     member __.CaseInsensitive (state) =
       {state with CaseInsensitive = true}
 
-  [<ObsoleteAttribute("This construct is obsolete, use `router` instead")>]
-  let scope = RouterBuilder()
-
   ///Computation expression used to create routing in Saturn application
   let router = RouterBuilder()
