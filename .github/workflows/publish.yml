@@ -1,0 +1,58 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*' # Publish on any new tag starting with v
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+        dotnet: [3.1.301]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet }}
+
+    - name: Restore tools
+      run: dotnet tool restore
+
+    - name: Publish to NuGet
+      run: dotnet fake build -t Push
+      env:
+        nuget-key: ${{ secrets.NUGET_KEY }}
+
+    - name: Get Changelog Entry
+      id: changelog_reader
+      uses: mindsers/changelog-reader-action@v1.1.0
+      with:
+        version: ${{ github.ref }}
+        path: ./CHANGELOG.md
+
+    - name: Create Release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: ${{ steps.changelog_reader.outputs.log_entry }}
+        draft: false
+        prerelease: false
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v1-release
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: build/*.nupkg
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
