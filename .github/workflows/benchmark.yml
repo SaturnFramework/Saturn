@@ -1,0 +1,27 @@
+name: Benchmark
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [macos-latest]
+        dotnet: [3.1.301]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ matrix.dotnet }}
+    - name: Install wrk
+      run: brew install wrk
+    - name: Restore tools
+      run: dotnet tool restore
+    - name: Restore packages
+      run: dotnet paket restore
+    - name: Run benchmark
+      run: cd benchmark && ./test.sh
