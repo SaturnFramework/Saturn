@@ -21,9 +21,10 @@ let project = "Saturn"
 
 let summary = "Opinionated, web development framework for F# which implements the server-side, functional MVC pattern"
 
-let gitOwner = "Krzysztof-Cieslak"
+let gitOwner = "SaturnFramework"
 let gitName = "Saturn"
 let gitHome = "https://github.com/" + gitOwner
+let gitUrl = gitHome + "/" + gitName
 
 // --------------------------------------------------------------------------------------
 // Build variables
@@ -33,7 +34,9 @@ let buildDir  = "./build/"
 let tempDir  = "./temp/"
 
 System.Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let release = ReleaseNotes.parse (System.IO.File.ReadAllLines "RELEASE_NOTES.md")
+let changelogFilename = "CHANGELOG.md"
+let changelog = Changelog.load changelogFilename
+let latestEntry = changelog.LatestEntry
 
 // --------------------------------------------------------------------------------------
 // Helpers
@@ -60,33 +63,6 @@ let DoNothing = ignore
 
 Target.create "Clean" (fun _ ->
     Shell.cleanDirs [buildDir; tempDir]
-)
-
-Target.create "AssemblyInfo" (fun _ ->
-    let getAssemblyInfoAttributes projectName =
-        [ AssemblyInfo.Title projectName
-          AssemblyInfo.Product project
-          AssemblyInfo.Description summary
-          AssemblyInfo.Version release.AssemblyVersion
-          AssemblyInfo.FileVersion release.AssemblyVersion ]
-
-    let getProjectDetails projectPath =
-        let projectName = System.IO.Path.GetFileNameWithoutExtension(projectPath)
-        ( projectPath,
-          projectName,
-          System.IO.Path.GetDirectoryName(projectPath),
-          (getAssemblyInfoAttributes projectName)
-        )
-
-    !! "src/**/*.??proj"
-    |> Seq.map getProjectDetails
-    |> Seq.iter (fun (projFileName, _, folderName, attributes) ->
-        match projFileName with
-        | proj when proj.EndsWith("fsproj") -> AssemblyInfoFile.createFSharp (folderName </> "AssemblyInfo.fs") attributes
-        | proj when proj.EndsWith("csproj") -> AssemblyInfoFile.createCSharp ((folderName </> "Properties") </> "AssemblyInfo.cs") attributes
-        | proj when proj.EndsWith("vbproj") -> AssemblyInfoFile.createVisualBasic ((folderName </> "My Project") </> "AssemblyInfo.vb") attributes
-        | _ -> ()
-        )
 )
 
 
@@ -125,11 +101,12 @@ Target.create "Test" (fun _ ->
 // --------------------------------------------------------------------------------------
 
 Target.create "Pack" (fun _ ->
+    let releaseNotes = sprintf "%s/blob/v%s/CHANGELOG.md" gitUrl latestEntry.NuGetVersion
     DotNet.pack (fun p ->
         { p with
             Configuration = DotNet.BuildConfiguration.Release
             OutputPath = Some buildDir
-            MSBuildParams = { p.MSBuildParams with Properties = [("Version", release.NugetVersion); ("PackageReleaseNotes", String.concat "\n" release.Notes)]}
+            MSBuildParams = { p.MSBuildParams with Properties = [("Version", latestEntry.NuGetVersion); ("PackageReleaseNotes", releaseNotes)]}
         }
     ) "Saturn.sln"
 )
@@ -142,35 +119,12 @@ Target.create "ReleaseGitHub" (fun _ ->
         |> function None -> gitHome + "/" + gitName | Some (s: string) -> s.Split().[0]
 
     Git.Staging.stageAll ""
-    Git.Commit.exec "" (sprintf "Bump version to %s" release.NugetVersion)
+    Git.Commit.exec "" (sprintf "Bump version to %s" latestEntry.NuGetVersion)
     Git.Branches.pushBranch "" remote (Git.Information.getBranchName "")
 
 
-    Git.Branches.tag "" release.NugetVersion
-    Git.Branches.pushTag "" remote release.NugetVersion
-
-    let client =
-        let user =
-            match getBuildParam "github-user" with
-            | s when not (isNullOrWhiteSpace s) -> s
-            | _ -> UserInput.getUserInput "Username: "
-        let pw =
-            match getBuildParam "github-pw" with
-            | s when not (isNullOrWhiteSpace s) -> s
-            | _ -> UserInput.getUserPassword "Password: "
-
-        // Git.createClient user pw
-        GitHub.createClient user pw
-    let files = !! (buildDir </> "*.nupkg")
-
-    // release on github
-    let cl =
-        client
-        |> GitHub.draftNewRelease gitOwner gitName release.NugetVersion (release.SemVer.PreRelease <> None) release.Notes
-    (cl,files)
-    ||> Seq.fold (fun acc e -> acc |> GitHub.uploadFile e)
-    |> GitHub.publishDraft//releaseDraft
-    |> Async.RunSynchronously
+    Git.Branches.tag "" (sprintf "v%s" latestEntry.NuGetVersion)
+    Git.Branches.pushTag "" (sprintf "v%s" latestEntry.NuGetVersion)
 )
 
 Target.create "Push" (fun _ ->
@@ -187,20 +141,20 @@ Target.create "Default" DoNothing
 Target.create "Release" DoNothing
 
 "Clean"
-  ==> "AssemblyInfo"
   ==> "Build"
   ==> "Test"
   ==> "Default"
 
 "Clean"
- ==> "AssemblyInfo"
  ==> "Publish"
  ==> "Docs"
 
 "Default"
   ==> "Pack"
   ==> "ReleaseGitHub"
-  ==> "Push"
   ==> "Release"
+
+"Pack"
+  ==> "Push"
 
 Target.runOrDefault "Pack"
