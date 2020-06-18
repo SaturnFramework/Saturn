@@ -124,7 +124,7 @@ Target.create "ReleaseGitHub" (fun _ ->
 
 
     Git.Branches.tag "" (sprintf "v%s" latestEntry.NuGetVersion)
-    Git.Branches.pushTag "" (sprintf "v%s" latestEntry.NuGetVersion)
+    Git.Branches.pushTag "" remote (sprintf "v%s" latestEntry.NuGetVersion)
 )
 
 Target.create "Push" (fun _ ->
