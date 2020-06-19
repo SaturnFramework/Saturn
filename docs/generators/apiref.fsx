@@ -77,24 +77,30 @@ let formatMember (m: Member) =
         |> Option.defaultValue ""
       else
         ""
-
+    let onMouseOut = sprintf "hideTip(event, '%s', 1)" m.Name
+    let onMouseIn = sprintf "showTip(event, '%s', 1)" m.Name
     tr [] [
-        td [] [
-            code [] [!! m.Name]
+        td [Class "memberName"] [
+            code [Custom ("onmouseout", onMouseOut); Custom ("onmouseover", onMouseIn);  ] [!! (m.Details.FormatUsage 500)]
+            div [Class "tip"; Id m.Name] [ b[] [!! "Signature:"]; !!m.Details.Signature]
             br []
 
+            if  not (String.IsNullOrWhiteSpace m.Details.FormatSourceLocation) then
+              a [Class "sourcelink"; Href m.Details.FormatSourceLocation ] [
+                i [Class "fab fa-github"] []
+              ]
+
             if hasCustomOp then
+              br []
               b [] [!! "CE Custom Operation: "]
               code [] [!!customOp]
               br []
-            br []
-            b [] [!! "Signature: "]
-            !!m.Details.Signature
-            br []
+
             if not (attributes.IsEmpty) then
-                b [] [!! "Attributes:"]
-                for a in attributes do
-                    code [] [!! (a.Name)]
+              br []
+              b [] [!! "Attributes:"]
+              for a in attributes do
+                  code [] [!! (a.Name)]
         ]
         td [] [!! (getComment m.Comment)]
     ]

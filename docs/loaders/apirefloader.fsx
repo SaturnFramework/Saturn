@@ -43,8 +43,9 @@ let loader (projectRoot: string) (siteContet: SiteContents) =
           Path.Combine (projectRoot, "..", "temp")
           Path.Combine (projectRoot, "..", "packages", "docsasp", "Microsoft.AspNetCore.app.ref", "ref", "netcoreapp3.1")
         ]
+      let sourceFolder = Path.Combine(projectRoot, "..")
       for (label, dll) in dlls do
-        let output = MetadataFormat.Generate(dll, markDownComments = true, publicOnly = true, libDirs = libs)
+        let output = MetadataFormat.Generate(dll, markDownComments = true, publicOnly = true, libDirs = libs, sourceRepo = "https://github.com/SaturnFramework/Saturn/tree/master", sourceFolder = sourceFolder)
 
         let allModules =
             output.AssemblyGroup.Namespaces
