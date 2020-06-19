@@ -1,9 +1,29 @@
+(**
 ---
 title: Router
 category: explanation
 menu_order: 5
----
 
+---
+*)
+(*** hide ***)
+#I "../../../temp/"
+#I "../../../packages/docsasp/Microsoft.AspNetCore.app.ref/ref/netcoreapp3.1"
+#r "Saturn.dll"
+#r "Giraffe.dll"
+#r "Microsoft.AspNetCore.Http.Abstractions.dll"
+
+module Index =
+  open Giraffe.GiraffeViewEngine
+  let layout = div [] []
+
+module NotFound =
+  open Giraffe.GiraffeViewEngine
+  let layout = div [] []
+
+let someScopeOrController = Giraffe.ResponseWriters.text ""
+
+(**
 # Routing
 
 Routes are how Saturn connects all the HTTP requests to the different actions. Think of a route as the URL of the application. The site is yoursite.com but you may have a route for your about page such as yoursite.com/about.
@@ -38,8 +58,8 @@ Now you have a router for the `"/books"` path inside another router for the `""`
 
 Now to see it in code, create a Saturn project from the template and you will have a `Router.fs` file like this:
 
-```fsharp
-module Router
+*)
+
 
 open Saturn
 open Giraffe.Core
@@ -84,38 +104,45 @@ let appRouter = router {
     // forward "/api" apiRouter
     forward "" browserRouter
 }
-```
+
+(**
 
 First, take a look at the `router` function.
 
-```fsharp
-let appRouter = router {
+*)
+
+let appRouter' = router {
     forward "" browserRouter
 }
-```
+
+(**
 
 The `appRouter` value is a `router`. Inside is the `forward "" browserRouter` line. The `forward` function needs a path and a router. In this case, the path is an empty string and the router is `browserRouter`. That means that the `browserRouter` router will handle the routes at the current location. Since `appRouter` is the first router called, the current location is the root of the application.
 
 Now let's look at `browserRouter`:
 
-```fsharp
-let browserRouter = router {
+*)
+
+let browserRouter' = router {
     not_found_handler (htmlView NotFound.layout)
     pipe_through browser
 
     forward "" defaultView
 }
-```
+
+(**
 
 There are three lines. The first line, `not_found_handler (htmlView NotFound.layout)` tells `browserRouter` to display a not found page if the user enters a route that the application does not handle. The second line tells the application to use the `browser` pipeline defined above. The pipeline is a list of settings on how the website will deliver the pages. Lastly, `forward "" defaultView` is like `forward "" browserRouter` from the `appRouter`. Again, `browserRouter` does not contain any routes but it tells the `defaultView` router to handle them. Finally, we get to the part where the application is told how to handle the routes. Inside `defaultView`, we created 3 routes:
 
-```fsharp
-let defaultView = router {
+*)
+
+let defaultView' = router {
     get "/" (htmlView Index.layout)
     get "/index.html" (redirectTo false "/")
     get "/default.html" (redirectTo false "/")
 }
-```
+
+(**
 
 Here, we see that `get` is used to define the routes. There are 3 routes here but 2 of them redirect to the first route. To illustrate, the routes are:
 
@@ -135,8 +162,10 @@ Looking at the first line inside `defaultView`, `get "/" (htmlView Index.layout)
 
 You can combine all 3 routers into one router like so:
 
-```fsharp
-let appRouter = router {
+*)
+
+
+let appRouter'' = router {
     not_found_handler (htmlView NotFound.layout)
     pipe_through browser
 
@@ -144,13 +173,15 @@ let appRouter = router {
     get "/index.html" (redirectTo false "/")
     get "/default.html" (redirectTo false "/")
 }
-```
+
+(**
 
 The template splits them into 3 to encourage good practices. In the first router, you can see the commented out code `forward "/api" apiRouter`. This is a good suggestion in the template to have a separate router to handle your API routes. We set up how to deliever the webpage with `pipe_through browser` in `browserRouter`. The settings are important for a browser to know how to handle your routes but not for a different application to access your routes as an API.
 
 The template provides an example of how to set up the API routes in the commented out code, which I copied below:
 
-```fsharp
+*)
+
 let api = pipeline {
     plug acceptJson
     set_header "x-pipeline-type" "Api"
@@ -163,7 +194,7 @@ let apiRouter = router {
     forward "/someApi" someScopeOrController
 }
 
-```
+(**
 
 Here we have the `apiRouter` router which does not return a 404 page but a 404 text instead which is appropriate for an API. The router also uses a pipeline that is more appropriate for an API such as accepting JSON inputs instead of HTML as in the `browser` pipeline.
 
@@ -203,3 +234,5 @@ Notice that `getf` is used instead of get. This is a separate version of get tha
 ## API Reference
 
 Full API reference for `router` CE can be found [here](../reference/Saturn/saturn-router-routerbuilder.html)
+
+*)

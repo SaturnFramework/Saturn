@@ -1,9 +1,19 @@
+(**
 ---
 title: Controllers
 category: explanation
 menu_order: 7
----
 
+---
+*)
+(*** hide ***)
+#I "../../../temp/"
+#I "../../../packages/docsasp/Microsoft.AspNetCore.app.ref/ref/netcoreapp3.1"
+#r "Saturn.dll"
+#r "Giraffe.dll"
+#r "Microsoft.AspNetCore.Http.Abstractions.dll"
+
+(**
 # Controller
 
 In Saturn, a **controller** is a list of routes that is focused on a **model** (an object that contains your data). So if you have a user model, some common operations are to display the list of users, show details of a user, add a user, update or user, or remove a user. A controller is a great way to organize all of these actions.
@@ -12,7 +22,9 @@ Each of the operations is a separate route and a controller is an easy way to gr
 
 A basic user controller is shown below:
 
-```fsharp
+*)
+open Saturn
+
 let userController = controller {
     index (fun ctx -> "Index handler version 1" |> Controller.text ctx) //View list of users
     add (fun ctx -> "Add handler version 1" |> Controller.text ctx) //Add a user
@@ -21,23 +33,24 @@ let userController = controller {
     edit (fun ctx id -> (sprintf "Edit handler version 1 - %i" id) |> Controller.text ctx)  //Edit a user
     update (fun ctx id -> (sprintf "Update handler version 1 - %i" id) |> Controller.text ctx)  //Update a user
 }
-```
 
+(**
 Here we can see the `index`, `add`, `create`, `show`, `edit`, and `update` operations but there are more operations that are not shown here like `patch` and `delete`. You can see all the operations int the [API Reference](../reference/Saturn/saturn-controller-controllerbuilder-10.html). You do not have to handle all of the operations.
 
 You might be wondering what the difference is between `add` and `create` or `edit` and `update`. The `add` operation tells the application to return the form so that the user can enter the data for the user to be added. The `create` operation will commit the data to the database of the application. It is the same with `edit` for displaying the form and `update` for committing the change.
 
 To add the controller for the routes, you can add it to the `defaultView` router like so:
 
-```fsharp
+*)
+
 let defaultView = router {
     get "/" (htmlView Index.layout)
     get "/index.html" (redirectTo false "/")
     get "/default.html" (redirectTo false "/")
     forward "/users" userController
 }
-```
 
+(**
 The route will now be:
 
 ```bash
@@ -74,7 +87,8 @@ yoursite.com
 
 In Saturn, you can make the comment controller a subcontroller of the user controller. It looks like the following code:
 
-```fsharp
+*)
+
 let commentController userId = controller {
     index (fun ctx -> (sprintf "Comment Index handler for user %i" userId ) |> Controller.text ctx)
     add (fun ctx -> (sprintf "Comment Add handler for user %i" userId ) |> Controller.text ctx)
@@ -97,7 +111,8 @@ let userController = controller {
     delete (fun ctx id -> failwith (sprintf "Delete handler no version failed - %i" id) |> Controller.text ctx)
     error_handler (fun ctx ex -> sprintf "Error handler no version - %s" ex.Message |> Controller.text ctx)
 }
-```
+
+(**
 
 To create a subcontroller, start with creating a controller for your model. After that, define it as a subcontroller inside the main controller with the following code:
 
@@ -105,8 +120,11 @@ To create a subcontroller, start with creating a controller for your model. Afte
     subController "/yourModel" yourModelController
 ```
 
+
 ## API Reference
 
 Full API reference for `controller` CE can be found [here](../reference/Saturn/saturn-controller-controllerbuilder-10.html)
 
 Full API reference for `Controller` module containing useful helpers can be found [here](../reference/Saturn/saturn-controllerhelpers-controller.html)
+
+*)
