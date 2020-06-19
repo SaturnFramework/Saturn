@@ -1913,3 +1913,14 @@ option {
   margin: 1.2rem 0;
 }
 
+.memberName {
+  position: relative;
+}
+
+.sourcelink {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: black;
+}
+
