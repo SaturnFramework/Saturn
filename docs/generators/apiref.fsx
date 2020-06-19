@@ -1,6 +1,8 @@
 #r "../_lib/Fornax.Core.dll"
-#r "../../packages/docs/Markdig/lib/netstandard2.0/Markdig.dll"
 #r "../../packages/docs/Newtonsoft.Json/lib/netstandard2.0/Newtonsoft.Json.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.CodeFormat.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Markdown.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Literate.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.MetadataFormat.dll"
 
 #if !FORNAX
@@ -13,20 +15,45 @@ open System
 open FSharp.MetadataFormat
 open Html
 open Apirefloader
-open Markdig
+open FSharp.Literate
+open FSharp.CodeFormat
 
-let markdownPipeline =
-    MarkdownPipelineBuilder()
-        .UsePipeTables()
-        .UseGridTables()
-        .Build()
+let tokenToCss (x: TokenKind) =
+    match x with
+    | TokenKind.Keyword -> "hljs-keyword"
+    | TokenKind.String -> "hljs-string"
+    | TokenKind.Comment -> "hljs-comment"
+    | TokenKind.Identifier -> "hljs-function"
+    | TokenKind.Inactive -> ""
+    | TokenKind.Number -> "hljs-number"
+    | TokenKind.Operator -> "hljs-keyword"
+    | TokenKind.Punctuation -> "hljs-keyword"
+    | TokenKind.Preprocessor -> "hljs-comment"
+    | TokenKind.Module -> "hljs-type"
+    | TokenKind.ReferenceType -> "hljs-type"
+    | TokenKind.ValueType -> "hljs-type"
+    | TokenKind.Interface -> "hljs-type"
+    | TokenKind.TypeArgument -> "hljs-type"
+    | TokenKind.Property -> "hljs-function"
+    | TokenKind.Enumeration -> "hljs-type"
+    | TokenKind.UnionCase -> "hljs-type"
+    | TokenKind.Function -> "hljs-function"
+    | TokenKind.Pattern -> "hljs-function"
+    | TokenKind.MutableVar -> "hljs-symbol"
+    | TokenKind.Disposable -> "hljs-symbol"
+    | TokenKind.Printf -> "hljs-regexp"
+    | TokenKind.Escaped -> "hljs-regexp"
+    | TokenKind.Default -> ""
 
-let getComment (c: Comment) =
+
+let getComment (c: Comment) : string =
   let t =
     c.RawData
     |> List.map (fun n -> n.Value)
     |> String.concat "\n\n"
-  Markdown.ToHtml(t, markdownPipeline)
+  let doc = Literate.ParseMarkdownString t
+  Literate.WriteHtml(doc, lineNumbers = false, tokenKindToCss = tokenToCss)
+          .Replace("lang=\"fsharp", "class=\"language-fsharp")
 
 
 let formatMember (m: Member) =

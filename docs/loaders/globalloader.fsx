@@ -1,10 +1,18 @@
 #r "../_lib/Fornax.Core.dll"
 
+type UrlRoot = | Root of string
+with
+  member x.subRoute (route: string) =
+    let (Root root) = x
+    root.TrimEnd('/') + "/" + route.TrimStart('/')
+  member x.subRoutef pattern =
+    Printf.kprintf x.subRoute pattern
+
 type SiteInfo = {
     title: string
     description: string
     theme_variant: string option
-    root_url: string
+    root_url: UrlRoot
 }
 
 let config = {
@@ -13,13 +21,13 @@ let config = {
     theme_variant = Some "blue"
     root_url =
       #if WATCH
-        "http://localhost:8080/"
+        Root "http://localhost:8080/"
       #else
-        "https://saturnframework.org/"
+        Root "https://saturnframework.org/"
       #endif
 }
 
-let loader (projectRoot: string) (siteContet: SiteContents) =
-    siteContet.Add(config)
+let loader (projectRoot: string) (siteContent: SiteContents) =
+    siteContent.Add(config)
 
-    siteContet
+    siteContent
