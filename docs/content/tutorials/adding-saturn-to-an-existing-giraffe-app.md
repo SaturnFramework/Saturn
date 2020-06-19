@@ -1,18 +1,18 @@
 ---
-title: Getting started
+title: Adding Saturn to an existing Giraffe application
 category: tutorial
 menu_order: 2
 ---
 
 # Adding Saturn to an existing Giraffe application
 
-The previous chapter showed how to get started with a new application. 
+The previous chapter showed how to get started with a new application.
 
 If you already have a working Giraffe webserver, you can gradually opt-in to Saturn.
 
 For example, if your existing app looks like this:
 
-```f#
+```fsharp
 
 type Customer = {
     Name : string
@@ -36,7 +36,7 @@ let webApp =
 and you need to add "vendor" functionality, you could implement it as a Saturn ``router`` while keeping everything else intact:
 
 
-```f#
+```fsharp
 // the new Saturn router
 let vendors = router {
     getf "/%i" (fun vendorId -> (json (readVendorFromDb vendorId)))
@@ -52,13 +52,13 @@ let webApp =
     ]
 ```
 
-# Embedding Giraffe Handlers into Saturn
+## Embedding Giraffe Handlers into Saturn
 
 Of course the other way around also works.
 
 For example, [Elmish.Bridge](https://github.com/Nhowka/Elmish.Bridge) does not provide a specialized implementation for Saturn. And it doesn't need to, because we can just use the Giraffe implementation!
 
-```f#
+```fsharp
 
 open Elmish
 open Elmish.Bridge

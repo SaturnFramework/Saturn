@@ -4,41 +4,14 @@ open System
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Markdown.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Literate.dll"
 
-open FSharp.Literate
+#if !FORNAX
+#load "./contentloader.fsx"
+open Contentloader
+#endif
+
 open System.IO
+open FSharp.Literate
 open FSharp.CodeFormat
-
-type PostConfig = {
-    disableLiveRefresh: bool
-}
-
-///This is following documentation structure described here https://documentation.divio.com/
-type PostCategory =
-  | Tutorial
-  | Explanation
-  | HowTo
-  | TopLevel
-  | ApiRef
-
-with
-  static member Parse x =
-    match x with
-    | "tutorial" -> Tutorial
-    | "explanation" -> Explanation
-    | "how-to" -> HowTo
-    | "top-level" -> TopLevel
-    | _ -> failwith "Unsupported category"
-
-type Post = {
-    file: string
-    link : string
-    title: string
-    content: string
-    text: string
-    menu_order: int
-    hide_menu: bool
-    category: PostCategory
-}
 
 let tokenToCss (x: TokenKind) =
     match x with
@@ -69,31 +42,31 @@ let tokenToCss (x: TokenKind) =
 
 
 
-
 let isSeparator (input : string) =
     input.StartsWith "---"
 
+
 ///`fileContent` - content of page to parse. Usually whole content of `.md` file
 ///returns content of config that should be used for the page
-let getConfig (fileContent : string) =
+let getConfig' (fileContent : string)  =
     let fileContent = fileContent.Split '\n'
-    let fileContent = fileContent |> Array.skip 1 //First line must be ---
-    let indexOfSeperator = fileContent |> Array.findIndex isSeparator
+    let fileContent = fileContent |> Array.skip 2 //First line must be (*, second line must be ---
+    let indexOfSeperator = (fileContent |> Array.findIndex isSeparator) + 1
     fileContent
     |> Array.splitAt indexOfSeperator
     |> fst
     |> String.concat "\n"
 
-///`fileContent` - content of page to parse. Usually whole content of `.md` file
+///`fileContent` - content of page to parse. Usually whole content of `.fsx` file
 ///returns HTML version of content of the page
-let getContent (fileContent : string) (fn: string) =
+let getContent' (fileContent : string) (fn: string) =
     let fileContent = fileContent.Split '\n'
-    let fileContent = fileContent |> Array.skip 1 //First line must be ---
-    let indexOfSeperator = fileContent |> Array.findIndex isSeparator
+    let fileContent = fileContent |> Array.skip 2 //First line must be (*, second line must be ---
+    let indexOfSeperator = (fileContent |> Array.findIndex isSeparator) + 1
     let _, content = fileContent |> Array.splitAt indexOfSeperator
 
     let content = content |> Array.skip 1 |> String.concat "\n"
-    let doc = Literate.ParseMarkdownFile fn
+    let doc = Literate.ParseScriptFile fn
     let ps =
          doc.Paragraphs
         |> List.skip 3 //Skip opening ---, config content, and closing ---
@@ -101,6 +74,7 @@ let getContent (fileContent : string) (fn: string) =
     let html = Literate.WriteHtml(doc, lineNumbers = false, tokenKindToCss = tokenToCss)
                        .Replace("lang=\"fsharp", "class=\"language-fsharp")
     content, html
+
 
 let trimString (str : string) =
     str.Trim().TrimEnd('"').TrimStart('"')
@@ -113,9 +87,9 @@ let relative toPath fromPath =
 let loadFile projectRoot n =
     let text = System.IO.File.ReadAllText n
 
-    let config = (getConfig text).Split( '\n') |> List.ofArray
+    let config = (getConfig' text).Split( '\n') |> List.ofArray
 
-    let (text, content) = getContent text n
+    let (text, content) = getContent' text n
 
     let file = relative (Path.Combine(projectRoot, "content") + string Path.DirectorySeparatorChar) n
     let link = Path.ChangeExtension(file, ".html")
@@ -155,7 +129,7 @@ let loader (projectRoot: string) (siteContent: SiteContents) =
         let postsPath = System.IO.Path.Combine(projectRoot, "content")
         let posts =
             Directory.GetFiles(postsPath, "*", SearchOption.AllDirectories )
-            |> Array.filter (fun n -> n.EndsWith ".md")
+            |> Array.filter (fun n -> n.EndsWith ".fsx")
             |> Array.map (loadFile projectRoot)
 
         posts

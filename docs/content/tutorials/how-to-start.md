@@ -32,7 +32,7 @@ If you want to start from scratch with a minimal Saturn webserver:
 1. Create a new F# Project (for example with `dotnet new console -lang F#`)
 2. Add the `Saturn` NuGet Package
 
-```f#
+```fsharp
 open Saturn
 open Giraffe
 

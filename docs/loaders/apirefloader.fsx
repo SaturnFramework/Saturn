@@ -36,7 +36,6 @@ let loader (projectRoot: string) (siteContet: SiteContents) =
           "Saturn.Extensions.Authorization", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Authorization.dll")
           "Saturn.Extensions.gRPC", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.gRPC.dll")
           "Saturn.Extensions.HttpSys", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.HttpSys.dll")
-          "Saturn.Extensions.OpenIdConnect", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.OpenIdConnect.dll")
           "Saturn.Extensions.Turbolinks", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Turbolinks.dll")
         ]
       let libs =

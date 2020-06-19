@@ -40,20 +40,22 @@ let defaultView = router {
 
 The route will now be:
 
-    yoursite.com
-        └── "" (router)
-            └── "" (browserRouter)
-                └── "" (defaultView)
-                    ├── "/"                 -yoursite.com/
-                    ├── "/index.html"       -redirect to yoursite.com/
-                    ├── "/default.html"     -redirect to yoursite.com/
-                    └── "/users"
-                        ├── index "/"           -yoursite.com/users/
-                        ├── add "/add"          -yoursite.com/users/add
-                        ├── create              -POST yoursite.com/users/add
-                        ├── show "/%i"          -yoursite.com/users/%i
-                        ├── edit "/%i/edit"     -yoursite.com/users/%i/edit
-                        └── update ""           -POST yoursite.com/users/%i/edit
+```bash
+yoursite.com
+└── "" (router)
+    └── "" (browserRouter)
+        └── "" (defaultView)
+            ├── "/"                 -yoursite.com/
+            ├── "/index.html"       -redirect to yoursite.com/
+            ├── "/default.html"     -redirect to yoursite.com/
+            └── "/users"
+                ├── index "/"           -yoursite.com/users/
+                ├── add "/add"          -yoursite.com/users/add
+                ├── create              -POST yoursite.com/users/add
+                ├── show "/%i"          -yoursite.com/users/%i
+                ├── edit "/%i/edit"     -yoursite.com/users/%i/edit
+                └── update ""           -POST yoursite.com/users/%i/edit
+```
 
 The create and update operations make changes to the database so you have to make a POST request containing the information you want to save to the database.
 
@@ -61,12 +63,14 @@ The create and update operations make changes to the database so you have to mak
 
 Now that you know how to chain routers together to create routes, we can look at a common scenario for a website. A website usually has users and each user can create multiple comments.
 
-    yoursite.com
-        └── "/users"
-            └── "/%i"           -yoursite.com/users/%i
-                └── "/comments" (commentController)
-                    ├── index "/"           -yoursite.com/users/{userId}/comments/
-                    └── show "/%i"          -yoursite.com/users/{userId}/comments/{commentId}
+```bash
+yoursite.com
+└── "/users"
+    └── "/%i"           -yoursite.com/users/%i
+        └── "/comments" (commentController)
+            ├── index "/"           -yoursite.com/users/{userId}/comments/
+            └── show "/%i"          -yoursite.com/users/{userId}/comments/{commentId}
+```
 
 In Saturn, you can make the comment controller a subcontroller of the user controller. It looks like the following code:
 

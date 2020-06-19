@@ -8,20 +8,22 @@ menu_order: 2
 
 After creating a new Saturn project, let's take a deeper look into what files are created.
 
-    ├── .fake
-    ├── .paket
-    ├── .vs
-    ├── .packages
-    ├── paket-files
-    ├── src
-    |   ├── Migrations
-    |   └── SaturnSample
-    ├── .gitignore
-    ├── build.fsx
-    ├── global.json
-    ├── paket.dependencies
-    ├── paket.lock
-    └── SaturnSample.sln
+```bash
+├── .fake
+├── .paket
+├── .vs
+├── .packages
+├── paket-files
+├── src
+|   ├── Migrations
+|   └── SaturnSample
+├── .gitignore
+├── build.fsx
+├── global.json
+├── paket.dependencies
+├── paket.lock
+└── SaturnSample.sln
+```
 
 At this level most of it is basic configuration files to help with running Saturn. From looking at the `.paket`, `paket-files`, `paket.dependencies`, `paket.lock` folders and files, you can see that by default Saturn uses [paket](https://fsprojects.github.io/Paket/) to handle package management. You won't be working with these files directly but rather through the command line tools instead.
 
@@ -35,28 +37,30 @@ Lastly, there is the `SaturnSample.sln` solution file so you can open the projec
 
 Most of the work you will do in this project however, will be in `src/SaturnSample`, which looks like the following when expanded:
 
-    ├── bin
-    ├── Books
-    |   ├── BooksController.fs
-    |   ├── BooksModel.fs
-    |   ├── BooksRepository.fs
-    |   └── BooksView.fs
-    ├── obj
-    ├── static
-    |   ├── app.css
-    |   └── app.js
-    ├── Templates
-    |   ├── App.fs
-    |   ├── Index.fs
-    |   ├── InternalError.fs
-    |   └── NotFound.fs
-    ├── Config.fs
-    ├── Database.fs
-    ├── database.sqlite
-    ├── paket.references
-    ├── Program.fs
-    ├── Router.fs
-    └── SaturnSample.fsproj
+```bash
+  ├── bin
+  ├── Books
+  |   ├── BooksController.fs
+  |   ├── BooksModel.fs
+  |   ├── BooksRepository.fs
+  |   └── BooksView.fs
+  ├── obj
+  ├── static
+  |   ├── app.css
+  |   └── app.js
+  ├── Templates
+  |   ├── App.fs
+  |   ├── Index.fs
+  |   ├── InternalError.fs
+  |   └── NotFound.fs
+  ├── Config.fs
+  ├── Database.fs
+  ├── database.sqlite
+  ├── paket.references
+  ├── Program.fs
+  ├── Router.fs
+  └── SaturnSample.fsproj
+```
 
 `bin` and `obj` folders store the compiled version of the program after you build the project.
 

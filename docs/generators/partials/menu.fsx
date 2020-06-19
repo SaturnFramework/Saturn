@@ -61,7 +61,7 @@ let menu (ctx : SiteContents) (page: string) =
     ul [Id "submenu-explanations"; if group = Some Contentloader.Explanation then Class "submenu submenu-active" else Class "submenu"; ] [
       for r in explenations ->
         li [] [
-          a [Href (rootUrl + "/" +  r.link); if r.title = page then Class "active-link padding" else Class "padding"] [
+          a [Href (rootUrl.subRoute r.link); if r.title = page then Class "active-link padding" else Class "padding"] [
             !! r.title
           ]
         ]
@@ -71,7 +71,7 @@ let menu (ctx : SiteContents) (page: string) =
     ul [Id "submenu-tutorials"; if group = Some Contentloader.Tutorial then Class "submenu submenu-active" else Class "submenu"; ] [
       for r in tutorials ->
         li [] [
-          a [ Href (rootUrl + "/" + r.link); if r.title = page then Class "active-link padding" else Class "padding" ] [
+          a [ Href (rootUrl.subRoute r.link); if r.title = page then Class "active-link padding" else Class "padding" ] [
             !! r.title
           ]
         ]
@@ -81,7 +81,7 @@ let menu (ctx : SiteContents) (page: string) =
     ul [Id "submenu-howtos"; if group = Some Contentloader.HowTo then Class "submenu submenu-active" else Class "submenu"; ] [
       for r in howtos ->
         li [] [
-          a [Href (rootUrl + "/" +  r.link); if r.title = page then Class "active-link padding" else Class "padding" ] [
+          a [Href (rootUrl.subRoute "/" +  r.link); if r.title = page then Class "active-link padding" else Class "padding" ] [
             !! r.title
           ]
         ]
@@ -91,7 +91,7 @@ let menu (ctx : SiteContents) (page: string) =
     ul [Id "submenu-refs"; if group = None then Class "submenu submenu-active" else Class "submenu"; ] [
       for r in all ->
         li [] [
-          a [Href (rootUrl + "/reference/" +  r.Label + "/index.html"); if r.Label = page then Class "active-link padding" else Class "padding" ] [
+          a [Href (rootUrl.subRoute "/reference/" +  r.Label + "/index.html"); if r.Label = page then Class "active-link padding" else Class "padding" ] [
             !! r.Label
           ]
         ]
@@ -128,12 +128,10 @@ let menu (ctx : SiteContents) (page: string) =
         input [Custom ("data-search-input", ""); Id "search-by"; Type "search"; Placeholder "Search..."]
         span  [Custom ("data-search-clear", "")] [i [Class "fas fa-times"] []]
       ]
-      script [Type "text/javascript"; Src (rootUrl + "/static/js/lunr.min.js")] []
-      script [Type "text/javascript"; Src (rootUrl + "/static/js/auto-complete.js")] []
-      script [Type "text/javascript";] [!! (sprintf "var baseurl ='%s'" rootUrl)]
-      script [Type "text/javascript"; Src (rootUrl + "/static/js/search.js")] []
-      script [Src (rootUrl + "/static/js/highlight.pack.js")] []
-      script [] [!! "hljs.initHighlightingOnLoad();"]
+      script [Type "text/javascript"; Src "//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"] []
+      script [Type "text/javascript"; Src "//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"] []
+      script [Type "text/javascript";] [!! (sprintf "var baseurl ='%s'" (rootUrl.subRoute ""))]
+      script [Type "text/javascript"; Src (rootUrl.subRoute "/static/js/search.js")] []
     ]
     div [Class "highlightable"] [
       ul [Class "topics"] menuHeader

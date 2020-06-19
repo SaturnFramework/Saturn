@@ -10,25 +10,29 @@ Routes are how Saturn connects all the HTTP requests to the different actions. T
 
 In Saturn, `Routers` contain all the routes of your application. A router is a list of routes. A website can have a router that handles the different routes to your page like so:
 
-    yoursite.com
-        ├── "/"             -yoursite.com/
-        ├── "/about"        -yoursite.com/about
-        ├── "/contact"      -yoursite.com/contact
-        ├── "/news"         -yoursite.com/news
-        └── "/investors"    -yoursite.com/investors
+```bash
+yoursite.com
+├── "/"             -yoursite.com/
+├── "/about"        -yoursite.com/about
+├── "/contact"      -yoursite.com/contact
+├── "/news"         -yoursite.com/news
+└── "/investors"    -yoursite.com/investors
+```
 
 Since this is at the root, this is your router at `""` path. You can then add a router inside another router to have the following:
 
-    yoursite.com
-        ├── books           -yoursite.com/books
-        |   ├── list        -yoursite.com/books/list
-        |   ├── add         -yoursite.com/books/add
-        |   ├── update      -yoursite.com/books/update
-        |   └── delete      -yoursite.com/books/update
-        ├── about           -yoursite.com/about
-        ├── contact         -yoursite.com/contact
-        ├── news            -yoursite.com/news
-        └── investors       -yoursite.com/investors
+```bash
+yoursite.com
+├── books           -yoursite.com/books
+|   ├── list        -yoursite.com/books/list
+|   ├── add         -yoursite.com/books/add
+|   ├── update      -yoursite.com/books/update
+|   └── delete      -yoursite.com/books/update
+├── about           -yoursite.com/about
+├── contact         -yoursite.com/contact
+├── news            -yoursite.com/news
+└── investors       -yoursite.com/investors
+```
 
 Now you have a router for the `"/books"` path inside another router for the `""` path.
 
@@ -115,13 +119,15 @@ let defaultView = router {
 
 Here, we see that `get` is used to define the routes. There are 3 routes here but 2 of them redirect to the first route. To illustrate, the routes are:
 
-    yoursite.com
-        └── "" (router)
-            └── "" (browserRouter)
-                └── "" (defaultView)
-                    ├── "/"                 -yoursite.com/
-                    ├── "/index.html"       -redirect to yoursite.com/
-                    └── "/default.html"     -redirect to yoursite.com/
+```bash
+yoursite.com
+└── "" (router)
+    └── "" (browserRouter)
+        └── "" (defaultView)
+            ├── "/"                 -yoursite.com/
+            ├── "/index.html"       -redirect to yoursite.com/
+            └── "/default.html"     -redirect to yoursite.com/
+```
 
 Looking at the first line inside `defaultView`, `get "/" (htmlView Index.layout)` tells the application to display `Index.layout` at the root of the application. The `get` corresponds to the HTTP verb GET so when you type in a link, the browser tries to GET the page. The first parameter of `get` is "/", so basically when getting the root, the `get` function will return something. The second parameter is `(htmlView Index.layout)` so the `get` function returns an HTML page specified by Index.layout. The second and third line have `(redirectTo false "/")`, telling the application to go to "yoursite.com/" when going to "yoursite.com/index" or "yoursite.com/default"
 
@@ -165,10 +171,12 @@ Here we have the `apiRouter` router which does not return a 404 page but a 404 t
 
 You might be wondering how to make routes that accept a numerical ID. You can make multiple routes for each ID like so
 
-    get "/1" (getApplication 1)
-    get "/2" (getApplication 2)
-    get "/3" (getApplication 3)
-    ...
+```fsharp
+get "/1" (getApplication 1)
+get "/2" (getApplication 2)
+get "/3" (getApplication 3)
+...
+```
 
 But this is impracticle because there can be a large number of items or new items are constantly being created with new IDs. Instead the solution is to use format strings. Remember that in the [Adding Pages Guide](adding-pages.md), we used `getf "/%s" index2Action` to pass a string to page.
 
