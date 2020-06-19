@@ -26,7 +26,6 @@ group Docs
   storage: symlink
 
   nuget FSharp.Formatting prerelease
-  nuget Markdig
   nuget Newtonsoft.Json
 
 group DocsAsp

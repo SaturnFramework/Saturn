@@ -1036,8 +1036,6 @@ NUGET
     FSharp.Core (4.7.2)
     FSharp.Formatting (4.1)
       FSharp.Compiler.Service (>= 35.0)
-    Markdig (0.20)
-      System.Memory (>= 4.5.4)
     Microsoft.NETCore.Platforms (3.1.1)
     Microsoft.NETCore.Targets (3.1)
     Newtonsoft.Json (12.0.3)
