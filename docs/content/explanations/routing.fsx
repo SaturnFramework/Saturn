@@ -209,7 +209,7 @@ get "/3" (getApplication 3)
 ...
 ```
 
-But this is impracticle because there can be a large number of items or new items are constantly being created with new IDs. Instead the solution is to use format strings. Remember that in the [Adding Pages Guide](adding-pages.md), we used `getf "/%s" index2Action` to pass a string to page.
+But this is impracticle because there can be a large number of items or new items are constantly being created with new IDs. Instead the solution is to use format strings. Remember that in the [Adding Pages Guide](../tutorials/adding-pages.html), we used `getf "/%s" index2Action` to pass a string to page.
 
 | Format Char | Type |
 | ----------- | ---- |
