@@ -17,12 +17,6 @@ let helloWorld2 = text "hello world2"
 let helloWorldName str = text ("hello world, " + str)
 let helloWorldNameAge (str, age) = text (sprintf "hello world, %s, You're %i" str age)
 
-//Pipeline CE is used to compose HttpHandlers together in more declarative way.
-//At the moment only low level helpers in form of custom CE keywords are prvovded.
-//But I hope to add some more high level helpers (for example `accept_json` instead of `must_accept "application/json" )
-//Phoenix default set of plugs can be good source of ideas.
-//Pipelines are composed together with `plug` keyowrd
-
 let apiHeaderPipe = pipeline {
     set_header "myCustomHeaderApi" "api"
 }
@@ -42,59 +36,23 @@ let endpointPipe = pipeline {
     plug requestId
 }
 
-//`route` CE is used to declare routers/subrouters (using TokenRouter). It provides custom keywords for all HTTP methods
-// supported by TokenRouter which supports type-safe formatting of routes. It's composed together with pipelines
-// with `pipe_through` method which means that all handlers registed in router will be piped through given pipeline
-// It enables composition with other routers (and any HttpHandlers) with `forward` keyword - it will behave
-// like `subRoute`, modify value of `Path` on HttpContext. It also enables setting custom error/not found handler
-// with `error_handler` keyword.
-// It automatically supports grouping handlers registered for same path into `choose` combinator, what is
-// not supported out of the box in TokenRouter - if you have multiple handlers registerd for `get "/"` they will be grouped,
-// on the TokenRouter matching we will create single `route "/"` call, but the HttpHandler passed to it will be `choose` build
-// from all registed handlers for this route.
 
 let apiRouter = router {
-    // pipe_through apiHeaderPipe
-    // not_found_handler (setStatusCode 404 >=> text "Api 404")
-
     get "/" apiHelloWorld
     get "/a" apiHelloWorld2
     delete "/del" apiDeleteExample
     deletef "/del/%s" apiDeleteExample2
 }
 
-//`controller<'Key>` CE is higher level abstraction following convention of Phoenix Controllers and `resources` macro. It will create
-// complex routing for predefined set of operations which looks like this:
-// [
-//     GET [
-//         route "/" index
-//         route "/add" add
-//         routef "/%?" show
-//         routef "/%?/edit" edit
-//     ]
-//     POST [
-//         route "/" create
-//     ]
-//     PUT [
-//         route "/%?" update
-//     ]
-//     PATCH [
-//         route "/%?" update
-//     ]
-//     DELETE [
-//         route "/%?" delete
-//     ]
-// ]
-// The exact format argument of `routef` routes is created based on generic type passed to CE - it supports same types what Giraffe `routef`
-// If any of the actions is not provided in CE it won't be added to routing table.
-// By convention given handlers should do following actions:
-// index -render list of all items
-// add - render form for adding new item
-// show - render single item
-// edit - render form for editing item
-// create - add item
-// update - update item
-// delete - delete item
+
+let commentController key = subcontroller {
+    not_found_handler (setStatusCode 404 >=> text "Comment 404")
+
+    index (fun ctx ->  (sprintf "Comment Index handler; Key %s" key) |> Controller.text ctx)
+    add (fun ctx -> (sprintf "Comment Add handler; Key %s" key) |> Controller.text ctx)
+    show (fun ctx id -> (sprintf "Comment Show handler - %s; Key %s" id key) |> Controller.text ctx)
+    edit (fun ctx id -> (sprintf "Comment Edit handler - %s; Key %s" id key) |> Controller.text ctx)
+}
 
 let userController = controller {
     not_found_handler (setStatusCode 404 >=> text "Users 404")
@@ -103,11 +61,8 @@ let userController = controller {
     add (fun ctx -> "Add handler" |> Controller.text ctx)
     show (fun ctx id -> (sprintf "Show handler - %s" id) |> Controller.text ctx)
     edit (fun ctx id -> (sprintf "Edit handler - %s" id) |> Controller.text ctx)
+    subController "/comment" commentController
 }
-
-//Since all computation expressions produces `HttpHandler` everything can be easily composed together in nice declarative way.
-//I belive that aim of the Saturn should be providing a more streamlined, higher level developer experiance on top of the great
-//Giraffe's model. It's bit like Phoenix using Plug model under the hood.
 
 
 let topRouter = router {
