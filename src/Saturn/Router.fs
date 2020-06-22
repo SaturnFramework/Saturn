@@ -152,8 +152,12 @@ module Router =
           | RouteType.Forward -> ""
         let routes, routesf = state.GetRoutes typ
         let routes = routes |> Seq.map (fun (p, lst) ->
+
           lst |> Seq.iter (fun l -> siteMap.Forward p v l)
-          route p >=> (choose lst))
+          if lst.Length = 1 then
+            route p >=> lst.Head
+          else
+            route p >=> (choose lst))
         let routesf = routesf |> Seq.map (fun (p, lst) ->
           lst |> Seq.iter (fun l ->
             try
@@ -161,11 +165,14 @@ module Router =
             with
             | _ -> ())
           let pf = PrintfFormat<_,_,_,_,_> p
-          let chooseF = fun o ->
-            lst
-            |> List.map (fun f -> f o)
-            |> choose
-          routefUnsafe pf chooseF
+          if lst.Length = 1 then
+            routefUnsafe pf lst.Head
+          else
+            let chooseF = fun o ->
+              lst
+              |> List.map (fun f -> f o)
+              |> choose
+            routefUnsafe pf chooseF
         )
         routes, routesf
 
@@ -200,26 +207,31 @@ module Router =
 
       let lst =
         choose [
-          yield GET >=> choose [
-            yield! gets
-            yield! getsf
-          ]
-          yield POST >=> choose [
-            yield! posts
-            yield! postsf
-          ]
-          yield PATCH >=> choose [
-            yield! patches
-            yield! patchesf
-          ]
-          yield PUT >=> choose [
-            yield! puts
-            yield! putsf
-          ]
-          yield DELETE >=> choose [
-            yield! deletes
-            yield! deletesf
-          ]
+          for e in gets do
+            yield GET >=> e
+          for e in getsf do
+            yield GET >=> e
+
+          for e in posts do
+            yield POST >=> e
+          for e in postsf do
+            yield POST >=> e
+
+          for e in patches do
+            yield PATCH >=> e
+          for e in patchesf do
+            yield PATCH >=> e
+
+          for e in puts do
+            yield PUT >=> e
+          for e in putsf do
+            yield PUT >=> e
+
+          for e in deletes do
+            yield DELETE >=> e
+          for e in deletesf do
+            yield DELETE >=> e
+
           yield! forwards
           yield! forwardsf
           if state.NotFoundHandler.IsSome then
