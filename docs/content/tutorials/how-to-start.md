@@ -45,7 +45,7 @@ run app
 
 If you compile and run this application, it will unconditionally return the text regardless of the path.
 
-From here on out you can add [routers](../explanations/routing.md), [controllers](../explanations/controller.md) and [views](../explanations/view.md).
+From here on out you can add [routers](../explanations/routing.html), [controllers](../explanations/controller.html) and [views](../explanations/view.html).
 
 ## Deep Dive
 
