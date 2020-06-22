@@ -115,13 +115,6 @@ module Router =
           else
            (Saturn.Common.succeed |> List.foldBack (fun e acc -> acc >=> e) state.Pipelines) >=> hndl
 
-        let v =
-          match typ with
-          | RouteType.Get -> "GET"
-          | RouteType.Post -> "POST"
-          | RouteType.Put -> "PUT"
-          | RouteType.Patch -> "PATCH"
-          | RouteType.Delete -> "DELETE"
         let routes, routesf = state.GetRoutes typ
         let routes = routes |> Seq.map (fun (p, lst) ->
 
