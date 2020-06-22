@@ -342,7 +342,6 @@ module Controller =
       endpoint actionHandler
 
     member private x.AddKeyHandler<'Output> state action (actionHandler: HttpContext -> 'Key -> Task<'Output>) =
-      //TODO: Add version check and error handler
       let endpoint = x.ActionToIdEndpoint state action
 
       let actionHandler : 'Key -> HttpHandler =

@@ -11,8 +11,7 @@ let browser = pipeline {
 }
 
 let defaultView = router {
-    //TODO
-    // get "/" (htmlView Index.layout)
+    get "/" (htmlView Index.layout)
     get "/index.html" (redirectTo false "/")
     get "/default.html" (redirectTo false "/")
 }
@@ -21,8 +20,7 @@ let browserRouter = router {
     pipe_through browser
 
     forward "" defaultView
-    //TODO
-    // forward "/otherView" (htmlView OtherView.layout)
+    forward "/otherView" (htmlView OtherView.layout)
 }
 
 
