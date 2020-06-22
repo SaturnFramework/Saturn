@@ -124,11 +124,14 @@ module Router =
             route p (addPipeline (choose lst)))
         let routesf = routesf |> Seq.map (fun (p, lst) ->
           let pf = PrintfFormat<_,_,_,_,_> p
-          let chooseF = fun o ->
-            lst
-            |> List.map (fun f -> f o)
-            |> choose
-          routef pf chooseF
+          if lst.Length = 1 then
+            routef pf lst.Head
+          else
+            let chooseF = fun o ->
+              lst
+              |> List.map (fun f -> f o)
+              |> choose
+            routef pf chooseF
         )
         [ yield! routes; yield! routesf]
 
