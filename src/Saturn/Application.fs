@@ -158,6 +158,15 @@ module Application =
       match state.EndpointRouter with
       | None -> ()
       | Some endpoints ->
+        let endpoints =
+          if not state.Pipelines.IsEmpty then
+            endpoints
+            |> List.map (fun endp ->
+              endp |> List.foldBack applyBefore state.Pipelines
+            )
+          else
+            endpoints
+
         useParts.Add (fun app ->
           app.UseRouting()
              .UseEndpoints(fun e-> e.MapGiraffeEndpoints(endpoints)))
