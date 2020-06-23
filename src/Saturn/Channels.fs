@@ -8,7 +8,6 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
 open System
 open System.Collections.Concurrent
-open System.Collections.Generic
 open System.Net.WebSockets
 open System.Threading
 open System.Threading.Tasks
@@ -32,10 +31,10 @@ module Channels =
 
     ///Type representing information about client that has executed some channel action
     ///It's passed as an argument in channel actions (`join`, `handle`, `terminate`)
-    type ClientInfo = { SocketId: SocketId }
+    type ClientInfo = { SocketId: SocketId; ChannelPath: ChannelPath }
         with
-            static member New socketId =
-                { SocketId = socketId }
+            static member New channelPath socketId =
+                { SocketId = socketId; ChannelPath = channelPath  }
 
     ///Type representing result of `join` action. It can be either succesful (`Ok`) or you can reject client connection (`Rejected`)
     type JoinResult =
@@ -53,11 +52,12 @@ module Channels =
     /// You can get instance of it with `ctx.GetService&lt;Saturn.Channels.ISocketHub>()` from any place that has access to HttpContext instance (`controller` actions, `channel` actions, normal `HttpHandler`)
     type ISocketHub =
         abstract member SendMessageToClients: ChannelPath -> Topic -> 'a -> Task<unit>
-        abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> Task<unit>
+        abstract member SendMessageToClient: ClientInfo -> Topic -> 'a -> Task<unit>
+        abstract member SendMessageToClientsFilter: (ClientInfo -> bool) -> Topic -> 'a -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
     type SocketHub(serializer: IJsonSerializer) =
-      let sockets = Dictionary<ChannelPath, ConcurrentDictionary<SocketId, Socket.ThreadSafeWebSocket>>()
+      let sockets = ConcurrentDictionary<ClientInfo, Socket.ThreadSafeWebSocket>()
 
       let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) = task {
         let text = serializer.SerializeToString msg
@@ -67,28 +67,40 @@ module Channels =
         | Error exn -> return exn.Throw()
       }
 
-      member __.NewPath path =
-        match sockets.TryGetValue path with
-        | true, _path -> ()
-        | false, _ -> sockets.[path] <- ConcurrentDictionary()
+      member __.ConnectSocketToPath path clientId socket =
+        let ci = {SocketId = clientId; ChannelPath = path}
+        sockets.AddOrUpdate(ci, socket, fun _ _ -> socket) |> ignore
+        ci
 
-      member __.ConnectSocketToPath path id socket =
-        sockets.[path].AddOrUpdate(id, socket, fun _ _ -> socket) |> ignore
-        id
-
-      member __.DisconnectSocketForPath path socketId =
-        sockets.[path].TryRemove socketId |> ignore
+      member __.DisconnectSocketForPath path clientId =
+        let ci = {SocketId = clientId; ChannelPath = path}
+        sockets.TryRemove ci |> ignore
 
       interface ISocketHub with
+        member __.SendMessageToClientsFilter(predicate: ClientInfo -> bool) (topic: Topic) (payload: 'a): Task<unit> = task {
+          let msg = { Topic = topic; Ref = ""; Payload = payload }
+          let tasks =
+            sockets
+            |> Seq.filter (fun n -> predicate n.Key)
+            |> Seq.map (fun n -> sendMessage msg n.Value)
+
+          let! _results = Task.WhenAll tasks
+          return ()
+          }
+
         member __.SendMessageToClients path topic payload  = task {
           let msg = { Topic = topic; Ref = ""; Payload = payload }
-          let tasks = [for kvp in sockets.[path] -> sendMessage msg kvp.Value ]
+          let tasks =
+            sockets
+            |> Seq.filter (fun n -> n.Key.ChannelPath = path)
+            |> Seq.map (fun n -> sendMessage msg n.Value)
+
           let! _results = Task.WhenAll tasks
           return ()
         }
 
-        member __.SendMessageToClient path clientId topic payload = task {
-          match sockets.[path].TryGetValue clientId with
+        member __.SendMessageToClient clientInfo topic payload = task {
+          match sockets.TryGetValue clientInfo with
           | true, socket ->
             let msg = { Topic = topic; Ref = ""; Payload = payload }
             do! sendMessage msg socket
@@ -96,8 +108,6 @@ module Channels =
         }
 
     type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
-        do sockets.NewPath path
-
         member __.Invoke(ctx : HttpContext) =
             task {
                 if ctx.Request.Path = PathString(path) then
@@ -106,14 +116,14 @@ module Channels =
                         let logger = ctx.RequestServices.GetRequiredService<ILogger<SocketMiddleware>>()
                         logger.LogTrace("Promoted websocket request")
                         let socketId =  Guid.NewGuid()
-                        let socketInfo = ClientInfo.New socketId
-                        let! joinResult = channel.Join(ctx, socketInfo)
+                        let clientInfo = ClientInfo.New path socketId
+                        let! joinResult = channel.Join(ctx, clientInfo)
                         match joinResult with
                         | Ok ->
                             logger.LogTrace("Joined channel {path}", path)
                             let! webSocket = ctx.WebSockets.AcceptWebSocketAsync()
                             let wrappedSocket = Socket.createFromWebSocket webSocket
-                            let socketId = sockets.ConnectSocketToPath path socketId wrappedSocket
+                            let clientInfo = sockets.ConnectSocketToPath path socketId wrappedSocket
 
                             while wrappedSocket.State = WebSocketState.Open do
                               match! Socket.receiveMessageAsUTF8 wrappedSocket with
@@ -122,7 +132,7 @@ module Channels =
                               | Result.Ok (WebSocket.ReceiveUTF8Result.String msg) ->
                                 logger.LogTrace("received message {0}", msg)
                                 try
-                                  do! channel.HandleMessage(ctx, socketInfo, serializer, msg)
+                                  do! channel.HandleMessage(ctx, clientInfo, serializer, msg)
                                 with
                                 | ex ->
                                   // typically a deserialization error, swallow
@@ -132,8 +142,8 @@ module Channels =
                                 logger.LogError(exn.SourceException, "Error while receiving message")
                                 () // TODO: ?
 
-                            do! channel.Terminate (ctx, socketInfo)
-                            sockets.DisconnectSocketForPath path socketId
+                            do! channel.Terminate (ctx, clientInfo)
+                            sockets.DisconnectSocketForPath path clientInfo.SocketId
                             let! result =  Socket.close wrappedSocket WebSocketCloseStatus.NormalClosure "Closing channel"
                             match result with
                             | Result.Ok () ->

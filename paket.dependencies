@@ -19,6 +19,7 @@ nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
 nuget FSharp.Control.Websockets >= 0.2
 nuget FSharp.Core >= 4.2.3
+nuget Elmish
 
 group Docs
   source https://api.nuget.org/v3/index.json
