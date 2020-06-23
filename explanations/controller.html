@@ -1,0 +1,337 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | Controllers
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="active-link padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <h1>Controller</h1>
+<p>In Saturn, a <strong>controller</strong> is a list of routes that is focused on a <strong>model</strong> (an object that contains your data). So if you have a user model, some common operations are to display the list of users, show details of a user, add a user, update or user, or remove a user. A controller is a great way to organize all of these actions.</p>
+<p>Each of the operations is a separate route and a controller is an easy way to group these routes together.</p>
+<p>A basic user controller is shown below:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="hljs-function">Saturn</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="hljs-function">userController</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="hljs-function">controller</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="hljs-keyword">index</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-string">&quot;Index handler version 1&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 8)" onmouseover="showTip(event, 'fs5', 8)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span> <span class="hljs-comment">//View list of users</span>
+    <span onmouseout="hideTip(event, 'fs8', 9)" onmouseover="showTip(event, 'fs8', 9)" class="hljs-keyword">add</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 10)" onmouseover="showTip(event, 'fs5', 10)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-string">&quot;Add handler version 1&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 11)" onmouseover="showTip(event, 'fs6', 11)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 12)" onmouseover="showTip(event, 'fs7', 12)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 13)" onmouseover="showTip(event, 'fs5', 13)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span> <span class="hljs-comment">//Add a user</span>
+    <span onmouseout="hideTip(event, 'fs9', 14)" onmouseover="showTip(event, 'fs9', 14)" class="hljs-keyword">create</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 15)" onmouseover="showTip(event, 'fs5', 15)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-string">&quot;Create handler version 1&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 16)" onmouseover="showTip(event, 'fs6', 16)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 17)" onmouseover="showTip(event, 'fs7', 17)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 18)" onmouseover="showTip(event, 'fs5', 18)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span> <span class="hljs-comment">//Create a user</span>
+    <span onmouseout="hideTip(event, 'fs10', 19)" onmouseover="showTip(event, 'fs10', 19)" class="hljs-keyword">show</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 20)" onmouseover="showTip(event, 'fs5', 20)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs11', 21)" onmouseover="showTip(event, 'fs11', 21)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 22)" onmouseover="showTip(event, 'fs12', 22)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Show handler version 1 - </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 23)" onmouseover="showTip(event, 'fs11', 23)" class="hljs-function">id</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 24)" onmouseover="showTip(event, 'fs6', 24)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 25)" onmouseover="showTip(event, 'fs7', 25)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 26)" onmouseover="showTip(event, 'fs5', 26)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span> <span class="hljs-comment">//Show details of a user</span>
+    <span onmouseout="hideTip(event, 'fs13', 27)" onmouseover="showTip(event, 'fs13', 27)" class="hljs-keyword">edit</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 28)" onmouseover="showTip(event, 'fs5', 28)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs11', 29)" onmouseover="showTip(event, 'fs11', 29)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 30)" onmouseover="showTip(event, 'fs12', 30)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Edit handler version 1 - </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 31)" onmouseover="showTip(event, 'fs11', 31)" class="hljs-function">id</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 32)" onmouseover="showTip(event, 'fs6', 32)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 33)" onmouseover="showTip(event, 'fs7', 33)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 34)" onmouseover="showTip(event, 'fs5', 34)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>  <span class="hljs-comment">//Edit a user</span>
+    <span onmouseout="hideTip(event, 'fs14', 35)" onmouseover="showTip(event, 'fs14', 35)" class="hljs-keyword">update</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 36)" onmouseover="showTip(event, 'fs5', 36)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs11', 37)" onmouseover="showTip(event, 'fs11', 37)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 38)" onmouseover="showTip(event, 'fs12', 38)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Update handler version 1 - </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 39)" onmouseover="showTip(event, 'fs11', 39)" class="hljs-function">id</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 40)" onmouseover="showTip(event, 'fs6', 40)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 41)" onmouseover="showTip(event, 'fs7', 41)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 42)" onmouseover="showTip(event, 'fs5', 42)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>  <span class="hljs-comment">//Update a user</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>Here we can see the <code>index</code>, <code>add</code>, <code>create</code>, <code>show</code>, <code>edit</code>, and <code>update</code> operations but there are more operations that are not shown here like <code>patch</code> and <code>delete</code>. You can see all the operations int the <a href="../reference/Saturn/saturn-controller-controllerbuilder-10.html">API Reference</a>. You do not have to handle all of the operations.</p>
+<p>You might be wondering what the difference is between <code>add</code> and <code>create</code> or <code>edit</code> and <code>update</code>. The <code>add</code> operation tells the application to return the form so that the user can enter the data for the user to be added. The <code>create</code> operation will commit the data to the database of the application. It is the same with <code>edit</code> for displaying the form and <code>update</code> for committing the change.</p>
+<p>To add the controller for the routes, you can add it to the <code>defaultView</code> router like so:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs15', 43)" onmouseover="showTip(event, 'fs15', 43)" class="hljs-function">defaultView</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs16', 44)" onmouseover="showTip(event, 'fs16', 44)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs17', 45)" onmouseover="showTip(event, 'fs17', 45)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/&quot;</span> <span class="hljs-keyword">(</span><span class="hljs-function">htmlView</span> <span onmouseout="hideTip(event, 'fs18', 46)" onmouseover="showTip(event, 'fs18', 46)" class="hljs-function">Index</span><span class="hljs-keyword">.</span><span class="hljs-function">layout</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs17', 47)" onmouseover="showTip(event, 'fs17', 47)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/index.html&quot;</span> <span class="hljs-keyword">(</span><span class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs17', 48)" onmouseover="showTip(event, 'fs17', 48)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/default.html&quot;</span> <span class="hljs-keyword">(</span><span class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs19', 49)" onmouseover="showTip(event, 'fs19', 49)" class="hljs-keyword">forward</span> <span class="hljs-string">&quot;/users&quot;</span> <span onmouseout="hideTip(event, 'fs2', 50)" onmouseover="showTip(event, 'fs2', 50)" class="hljs-function">userController</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>The route will now be:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip"><code lang="bash">yoursite.com
+└── "" (router)
+    └── "" (browserRouter)
+        └── "" (defaultView)
+            ├── "/"                 -yoursite.com/
+            ├── "/index.html"       -redirect to yoursite.com/
+            ├── "/default.html"     -redirect to yoursite.com/
+            └── "/users"
+                ├── index "/"           -yoursite.com/users/
+                ├── add "/add"          -yoursite.com/users/add
+                ├── create              -POST yoursite.com/users/add
+                ├── show "/%i"          -yoursite.com/users/%i
+                ├── edit "/%i/edit"     -yoursite.com/users/%i/edit
+                └── update ""           -POST yoursite.com/users/%i/edit
+</code></pre></td></tr></table>
+<p>The create and update operations make changes to the database so you have to make a POST request containing the information you want to save to the database.</p>
+<h2>Subcontroller</h2>
+<p>Now that you know how to chain routers together to create routes, we can look at a common scenario for a website. A website usually has users and each user can create multiple comments.</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip"><code lang="bash">yoursite.com
+└── "/users"
+    └── "/%i"           -yoursite.com/users/%i
+        └── "/comments" (commentController)
+            ├── index "/"           -yoursite.com/users/{userId}/comments/
+            └── show "/%i"          -yoursite.com/users/{userId}/comments/{commentId}
+</code></pre></td></tr></table>
+<p>In Saturn, you can make the comment controller a subcontroller of the user controller. It looks like the following code:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs20', 51)" onmouseover="showTip(event, 'fs20', 51)" class="hljs-function">commentController</span> <span onmouseout="hideTip(event, 'fs21', 52)" onmouseover="showTip(event, 'fs21', 52)" class="hljs-function">userId</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs3', 53)" onmouseover="showTip(event, 'fs3', 53)" class="hljs-function">controller</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs4', 54)" onmouseover="showTip(event, 'fs4', 54)" class="hljs-keyword">index</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 55)" onmouseover="showTip(event, 'fs5', 55)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 56)" onmouseover="showTip(event, 'fs12', 56)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Comment Index handler for user </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 57)" onmouseover="showTip(event, 'fs21', 57)" class="hljs-function">userId</span> <span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 58)" onmouseover="showTip(event, 'fs6', 58)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 59)" onmouseover="showTip(event, 'fs7', 59)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 60)" onmouseover="showTip(event, 'fs5', 60)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs8', 61)" onmouseover="showTip(event, 'fs8', 61)" class="hljs-keyword">add</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 62)" onmouseover="showTip(event, 'fs5', 62)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 63)" onmouseover="showTip(event, 'fs12', 63)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Comment Add handler for user </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 64)" onmouseover="showTip(event, 'fs21', 64)" class="hljs-function">userId</span> <span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 65)" onmouseover="showTip(event, 'fs6', 65)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 66)" onmouseover="showTip(event, 'fs7', 66)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 67)" onmouseover="showTip(event, 'fs5', 67)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs10', 68)" onmouseover="showTip(event, 'fs10', 68)" class="hljs-keyword">show</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 69)" onmouseover="showTip(event, 'fs5', 69)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs22', 70)" onmouseover="showTip(event, 'fs22', 70)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 71)" onmouseover="showTip(event, 'fs12', 71)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Show comment </span><span class="hljs-regexp">%s</span><span class="hljs-string"> handler for user </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs22', 72)" onmouseover="showTip(event, 'fs22', 72)" class="hljs-function">id</span> <span onmouseout="hideTip(event, 'fs21', 73)" onmouseover="showTip(event, 'fs21', 73)" class="hljs-function">userId</span> <span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 74)" onmouseover="showTip(event, 'fs6', 74)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 75)" onmouseover="showTip(event, 'fs7', 75)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 76)" onmouseover="showTip(event, 'fs5', 76)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs13', 77)" onmouseover="showTip(event, 'fs13', 77)" class="hljs-keyword">edit</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 78)" onmouseover="showTip(event, 'fs5', 78)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs22', 79)" onmouseover="showTip(event, 'fs22', 79)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 80)" onmouseover="showTip(event, 'fs12', 80)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Edit comment </span><span class="hljs-regexp">%s</span><span class="hljs-string"> handler for user </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs22', 81)" onmouseover="showTip(event, 'fs22', 81)" class="hljs-function">id</span> <span onmouseout="hideTip(event, 'fs21', 82)" onmouseover="showTip(event, 'fs21', 82)" class="hljs-function">userId</span> <span class="hljs-keyword">)</span>  <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 83)" onmouseover="showTip(event, 'fs6', 83)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 84)" onmouseover="showTip(event, 'fs7', 84)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 85)" onmouseover="showTip(event, 'fs5', 85)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+<span class="hljs-keyword">}</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 86)" onmouseover="showTip(event, 'fs2', 86)" class="hljs-function">userController</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs3', 87)" onmouseover="showTip(event, 'fs3', 87)" class="hljs-function">controller</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs23', 88)" onmouseover="showTip(event, 'fs23', 88)" class="hljs-keyword">subController</span> <span class="hljs-string">&quot;/comments&quot;</span> <span onmouseout="hideTip(event, 'fs20', 89)" onmouseover="showTip(event, 'fs20', 89)" class="hljs-function">commentController</span>
+
+    <span onmouseout="hideTip(event, 'fs24', 90)" onmouseover="showTip(event, 'fs24', 90)" class="hljs-keyword">plug</span> <span class="hljs-keyword">[</span><span onmouseout="hideTip(event, 'fs25', 91)" onmouseover="showTip(event, 'fs25', 91)" class="hljs-type">All</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">(</span><span class="hljs-function">setHttpHeader</span> <span class="hljs-string">&quot;user-controller-common&quot;</span> <span class="hljs-string">&quot;123&quot;</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs24', 92)" onmouseover="showTip(event, 'fs24', 92)" class="hljs-keyword">plug</span> <span class="hljs-keyword">[</span><span onmouseout="hideTip(event, 'fs18', 93)" onmouseover="showTip(event, 'fs18', 93)" class="hljs-type">Index</span><span class="hljs-keyword">;</span> <span onmouseout="hideTip(event, 'fs26', 94)" onmouseover="showTip(event, 'fs26', 94)" class="hljs-type">Show</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">(</span><span class="hljs-function">setHttpHeader</span> <span class="hljs-string">&quot;user-controller-specialized&quot;</span> <span class="hljs-string">&quot;123&quot;</span><span class="hljs-keyword">)</span>
+
+    <span onmouseout="hideTip(event, 'fs4', 95)" onmouseover="showTip(event, 'fs4', 95)" class="hljs-keyword">index</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 96)" onmouseover="showTip(event, 'fs5', 96)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-string">&quot;Index handler no version&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 97)" onmouseover="showTip(event, 'fs6', 97)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 98)" onmouseover="showTip(event, 'fs7', 98)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 99)" onmouseover="showTip(event, 'fs5', 99)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs10', 100)" onmouseover="showTip(event, 'fs10', 100)" class="hljs-keyword">show</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 101)" onmouseover="showTip(event, 'fs5', 101)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs11', 102)" onmouseover="showTip(event, 'fs11', 102)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 103)" onmouseover="showTip(event, 'fs12', 103)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Show handler no version - </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 104)" onmouseover="showTip(event, 'fs11', 104)" class="hljs-function">id</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 105)" onmouseover="showTip(event, 'fs6', 105)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 106)" onmouseover="showTip(event, 'fs7', 106)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 107)" onmouseover="showTip(event, 'fs5', 107)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs8', 108)" onmouseover="showTip(event, 'fs8', 108)" class="hljs-keyword">add</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 109)" onmouseover="showTip(event, 'fs5', 109)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-string">&quot;Add handler no version&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 110)" onmouseover="showTip(event, 'fs6', 110)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 111)" onmouseover="showTip(event, 'fs7', 111)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 112)" onmouseover="showTip(event, 'fs5', 112)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs9', 113)" onmouseover="showTip(event, 'fs9', 113)" class="hljs-keyword">create</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 114)" onmouseover="showTip(event, 'fs5', 114)" class="hljs-function">ctx</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-string">&quot;Create handler no version&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 115)" onmouseover="showTip(event, 'fs6', 115)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 116)" onmouseover="showTip(event, 'fs7', 116)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 117)" onmouseover="showTip(event, 'fs5', 117)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs13', 118)" onmouseover="showTip(event, 'fs13', 118)" class="hljs-keyword">edit</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 119)" onmouseover="showTip(event, 'fs5', 119)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs11', 120)" onmouseover="showTip(event, 'fs11', 120)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 121)" onmouseover="showTip(event, 'fs12', 121)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Edit handler no version - </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 122)" onmouseover="showTip(event, 'fs11', 122)" class="hljs-function">id</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 123)" onmouseover="showTip(event, 'fs6', 123)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 124)" onmouseover="showTip(event, 'fs7', 124)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 125)" onmouseover="showTip(event, 'fs5', 125)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs14', 126)" onmouseover="showTip(event, 'fs14', 126)" class="hljs-keyword">update</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 127)" onmouseover="showTip(event, 'fs5', 127)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs11', 128)" onmouseover="showTip(event, 'fs11', 128)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 129)" onmouseover="showTip(event, 'fs12', 129)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Update handler no version - </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 130)" onmouseover="showTip(event, 'fs11', 130)" class="hljs-function">id</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 131)" onmouseover="showTip(event, 'fs6', 131)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 132)" onmouseover="showTip(event, 'fs7', 132)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 133)" onmouseover="showTip(event, 'fs5', 133)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs27', 134)" onmouseover="showTip(event, 'fs27', 134)" class="hljs-keyword">delete</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 135)" onmouseover="showTip(event, 'fs5', 135)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs11', 136)" onmouseover="showTip(event, 'fs11', 136)" class="hljs-function">id</span> <span class="hljs-keyword">-&gt;</span> <span onmouseout="hideTip(event, 'fs28', 137)" onmouseover="showTip(event, 'fs28', 137)" class="hljs-function">failwith</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs12', 138)" onmouseover="showTip(event, 'fs12', 138)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Delete handler no version failed - </span><span class="hljs-regexp">%i</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs11', 139)" onmouseover="showTip(event, 'fs11', 139)" class="hljs-function">id</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 140)" onmouseover="showTip(event, 'fs6', 140)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 141)" onmouseover="showTip(event, 'fs7', 141)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 142)" onmouseover="showTip(event, 'fs5', 142)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs29', 143)" onmouseover="showTip(event, 'fs29', 143)" class="hljs-keyword">error_handler</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span onmouseout="hideTip(event, 'fs5', 144)" onmouseover="showTip(event, 'fs5', 144)" class="hljs-function">ctx</span> <span onmouseout="hideTip(event, 'fs30', 145)" onmouseover="showTip(event, 'fs30', 145)" class="hljs-function">ex</span> <span class="hljs-keyword">-&gt;</span> <span onmouseout="hideTip(event, 'fs12', 146)" onmouseover="showTip(event, 'fs12', 146)" class="hljs-function">sprintf</span> <span class="hljs-string">&quot;Error handler no version - </span><span class="hljs-regexp">%s</span><span class="hljs-string">&quot;</span> <span onmouseout="hideTip(event, 'fs30', 147)" onmouseover="showTip(event, 'fs30', 147)" class="hljs-function">ex</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs31', 148)" onmouseover="showTip(event, 'fs31', 148)" class="hljs-function">Message</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs6', 149)" onmouseover="showTip(event, 'fs6', 149)" class="hljs-type">Controller</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 150)" onmouseover="showTip(event, 'fs7', 150)" class="hljs-function">text</span> <span onmouseout="hideTip(event, 'fs5', 151)" onmouseover="showTip(event, 'fs5', 151)" class="hljs-function">ctx</span><span class="hljs-keyword">)</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>To create a subcontroller, start with creating a controller for your model. After that, define it as a subcontroller inside the main controller with the following code:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp">    <span class="hljs-function">subController</span> <span class="hljs-string">&quot;/yourModel&quot;</span> <span class="hljs-function">yourModelController</span>
+</code></pre>
+<h2>API Reference</h2>
+<p>Full API reference for <code>controller</code> CE can be found <a href="../reference/Saturn/saturn-controller-controllerbuilder-10.html">here</a></p>
+<p>Full API reference for <code>Controller</code> module containing useful helpers can be found <a href="../reference/Saturn/saturn-controllerhelpers-controller.html">here</a></p>
+<div class="tip" id="fs1">namespace Saturn</div>
+<div class="tip" id="fs2">val userController : Giraffe.Core.HttpHandler</div>
+<div class="tip" id="fs3">val controller&lt;&#39;Key,&#39;IndexOutput,&#39;ShowOutput,&#39;AddOutput,&#39;EditOutput,&#39;CreateOutput,&#39;UpdateOutput,&#39;PatchOutput,&#39;DeleteOutput,&#39;DeleteAllOutput&gt; : ControllerBuilder&lt;&#39;Key,&#39;IndexOutput,&#39;ShowOutput,&#39;AddOutput,&#39;EditOutput,&#39;CreateOutput,&#39;UpdateOutput,&#39;PatchOutput,&#39;DeleteOutput,&#39;DeleteAllOutput&gt;</div>
+<div class="tip" id="fs4">custom operation: index (AspNetCore.Http.HttpContext -&gt; System.Threading.Tasks.Task&lt;&#39;IndexOutput&gt;)<br /><br />Calls ControllerBuilder.Index</div>
+<div class="tip" id="fs5">val ctx : AspNetCore.Http.HttpContext</div>
+<div class="tip" id="fs6">Multiple items<br />module Controller<br /><br />from Saturn.ControllerHelpers<br /><br />--------------------<br />module Controller<br /><br />from Saturn</div>
+<div class="tip" id="fs7">val text : ctx:AspNetCore.Http.HttpContext -&gt; value:string -&gt; System.Threading.Tasks.Task&lt;AspNetCore.Http.HttpContext option&gt;</div>
+<div class="tip" id="fs8">custom operation: add (AspNetCore.Http.HttpContext -&gt; System.Threading.Tasks.Task&lt;&#39;AddOutput&gt;)<br /><br />Calls ControllerBuilder.Add</div>
+<div class="tip" id="fs9">custom operation: create (AspNetCore.Http.HttpContext -&gt; System.Threading.Tasks.Task&lt;&#39;CreateOutput&gt;)<br /><br />Calls ControllerBuilder.Create</div>
+<div class="tip" id="fs10">custom operation: show (AspNetCore.Http.HttpContext -&gt; &#39;Key -&gt; System.Threading.Tasks.Task&lt;&#39;ShowOutput&gt;)<br /><br />Calls ControllerBuilder.Show</div>
+<div class="tip" id="fs11">val id : int</div>
+<div class="tip" id="fs12">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T</div>
+<div class="tip" id="fs13">custom operation: edit (AspNetCore.Http.HttpContext -&gt; &#39;Key -&gt; System.Threading.Tasks.Task&lt;&#39;EditOutput&gt;)<br /><br />Calls ControllerBuilder.Edit</div>
+<div class="tip" id="fs14">custom operation: update (AspNetCore.Http.HttpContext -&gt; &#39;Key -&gt; System.Threading.Tasks.Task&lt;&#39;UpdateOutput&gt;)<br /><br />Calls ControllerBuilder.Update</div>
+<div class="tip" id="fs15">val defaultView : Giraffe.Core.HttpHandler</div>
+<div class="tip" id="fs16">val router : RouterBuilder</div>
+<div class="tip" id="fs17">custom operation: get (string) (Giraffe.Core.HttpHandler)<br /><br />Calls RouterBuilder.Get</div>
+<div class="tip" id="fs18">union case Action.Index: Action</div>
+<div class="tip" id="fs19">custom operation: forward (string) (Giraffe.Core.HttpHandler)<br /><br />Calls RouterBuilder.Forward</div>
+<div class="tip" id="fs20">val commentController : userId:int -&gt; Giraffe.Core.HttpHandler</div>
+<div class="tip" id="fs21">val userId : int</div>
+<div class="tip" id="fs22">val id : string</div>
+<div class="tip" id="fs23">custom operation: subController (string) (&#39;a -&gt; Giraffe.Core.HttpHandler)<br /><br />Calls ControllerBuilder.SubController</div>
+<div class="tip" id="fs24">custom operation: plug (Action list) (Giraffe.Core.HttpHandler)<br /><br />Calls ControllerBuilder.Plug</div>
+<div class="tip" id="fs25">union case Action.All: Action</div>
+<div class="tip" id="fs26">union case Action.Show: Action</div>
+<div class="tip" id="fs27">custom operation: delete (AspNetCore.Http.HttpContext -&gt; &#39;Key -&gt; System.Threading.Tasks.Task&lt;&#39;DeleteOutput&gt;)<br /><br />Calls ControllerBuilder.Delete</div>
+<div class="tip" id="fs28">val failwith : message:string -&gt; &#39;T</div>
+<div class="tip" id="fs29">custom operation: error_handler (AspNetCore.Http.HttpContext -&gt; System.Exception -&gt; Giraffe.Core.HttpFuncResult)<br /><br />Calls ControllerBuilder.ErrorHandler</div>
+<div class="tip" id="fs30">val ex : System.Exception</div>
+<div class="tip" id="fs31">property System.Exception.Message: string with get</div>
+
+
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

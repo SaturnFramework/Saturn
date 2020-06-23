@@ -1,0 +1,1460 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | ApplicationBuilder
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <div class="api-page">
+            <h2>
+              ApplicationBuilder
+            </h2>
+            <b>
+              Namespace: 
+            </b>
+            <a href="Saturn.html">
+              Saturn
+            </a>
+            <br/>
+            <b>
+              Parent: 
+            </b>
+            <a href="saturn-application.html">
+              Application
+            </a>
+            <span>
+              <p>Computation expression used to configure Saturn application.
+Under the hood it's using ASP.NET application configurations interfaces such as <code>IWebHostBuilder</code>, <code>IServiceCollection</code>, <code>IApplicationBuilder</code> and others.
+It aims to hide cumbersome ASP.NET application configuration and enable high level, declarative application configuration using feature toggles.</p>
+<p><strong>Example:</strong></p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="hljs-function">app</span> <span class="hljs-keyword">=</span> <span class="hljs-function">application</span> <span class="hljs-keyword">{</span>
+    <span class="hljs-function">pipe_through</span> <span class="hljs-function">endpointPipe</span>
+    <span class="hljs-function">use_router</span> <span class="hljs-function">topRouter</span>
+    <span class="hljs-function">url</span> <span class="hljs-string">&quot;http://0.0.0.0:8085/&quot;</span>
+    <span class="hljs-function">memory_cache</span>
+    <span class="hljs-function">use_static</span> <span class="hljs-string">&quot;static&quot;</span>
+    <span class="hljs-function">use_gzip</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<div class="tip" id="fs1">val app : obj</div>
+
+
+            </span>
+            <br/>
+            <table>
+              <tr>
+                <th width="35%">
+                  Name
+                </th>
+                <th width="65%">
+                  Description
+                </th>
+              </tr>
+              <tr>
+                <td colSpan="3">
+                  <b>
+                    Instance Members
+                  </b>
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ActivateDeveloperExceptions', 1)" onmouseover="showTip(event, 'ActivateDeveloperExceptions', 1)">
+                    x.ActivateDeveloperExceptions(state)
+                  </code>
+                  <div class="tip" id="ActivateDeveloperExceptions">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L611-611">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_developer_exceptions
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Turns on the developer exception page, if the environment is in development mode.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'AddChannel', 1)" onmouseover="showTip(event, 'AddChannel', 1)">
+                    x.AddChannel(state, url, channel)
+                  </code>
+                  <div class="tip" id="AddChannel">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * url:string * channel:IChannel) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L605-605">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    add_channel
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Registers channel for given url.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'AddMimeTypes', 1)" onmouseover="showTip(event, 'AddMimeTypes', 1)">
+                    x.AddMimeTypes(state, mimeList)
+                  </code>
+                  <div class="tip" id="AddMimeTypes">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * mimeList:(string * string) list) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L250-250">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_mime_types
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds MIME types definitions as a list of (extension, mime)</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'AppConfig', 1)" onmouseover="showTip(event, 'AppConfig', 1)">
+                    x.AppConfig(state, config)
+                  </code>
+                  <div class="tip" id="AppConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * config:(IApplicationBuilder -> IApplicationBuilder)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L225-225">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    app_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds custom application configuration step.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'CliArguments', 1)" onmouseover="showTip(event, 'CliArguments', 1)">
+                    x.CliArguments(state, args)
+                  </code>
+                  <div class="tip" id="CliArguments">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * args:string array) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L566-566">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    cli_arguments
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Sets the cli arguments for the <code>IWebHostBuilder</code> to enable default command line configuration and functionality.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ConfigJSONSerializer', 1)" onmouseover="showTip(event, 'ConfigJSONSerializer', 1)">
+                    x.ConfigJSONSerializer(state, settings)
+                  </code>
+                  <div class="tip" id="ConfigJSONSerializer">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * settings:JsonSerializerSettings) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L573-573">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_json_settings
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Configures built in JSON.Net (de)serializer with custom settings.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ConfigXMLSerializer', 1)" onmouseover="showTip(event, 'ConfigXMLSerializer', 1)">
+                    x.ConfigXMLSerializer(state, settings)
+                  </code>
+                  <div class="tip" id="ConfigXMLSerializer">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * settings:XmlWriterSettings) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L589-589">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_xml_settings
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Configures built in XML (de)serializer with custom settings.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'DisableDiagnostics', 1)" onmouseover="showTip(event, 'DisableDiagnostics', 1)">
+                    x.DisableDiagnostics(state)
+                  </code>
+                  <div class="tip" id="DisableDiagnostics">
+                    <b>
+                      Signature:
+                    </b>
+                    state:'?39607 -> '?39607
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L543-543">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    disable_diagnostics
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Disables generation of diagnostic files that can be used by Saturn tooling.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'EndpointRouter', 1)" onmouseover="showTip(event, 'EndpointRouter', 1)">
+                    x.EndpointRouter(state, routes)
+                  </code>
+                  <div class="tip" id="EndpointRouter">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * routes:Endpoint list) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L200-200">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_endpoint_router
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Defines top-level endpoint router used for the application</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ErrorHandler', 1)" onmouseover="showTip(event, 'ErrorHandler', 1)">
+                    x.ErrorHandler(state, handler)
+                  </code>
+                  <div class="tip" id="ErrorHandler">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * handler:ErrorHandler) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L220-220">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    error_handler
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds error/not-found handler for current scope</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ForceSSL', 1)" onmouseover="showTip(event, 'ForceSSL', 1)">
+                    x.ForceSSL(state)
+                  </code>
+                  <div class="tip" id="ForceSSL">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L334-334">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    force_ssl
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Redirect all HTTP request to HTTPS</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'HostConfig', 1)" onmouseover="showTip(event, 'HostConfig', 1)">
+                    x.HostConfig(state, config)
+                  </code>
+                  <div class="tip" id="HostConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * config:(IHostBuilder -> IHostBuilder)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L230-230">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    host_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds custom generic host (<code>IHostBuilder</code>) configuration step. Configuration for web host should use <code>webhost_config</code> instead.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ListenLocal', 1)" onmouseover="showTip(event, 'ListenLocal', 1)">
+                    x.ListenLocal(state, portNumber, listenOptions)
+                  </code>
+                  <div class="tip" id="ListenLocal">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * portNumber:int * listenOptions:(ListenOptions -> unit)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L624-624">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    listen_local
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Listens on <code>::1</code> and <code>127.0.0.1</code> with the given port. Requesting a dynamic port by specifying <code>0</code> is not supported for this type of endpoint</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Logging', 1)" onmouseover="showTip(event, 'Logging', 1)">
+                    x.Logging(state, config)
+                  </code>
+                  <div class="tip" id="Logging">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * config:(ILoggingBuilder -> unit)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L256-256">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    logging
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds logging configuration.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'MemoryCache', 1)" onmouseover="showTip(event, 'MemoryCache', 1)">
+                    x.MemoryCache(state)
+                  </code>
+                  <div class="tip" id="MemoryCache">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L261-261">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    memory_cache
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables in-memory session cache</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'NoRouter', 1)" onmouseover="showTip(event, 'NoRouter', 1)">
+                    x.NoRouter(state)
+                  </code>
+                  <div class="tip" id="NoRouter">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L205-205">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    no_router
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Disable warning message about lack of <code>router</code> definition. Should be used for channels-only or gRPC applications.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'NoWebhost', 1)" onmouseover="showTip(event, 'NoWebhost', 1)">
+                    x.NoWebhost(state)
+                  </code>
+                  <div class="tip" id="NoWebhost">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L210-210">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    no_webhost
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Disables any configuration of webhost. Could be used for generic <code>IHostBuilder</code> applications not using Kestrel/IIS</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'PipeThrough', 1)" onmouseover="showTip(event, 'PipeThrough', 1)">
+                    x.PipeThrough(state, pipe)
+                  </code>
+                  <div class="tip" id="PipeThrough">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * pipe:HttpHandler) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L215-215">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    pipe_through
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds pipeline to the list of pipelines that will be used for every request</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Router', 1)" onmouseover="showTip(event, 'Router', 1)">
+                    x.Router(state, handler)
+                  </code>
+                  <div class="tip" id="Router">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * handler:HttpHandler) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L195-195">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_router
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Defines top-level router used for the application</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Run', 1)" onmouseover="showTip(event, 'Run', 1)">
+                    x.Run(state)
+                  </code>
+                  <div class="tip" id="Run">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> IHostBuilder
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L95-95">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ServiceConfig', 1)" onmouseover="showTip(event, 'ServiceConfig', 1)">
+                    x.ServiceConfig(state, config)
+                  </code>
+                  <div class="tip" id="ServiceConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * config:(IServiceCollection -> IServiceCollection)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L240-240">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    service_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds custom service configuration step.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Url', 1)" onmouseover="showTip(event, 'Url', 1)">
+                    x.Url(state, url)
+                  </code>
+                  <div class="tip" id="Url">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * url:string) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L245-245">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    url
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds url</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseAntiforgery', 1)" onmouseover="showTip(event, 'UseAntiforgery', 1)">
+                    x.UseAntiforgery(state)
+                  </code>
+                  <div class="tip" id="UseAntiforgery">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L549-549">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_antiforgery
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables use of the <code>protectFromForgery</code> <code>pipeline</code> component and the <code>CSRF</code> features in general.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseAntiforgeryWithConfig', 1)" onmouseover="showTip(event, 'UseAntiforgeryWithConfig', 1)">
+                    x.UseAntiforgeryWithConfig(state, configFn)
+                  </code>
+                  <div class="tip" id="UseAntiforgeryWithConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * configFn:(AntiforgeryOptions -> unit)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L558-558">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_antiforgery_with_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables use of the <code>protectFromForgery</code> <code>pipeline</code> component and the <code>CSRF</code> features in general.
+This overload allows for custom configuration of the subsystem, for more information see the <code>AntiforgeryOptions</code> class at <a href="https://github.com/aspnet/Antiforgery/blob/dev/src/Microsoft.AspNetCore.Antiforgery/AntiforgeryOptions.cs">https://github.com/aspnet/Antiforgery/blob/dev/src/Microsoft.AspNetCore.Antiforgery/AntiforgeryOptions.cs</a></p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseConfig', 1)" onmouseover="showTip(event, 'UseConfig', 1)">
+                    x.UseConfig(state, configBuilder)
+                  </code>
+                  <div class="tip" id="UseConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * configBuilder:(IConfiguration -> 'a)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L315-315">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseCookiesAuth', 1)" onmouseover="showTip(event, 'UseCookiesAuth', 1)">
+                    x.UseCookiesAuth(state, issuer)
+                  </code>
+                  <div class="tip" id="UseCookiesAuth">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * issuer:string) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L402-402">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_cookies_authentication
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables default cookies authentication</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseCookiesAuthConfig', 1)" onmouseover="showTip(event, 'UseCookiesAuthConfig', 1)">
+                    x.UseCookiesAuthConfig(state, options)
+                  </code>
+                  <div class="tip" id="UseCookiesAuthConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * options:(CookieAuthenticationOptions -> unit)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L426-426">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_cookies_authentication_with_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables cookies authentication with custom configuration</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseCors', 1)" onmouseover="showTip(event, 'UseCors', 1)">
+                    x.UseCors(state, policy, policyConfig)
+                  </code>
+                  <div class="tip" id="UseCors">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * policy:string * policyConfig:(CorsPolicyBuilder -> unit)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L343-343">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_cors
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables application level CORS protection</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseCustomJSONSerializer', 1)" onmouseover="showTip(event, 'UseCustomJSONSerializer', 1)">
+                    x.UseCustomJSONSerializer(state, serializer)
+                  </code>
+                  <div class="tip" id="UseCustomJSONSerializer">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * serializer:'?39613) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L581-581">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_json_serializer
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Replaces built in JSON.Net (de)serializer with custom serializer</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseCustomXMLSerializer', 1)" onmouseover="showTip(event, 'UseCustomXMLSerializer', 1)">
+                    x.UseCustomXMLSerializer(state, serializer)
+                  </code>
+                  <div class="tip" id="UseCustomXMLSerializer">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * serializer:'?39616) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L597-597">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_xml_serializer
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Replaces built in XML (de)serializer with custom serializer</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseGZip', 1)" onmouseover="showTip(event, 'UseGZip', 1)">
+                    x.UseGZip(state)
+                  </code>
+                  <div class="tip" id="UseGZip">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L272-272">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_gzip
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables gzip compression</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseIIS', 1)" onmouseover="showTip(event, 'UseIIS', 1)">
+                    x.UseIIS(state)
+                  </code>
+                  <div class="tip" id="UseIIS">
+                    <b>
+                      Signature:
+                    </b>
+                    state:ApplicationState -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L520-520">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_iis
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables IIS integration</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseJWTAuth', 1)" onmouseover="showTip(event, 'UseJWTAuth', 1)">
+                    x.UseJWTAuth(state, secret, issuer)
+                  </code>
+                  <div class="tip" id="UseJWTAuth">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * secret:string * issuer:string) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L356-356">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_jwt_authentication
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables default JWT authentication</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseJWTAuthConfig', 1)" onmouseover="showTip(event, 'UseJWTAuthConfig', 1)">
+                    x.UseJWTAuthConfig(state, config)
+                  </code>
+                  <div class="tip" id="UseJWTAuthConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * config:(JwtBearerOptions -> unit)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L384-384">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_jwt_authentication_with_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables JWT authentication with custom configuration</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseOAuthWithConfig', 1)" onmouseover="showTip(event, 'UseOAuthWithConfig', 1)">
+                    x.UseOAuthWithConfig(state, name, config)
+                  </code>
+                  <div class="tip" id="UseOAuthWithConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * name:string * config:(OAuthOptions -> unit)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L496-496">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_oauth_with_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables OAuth authentication with custom configuration</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseOAuthWithSettings', 1)" onmouseover="showTip(event, 'UseOAuthWithSettings', 1)">
+                    x.UseOAuthWithSettings(state, clientId, clientSecret, settings)
+                  </code>
+                  <div class="tip" id="UseOAuthWithSettings">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * clientId:string * clientSecret:string * settings:OAuthSettings) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L450-450">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_oauth
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables simple custom OAuth authentication using parmeters provided with <code>OAuth.OAuthSettings</code> record.
+Can be used to quickly implement default OAuth authentication for 3rd party providers.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UsePolicy', 1)" onmouseover="showTip(event, 'UsePolicy', 1)">
+                    x.UsePolicy(state, policy, evaluator)
+                  </code>
+                  <div class="tip" id="UsePolicy">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * policy:string * evaluator:(AuthorizationHandlerContext -> bool)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L529-529">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_policy
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Add custom policy, taking an <code>AuthorizationHandlerContext -&gt; bool</code></p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'UseStatic', 1)" onmouseover="showTip(event, 'UseStatic', 1)">
+                    x.UseStatic(state, path)
+                  </code>
+                  <div class="tip" id="UseStatic">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * path:string) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L297-297">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_static
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Enables using static file hosting.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'WebHostConfig', 1)" onmouseover="showTip(event, 'WebHostConfig', 1)">
+                    x.WebHostConfig(state, config)
+                  </code>
+                  <div class="tip" id="WebHostConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:ApplicationState * config:(IWebHostBuilder -> IWebHostBuilder)) -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L235-235">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    webhost_config
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>Adds custom web host configuration step.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Yield', 1)" onmouseover="showTip(event, 'Yield', 1)">
+                    x.Yield(arg1)
+                  </code>
+                  <div class="tip" id="Yield">
+                    <b>
+                      Signature:
+                    </b>
+                    '?39576 -> ApplicationState
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Application.fs#L89-89">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  
+
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

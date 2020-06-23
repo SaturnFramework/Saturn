@@ -1,0 +1,246 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | Endpoint Routing
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="active-link padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <h1>Endpoint Routing</h1>
+<p>Saturn from version <code>0.15</code> supports <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-3.1">ASP.NET Endpoint Routing</a> additionally to custom routing implementation provided by Giraffe. The main difference between old routing and new one is that Endpoint Routing assumes total separation of routing from behavior - it works by statically defining list of all possible routes on startup of application. This impacts design of some of our Saturn abstractions, and means new routing is not 100% compatible with old one. On the bright side, theoretically, Endpoint Routing should provide noticeable performance boost, and in the future it will allow for better ecosystem integration.</p>
+<blockquote>
+<p>Currently endpoint routing API is treated as an experimental API - it's subject to changes.</p>
+</blockquote>
+<p>To use Endpoint Routing you need to open <code>Saturn.Endpoint</code> namespace - this will override known <code>router</code> and <code>controller</code> Computation Expressions with their Endpoint Routing versions. In <code>application</code> CE instead of using <code>use_router</code> operation you should use <code>use_endpoint_router</code> operation. For many simple applications this may be enough to get things working - we've been trying to keep API as compatible as possible.</p>
+<p>However there are differences:</p>
+<ul>
+<li>With Endpoint Routing <code>router</code> and <code>controller</code> computation expressions are not transformed to <code>HttpHandler</code> but rather to <code>Endpoint list</code>. This has a huge impact on composability of those abstractions - you can't do things like <code>myHttpHandler &gt;=&gt; router { ... }</code> any more. Such code should be replaced with <code>plug/pipe_through</code> functionality in both <code>router</code> and <code>controller</code>. <code>Endpoint list</code> can basically be used in 2 places - in <code>forward</code> operation in <code>router</code> and <code>use_endpoint_router</code> in <code>application</code>.</li>
+<li>
+Lack of <code>subroutef</code> in Giraffe-EndpointRouting - beacuse EndpointRouting needs to have all possible route templates at the application startup it's really hard to emulate some of previous Giraffe's routing composibility capabilities. From Saturn point of view this created 2 major changes:
+<ul>
+<li>there's no <code>forwardf</code> in <code>router</code> CE anymore - it should be replaced with set of <code>getf/postf/putf ...</code> operations in child router.</li>
+<li><code>subController</code> in <code>controller</code> CE doesn't work well in Endpoint Routing - you can use as subcontrollers only old, HttpHandler based controllers (even if you parent controller is Endpoint Routing controller). In <code>Saturn.Endpoint</code> we provide additonal <code>subcontroller</code> CE - it's an alias to old <code>controller</code> CE</li>
+</ul>
+</li>
+<li>Lack of <code>case_insensitive</code> in <code>router</code> and <code>controller</code> - with Endpoint Routing all routes are case insensitive by default and there's no easy way to change it</li>
+<li>Lack of <code>not_found_handler</code> in <code>router</code> and <code>controller</code> - as Endpoint Routing creates global table of routing having scoped not-found handlers is really tricky. Use built-in ways of handle 404 in ASP.NET (such as <code>UseDeveloperExceptionPage</code>)</li>
+<li>Unlike Giraffe routing, Endpoint Routing doesn't ensure order of routing checks - this shouldn't be a problem in most cases, but I can imagine some edge cases in which this would matter.</li>
+</ul>
+<p>In general, to reiterate - Endpoint Routing API in Giraffe/Saturn is still experimental. However, it probably is a future of Giraffe/Saturn so if possible please check if your applications can move to the Endpoint Routing API, and try it out. It's important for everyone involved to get feedback on this new routing engine.</p>
+
+
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

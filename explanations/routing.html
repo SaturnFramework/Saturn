@@ -1,0 +1,440 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | Router
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="active-link padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <h1>Routing</h1>
+<p>Routes are how Saturn connects all the HTTP requests to the different actions. Think of a route as the URL of the application. The site is yoursite.com but you may have a route for your about page such as yoursite.com/about.</p>
+<p>In Saturn, <code>Routers</code> contain all the routes of your application. A router is a list of routes. A website can have a router that handles the different routes to your page like so:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip"><code lang="bash">yoursite.com
+├── "/"             -yoursite.com/
+├── "/about"        -yoursite.com/about
+├── "/contact"      -yoursite.com/contact
+├── "/news"         -yoursite.com/news
+└── "/investors"    -yoursite.com/investors
+</code></pre></td></tr></table>
+<p>Since this is at the root, this is your router at <code>""</code> path. You can then add a router inside another router to have the following:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip"><code lang="bash">yoursite.com
+├── books           -yoursite.com/books
+|   ├── list        -yoursite.com/books/list
+|   ├── add         -yoursite.com/books/add
+|   ├── update      -yoursite.com/books/update
+|   └── delete      -yoursite.com/books/update
+├── about           -yoursite.com/about
+├── contact         -yoursite.com/contact
+├── news            -yoursite.com/news
+└── investors       -yoursite.com/investors
+</code></pre></td></tr></table>
+<p>Now you have a router for the <code>"/books"</code> path inside another router for the <code>""</code> path.</p>
+<p>Now to see it in code, create a Saturn project from the template and you will have a <code>Router.fs</code> file like this:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">open</span> <span onmouseout="hideTip(event, 'fs6', 9)" onmouseover="showTip(event, 'fs6', 9)" class="hljs-function">Saturn</span>
+<span class="hljs-keyword">open</span> <span onmouseout="hideTip(event, 'fs1', 10)" onmouseover="showTip(event, 'fs1', 10)" class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs7', 11)" onmouseover="showTip(event, 'fs7', 11)" class="hljs-function">Core</span>
+<span class="hljs-keyword">open</span> <span onmouseout="hideTip(event, 'fs1', 12)" onmouseover="showTip(event, 'fs1', 12)" class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs4', 13)" onmouseover="showTip(event, 'fs4', 13)" class="hljs-function">ResponseWriters</span>
+
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs8', 14)" onmouseover="showTip(event, 'fs8', 14)" class="hljs-function">browser</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs9', 15)" onmouseover="showTip(event, 'fs9', 15)" class="hljs-keyword">pipeline</span> <span class="hljs-keyword">{</span>
+    <span class="hljs-function">plug</span> <span onmouseout="hideTip(event, 'fs10', 16)" onmouseover="showTip(event, 'fs10', 16)" class="hljs-function">acceptHtml</span>
+    <span class="hljs-function">plug</span> <span onmouseout="hideTip(event, 'fs11', 17)" onmouseover="showTip(event, 'fs11', 17)" class="hljs-function">putSecureBrowserHeaders</span>
+    <span class="hljs-function">plug</span> <span onmouseout="hideTip(event, 'fs12', 18)" onmouseover="showTip(event, 'fs12', 18)" class="hljs-function">fetchSession</span>
+    <span class="hljs-function">set_header</span> <span class="hljs-string">&quot;x-pipeline-type&quot;</span> <span class="hljs-string">&quot;Browser&quot;</span>
+<span class="hljs-keyword">}</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs13', 19)" onmouseover="showTip(event, 'fs13', 19)" class="hljs-function">defaultView</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 20)" onmouseover="showTip(event, 'fs14', 20)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs15', 21)" onmouseover="showTip(event, 'fs15', 21)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs16', 22)" onmouseover="showTip(event, 'fs16', 22)" class="hljs-function">htmlView</span> <span onmouseout="hideTip(event, 'fs17', 23)" onmouseover="showTip(event, 'fs17', 23)" class="hljs-function">Index</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs2', 24)" onmouseover="showTip(event, 'fs2', 24)" class="hljs-function">layout</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs15', 25)" onmouseover="showTip(event, 'fs15', 25)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/index.html&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs18', 26)" onmouseover="showTip(event, 'fs18', 26)" class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs15', 27)" onmouseover="showTip(event, 'fs15', 27)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/default.html&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs18', 28)" onmouseover="showTip(event, 'fs18', 28)" class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+<span class="hljs-keyword">}</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs19', 29)" onmouseover="showTip(event, 'fs19', 29)" class="hljs-function">browserRouter</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 30)" onmouseover="showTip(event, 'fs14', 30)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs20', 31)" onmouseover="showTip(event, 'fs20', 31)" class="hljs-keyword">not_found_handler</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs16', 32)" onmouseover="showTip(event, 'fs16', 32)" class="hljs-function">htmlView</span> <span onmouseout="hideTip(event, 'fs21', 33)" onmouseover="showTip(event, 'fs21', 33)" class="hljs-function">NotFound</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs2', 34)" onmouseover="showTip(event, 'fs2', 34)" class="hljs-function">layout</span><span class="hljs-keyword">)</span> <span class="hljs-comment">//Use the default 404 webpage</span>
+    <span onmouseout="hideTip(event, 'fs22', 35)" onmouseover="showTip(event, 'fs22', 35)" class="hljs-keyword">pipe_through</span> <span onmouseout="hideTip(event, 'fs8', 36)" onmouseover="showTip(event, 'fs8', 36)" class="hljs-function">browser</span> <span class="hljs-comment">//Use the default browser pipeline</span>
+
+    <span onmouseout="hideTip(event, 'fs23', 37)" onmouseover="showTip(event, 'fs23', 37)" class="hljs-keyword">forward</span> <span class="hljs-string">&quot;&quot;</span> <span onmouseout="hideTip(event, 'fs13', 38)" onmouseover="showTip(event, 'fs13', 38)" class="hljs-function">defaultView</span> <span class="hljs-comment">//Use the default view</span>
+<span class="hljs-keyword">}</span>
+
+<span class="hljs-comment">//Other scopes may use different pipelines and error handlers</span>
+
+<span class="hljs-comment">// let api = pipeline {</span>
+<span class="hljs-comment">//     plug acceptJson</span>
+<span class="hljs-comment">//     set_header &quot;x-pipeline-type&quot; &quot;Api&quot;</span>
+<span class="hljs-comment">// }</span>
+
+<span class="hljs-comment">// let apiRouter = router {</span>
+<span class="hljs-comment">//     not_found_handler (setStatusCode 404 &gt;=&gt; text &quot;Api 404&quot;)</span>
+<span class="hljs-comment">//     pipe_through api</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">//     forward &quot;/someApi&quot; someScopeOrController</span>
+<span class="hljs-comment">// }</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs24', 39)" onmouseover="showTip(event, 'fs24', 39)" class="hljs-function">appRouter</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 40)" onmouseover="showTip(event, 'fs14', 40)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span class="hljs-comment">// forward &quot;/api&quot; apiRouter</span>
+    <span onmouseout="hideTip(event, 'fs23', 41)" onmouseover="showTip(event, 'fs23', 41)" class="hljs-keyword">forward</span> <span class="hljs-string">&quot;&quot;</span> <span onmouseout="hideTip(event, 'fs19', 42)" onmouseover="showTip(event, 'fs19', 42)" class="hljs-function">browserRouter</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>First, take a look at the <code>router</code> function.</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs25', 43)" onmouseover="showTip(event, 'fs25', 43)" class="hljs-function">appRouter&#39;</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 44)" onmouseover="showTip(event, 'fs14', 44)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs23', 45)" onmouseover="showTip(event, 'fs23', 45)" class="hljs-keyword">forward</span> <span class="hljs-string">&quot;&quot;</span> <span onmouseout="hideTip(event, 'fs19', 46)" onmouseover="showTip(event, 'fs19', 46)" class="hljs-function">browserRouter</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>The <code>appRouter</code> value is a <code>router</code>. Inside is the <code>forward "" browserRouter</code> line. The <code>forward</code> function needs a path and a router. In this case, the path is an empty string and the router is <code>browserRouter</code>. That means that the <code>browserRouter</code> router will handle the routes at the current location. Since <code>appRouter</code> is the first router called, the current location is the root of the application.</p>
+<p>Now let's look at <code>browserRouter</code>:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs26', 47)" onmouseover="showTip(event, 'fs26', 47)" class="hljs-function">browserRouter&#39;</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 48)" onmouseover="showTip(event, 'fs14', 48)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs20', 49)" onmouseover="showTip(event, 'fs20', 49)" class="hljs-keyword">not_found_handler</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs16', 50)" onmouseover="showTip(event, 'fs16', 50)" class="hljs-function">htmlView</span> <span onmouseout="hideTip(event, 'fs21', 51)" onmouseover="showTip(event, 'fs21', 51)" class="hljs-function">NotFound</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs2', 52)" onmouseover="showTip(event, 'fs2', 52)" class="hljs-function">layout</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs22', 53)" onmouseover="showTip(event, 'fs22', 53)" class="hljs-keyword">pipe_through</span> <span onmouseout="hideTip(event, 'fs8', 54)" onmouseover="showTip(event, 'fs8', 54)" class="hljs-function">browser</span>
+
+    <span onmouseout="hideTip(event, 'fs23', 55)" onmouseover="showTip(event, 'fs23', 55)" class="hljs-keyword">forward</span> <span class="hljs-string">&quot;&quot;</span> <span onmouseout="hideTip(event, 'fs13', 56)" onmouseover="showTip(event, 'fs13', 56)" class="hljs-function">defaultView</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>There are three lines. The first line, <code>not_found_handler (htmlView NotFound.layout)</code> tells <code>browserRouter</code> to display a not found page if the user enters a route that the application does not handle. The second line tells the application to use the <code>browser</code> pipeline defined above. The pipeline is a list of settings on how the website will deliver the pages. Lastly, <code>forward "" defaultView</code> is like <code>forward "" browserRouter</code> from the <code>appRouter</code>. Again, <code>browserRouter</code> does not contain any routes but it tells the <code>defaultView</code> router to handle them. Finally, we get to the part where the application is told how to handle the routes. Inside <code>defaultView</code>, we created 3 routes:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs27', 57)" onmouseover="showTip(event, 'fs27', 57)" class="hljs-function">defaultView&#39;</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 58)" onmouseover="showTip(event, 'fs14', 58)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs15', 59)" onmouseover="showTip(event, 'fs15', 59)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs16', 60)" onmouseover="showTip(event, 'fs16', 60)" class="hljs-function">htmlView</span> <span onmouseout="hideTip(event, 'fs17', 61)" onmouseover="showTip(event, 'fs17', 61)" class="hljs-function">Index</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs2', 62)" onmouseover="showTip(event, 'fs2', 62)" class="hljs-function">layout</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs15', 63)" onmouseover="showTip(event, 'fs15', 63)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/index.html&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs18', 64)" onmouseover="showTip(event, 'fs18', 64)" class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs15', 65)" onmouseover="showTip(event, 'fs15', 65)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/default.html&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs18', 66)" onmouseover="showTip(event, 'fs18', 66)" class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>Here, we see that <code>get</code> is used to define the routes. There are 3 routes here but 2 of them redirect to the first route. To illustrate, the routes are:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip"><code lang="bash">yoursite.com
+└── "" (router)
+    └── "" (browserRouter)
+        └── "" (defaultView)
+            ├── "/"                 -yoursite.com/
+            ├── "/index.html"       -redirect to yoursite.com/
+            └── "/default.html"     -redirect to yoursite.com/
+</code></pre></td></tr></table>
+<p>Looking at the first line inside <code>defaultView</code>, <code>get "/" (htmlView Index.layout)</code> tells the application to display <code>Index.layout</code> at the root of the application. The <code>get</code> corresponds to the HTTP verb GET so when you type in a link, the browser tries to GET the page. The first parameter of <code>get</code> is "/", so basically when getting the root, the <code>get</code> function will return something. The second parameter is <code>(htmlView Index.layout)</code> so the <code>get</code> function returns an HTML page specified by Index.layout. The second and third line have <code>(redirectTo false "/")</code>, telling the application to go to "yoursite.com/" when going to "yoursite.com/index" or "yoursite.com/default"</p>
+<h2>Best Practices</h2>
+<p>You can combine all 3 routers into one router like so:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs28', 67)" onmouseover="showTip(event, 'fs28', 67)" class="hljs-function">appRouter&#39;&#39;</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 68)" onmouseover="showTip(event, 'fs14', 68)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs20', 69)" onmouseover="showTip(event, 'fs20', 69)" class="hljs-keyword">not_found_handler</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs16', 70)" onmouseover="showTip(event, 'fs16', 70)" class="hljs-function">htmlView</span> <span onmouseout="hideTip(event, 'fs21', 71)" onmouseover="showTip(event, 'fs21', 71)" class="hljs-function">NotFound</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs2', 72)" onmouseover="showTip(event, 'fs2', 72)" class="hljs-function">layout</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs22', 73)" onmouseover="showTip(event, 'fs22', 73)" class="hljs-keyword">pipe_through</span> <span onmouseout="hideTip(event, 'fs8', 74)" onmouseover="showTip(event, 'fs8', 74)" class="hljs-function">browser</span>
+
+    <span onmouseout="hideTip(event, 'fs15', 75)" onmouseover="showTip(event, 'fs15', 75)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs16', 76)" onmouseover="showTip(event, 'fs16', 76)" class="hljs-function">htmlView</span> <span onmouseout="hideTip(event, 'fs17', 77)" onmouseover="showTip(event, 'fs17', 77)" class="hljs-function">Index</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs2', 78)" onmouseover="showTip(event, 'fs2', 78)" class="hljs-function">layout</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs15', 79)" onmouseover="showTip(event, 'fs15', 79)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/index.html&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs18', 80)" onmouseover="showTip(event, 'fs18', 80)" class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs15', 81)" onmouseover="showTip(event, 'fs15', 81)" class="hljs-keyword">get</span> <span class="hljs-string">&quot;/default.html&quot;</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs18', 82)" onmouseover="showTip(event, 'fs18', 82)" class="hljs-function">redirectTo</span> <span class="hljs-keyword">false</span> <span class="hljs-string">&quot;/&quot;</span><span class="hljs-keyword">)</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>The template splits them into 3 to encourage good practices. In the first router, you can see the commented out code <code>forward "/api" apiRouter</code>. This is a good suggestion in the template to have a separate router to handle your API routes. We set up how to deliever the webpage with <code>pipe_through browser</code> in <code>browserRouter</code>. The settings are important for a browser to know how to handle your routes but not for a different application to access your routes as an API.</p>
+<p>The template provides an example of how to set up the API routes in the commented out code, which I copied below:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs29', 83)" onmouseover="showTip(event, 'fs29', 83)" class="hljs-function">api</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs9', 84)" onmouseover="showTip(event, 'fs9', 84)" class="hljs-keyword">pipeline</span> <span class="hljs-keyword">{</span>
+    <span class="hljs-function">plug</span> <span onmouseout="hideTip(event, 'fs30', 85)" onmouseover="showTip(event, 'fs30', 85)" class="hljs-function">acceptJson</span>
+    <span class="hljs-function">set_header</span> <span class="hljs-string">&quot;x-pipeline-type&quot;</span> <span class="hljs-string">&quot;Api&quot;</span>
+<span class="hljs-keyword">}</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs31', 86)" onmouseover="showTip(event, 'fs31', 86)" class="hljs-function">apiRouter</span> <span class="hljs-keyword">=</span> <span onmouseout="hideTip(event, 'fs14', 87)" onmouseover="showTip(event, 'fs14', 87)" class="hljs-keyword">router</span> <span class="hljs-keyword">{</span>
+    <span onmouseout="hideTip(event, 'fs20', 88)" onmouseover="showTip(event, 'fs20', 88)" class="hljs-keyword">not_found_handler</span> <span class="hljs-keyword">(</span><span onmouseout="hideTip(event, 'fs32', 89)" onmouseover="showTip(event, 'fs32', 89)" class="hljs-function">setStatusCode</span> <span class="hljs-number">404</span> <span class="hljs-keyword">&gt;</span><span class="hljs-keyword">=&gt;</span> <span onmouseout="hideTip(event, 'fs33', 90)" onmouseover="showTip(event, 'fs33', 90)" class="hljs-function">text</span> <span class="hljs-string">&quot;Api 404&quot;</span><span class="hljs-keyword">)</span>
+    <span onmouseout="hideTip(event, 'fs22', 91)" onmouseover="showTip(event, 'fs22', 91)" class="hljs-keyword">pipe_through</span> <span onmouseout="hideTip(event, 'fs29', 92)" onmouseover="showTip(event, 'fs29', 92)" class="hljs-function">api</span>
+
+    <span onmouseout="hideTip(event, 'fs23', 93)" onmouseover="showTip(event, 'fs23', 93)" class="hljs-keyword">forward</span> <span class="hljs-string">&quot;/someApi&quot;</span> <span onmouseout="hideTip(event, 'fs34', 94)" onmouseover="showTip(event, 'fs34', 94)" class="hljs-function">someScopeOrController</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<p>Here we have the <code>apiRouter</code> router which does not return a 404 page but a 404 text instead which is appropriate for an API. The router also uses a pipeline that is more appropriate for an API such as accepting JSON inputs instead of HTML as in the <code>browser</code> pipeline.</p>
+<h2>Format Strings</h2>
+<p>You might be wondering how to make routes that accept a numerical ID. You can make multiple routes for each ID like so</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-function">get</span> <span class="hljs-string">&quot;/1&quot;</span> <span class="hljs-keyword">(</span><span class="hljs-function">getApplication</span> <span class="hljs-number">1</span><span class="hljs-keyword">)</span>
+<span class="hljs-function">get</span> <span class="hljs-string">&quot;/2&quot;</span> <span class="hljs-keyword">(</span><span class="hljs-function">getApplication</span> <span class="hljs-number">2</span><span class="hljs-keyword">)</span>
+<span class="hljs-function">get</span> <span class="hljs-string">&quot;/3&quot;</span> <span class="hljs-keyword">(</span><span class="hljs-function">getApplication</span> <span class="hljs-number">3</span><span class="hljs-keyword">)</span>
+<span class="hljs-keyword">..</span><span class="hljs-keyword">.</span>
+</code></pre>
+<p>But this is impracticle because there can be a large number of items or new items are constantly being created with new IDs. Instead the solution is to use format strings. Remember that in the <a href="../tutorials/adding-pages.html">Adding Pages Guide</a>, we used <code>getf "/%s" index2Action</code> to pass a string to page.</p>
+<table>
+<thead>
+<tr class="header">
+<th><p>Format Char</p></th>
+<th><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p><code>%b</code></p></td>
+<td><p><code>bool</code></p></td>
+</tr>
+<tr class="even">
+<td><p><code>%c</code></p></td>
+<td><p><code>char</code></p></td>
+</tr>
+<tr class="odd">
+<td><p><code>%s</code></p></td>
+<td><p><code>string</code></p></td>
+</tr>
+<tr class="even">
+<td><p><code>%i</code></p></td>
+<td><p><code>int</code></p></td>
+</tr>
+<tr class="odd">
+<td><p><code>%d</code></p></td>
+<td><p><code>int64</code></p></td>
+</tr>
+<tr class="even">
+<td><p><code>%f</code></p></td>
+<td><p><code>float</code>/<code>double</code></p></td>
+</tr>
+<tr class="odd">
+<td><p><code>%O</code></p></td>
+<td><p><code>Guid</code></p></td>
+</tr>
+</tbody>
+</table>
+
+<p>For a numerical ID, we want to pass an int which is <code>%i</code> in the list above, so you can replace the lines above with</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-function">getf</span> <span class="hljs-string">&quot;/%i&quot;</span> <span class="hljs-function">getApplication</span>
+</code></pre>
+<p>Notice that <code>getf</code> is used instead of get. This is a separate version of get that handles <code>f</code>ormat characters.</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-function">You</span> <span class="hljs-function">can</span> <span class="hljs-keyword">use</span> <span class="hljs-function">format</span> <span class="hljs-function">strings</span> <span class="hljs-keyword">with</span> <span class="hljs-string">&quot;forward&quot;</span> <span class="hljs-function">too</span> <span class="hljs-function">by</span> <span onmouseout="hideTip(event, 'fs35', 95)" onmouseover="showTip(event, 'fs35', 95)" class="hljs-function">using</span> <span class="hljs-string">&quot;forwardf&quot;</span>
+</code></pre>
+<h2>API Reference</h2>
+<p>Full API reference for <code>router</code> CE can be found <a href="../reference/Saturn/saturn-router-routerbuilder.html">here</a></p>
+<div class="tip" id="fs1">namespace Giraffe</div>
+<div class="tip" id="fs2">val layout : obj</div>
+<div class="tip" id="fs3">val someScopeOrController : (Giraffe.Core.HttpFunc -&gt; AspNetCore.Http.HttpContext -&gt; Giraffe.Core.HttpFuncResult)</div>
+<div class="tip" id="fs4">module ResponseWriters<br /><br />from Giraffe</div>
+<div class="tip" id="fs5">val text : str:string -&gt; Giraffe.Core.HttpHandler</div>
+<div class="tip" id="fs6">namespace Saturn</div>
+<div class="tip" id="fs7">module Core<br /><br />from Giraffe</div>
+<div class="tip" id="fs8">val browser : HttpHandler</div>
+<div class="tip" id="fs9">val pipeline : PipelineBuilder</div>
+<div class="tip" id="fs10">val acceptHtml : HttpHandler</div>
+<div class="tip" id="fs11">val putSecureBrowserHeaders : HttpHandler</div>
+<div class="tip" id="fs12">val fetchSession : nxt:HttpFunc -&gt; ctx:AspNetCore.Http.HttpContext -&gt; HttpFuncResult</div>
+<div class="tip" id="fs13">val defaultView : HttpHandler</div>
+<div class="tip" id="fs14">val router : RouterBuilder</div>
+<div class="tip" id="fs15">custom operation: get (string) (HttpHandler)<br /><br />Calls RouterBuilder.Get</div>
+<div class="tip" id="fs16"></div>
+<div class="tip" id="fs17">Multiple items<br />union case Action.Index: Action<br /><br />--------------------<br />module Index<br /><br />from Routing</div>
+<div class="tip" id="fs18">val redirectTo : permanent:bool -&gt; location:string -&gt; next:HttpFunc -&gt; ctx:AspNetCore.Http.HttpContext -&gt; HttpFuncResult</div>
+<div class="tip" id="fs19">val browserRouter : HttpHandler</div>
+<div class="tip" id="fs20">custom operation: not_found_handler (HttpHandler)<br /><br />Calls RouterBuilder.NotFoundHandler</div>
+<div class="tip" id="fs21">module NotFound<br /><br />from Routing</div>
+<div class="tip" id="fs22">custom operation: pipe_through (HttpHandler)<br /><br />Calls RouterBuilder.PipeThrough</div>
+<div class="tip" id="fs23">custom operation: forward (string) (HttpHandler)<br /><br />Calls RouterBuilder.Forward</div>
+<div class="tip" id="fs24">val appRouter : HttpHandler</div>
+<div class="tip" id="fs25">val appRouter&#39; : HttpHandler</div>
+<div class="tip" id="fs26">val browserRouter&#39; : HttpHandler</div>
+<div class="tip" id="fs27">val defaultView&#39; : HttpHandler</div>
+<div class="tip" id="fs28">val appRouter&#39;&#39; : HttpHandler</div>
+<div class="tip" id="fs29">val api : HttpHandler</div>
+<div class="tip" id="fs30">val acceptJson : HttpHandler</div>
+<div class="tip" id="fs31">val apiRouter : HttpHandler</div>
+<div class="tip" id="fs32">val setStatusCode : statusCode:int -&gt; next:HttpFunc -&gt; ctx:AspNetCore.Http.HttpContext -&gt; HttpFuncResult</div>
+<div class="tip" id="fs33">val text : str:string -&gt; HttpHandler</div>
+<div class="tip" id="fs34">val someScopeOrController : (HttpFunc -&gt; AspNetCore.Http.HttpContext -&gt; HttpFuncResult)</div>
+<div class="tip" id="fs35">val using : resource:&#39;T -&gt; action:(&#39;T -&gt; &#39;U) -&gt; &#39;U (requires &#39;T :&gt; System.IDisposable)</div>
+
+
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

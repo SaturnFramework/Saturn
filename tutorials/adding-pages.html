@@ -1,0 +1,343 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | Adding Pages
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="active-link padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <h1>Adding Pages</h1>
+<p>This guide uses the same project from the <a href="how-to-start.html">how to start guide</a>. Let's add two pages to it - one hello page and a page that can get your name from the URL.</p>
+<h2>Creating the View</h2>
+<p>To begin, create a <code>Hello</code> folder inside the <code>src/SaturnSample</code> folder.</p>
+<p>Inside the folder, create a new file called "HelloViews.fs". This file will contain the functions to create the page.</p>
+<p>Insert the following into the file:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">namespace</span> <span class="hljs-function">Hello</span>
+
+<span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+<span class="hljs-keyword">open</span> <span class="hljs-function">Saturn</span>
+
+<span class="hljs-keyword">module</span> <span class="hljs-function">Views</span> <span class="hljs-keyword">=</span>
+  <span class="hljs-keyword">let</span> <span class="hljs-function">index</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">h2</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-function">rawText</span> <span class="hljs-string">&quot;Hello from Saturn!&quot;</span><span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>One of the dependencies required is <a href="https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md#giraffe-view-engine">Giraffe View Engine</a>. This will allow your project to define HTML within your function. The <code>index</code> function will result in the following HTML code:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="html"><span class="k">&lt;</span><span class="i">div</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">h2</span><span class="k">&gt;</span>Hello from Saturn!<span class="k">&lt;/</span><span class="i">h2</span><span class="k">&gt;</span>
+<span class="k">&lt;/</span><span class="i">div</span><span class="k">&gt;</span>
+</code></pre></td></tr></table>
+<h2>Creating the Controller</h2>
+<p>Create a <code>HelloController.fs</code> file inside the <code>Hello</code> folder.</p>
+<p>The <code>index</code> function tells us what the HTML will be but we still need to tell Saturn to return it as an HTML page. We also need to tell Saturn where the page is.</p>
+<p>Insert the following into the file:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">namespace</span> <span class="hljs-function">Hello</span>
+
+<span class="hljs-keyword">open</span> <span class="hljs-function">Saturn</span>
+<span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">ResponseWriters</span>
+
+<span class="hljs-keyword">module</span> <span class="hljs-function">Controller</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-keyword">let</span> <span class="hljs-function">indexAction</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">htmlView</span> <span class="hljs-keyword">(</span><span class="hljs-function">Views</span><span class="hljs-keyword">.</span><span class="hljs-function">index</span><span class="hljs-keyword">)</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">helloView</span> <span class="hljs-keyword">=</span> <span class="hljs-function">router</span> <span class="hljs-keyword">{</span>
+        <span class="hljs-function">get</span> <span class="hljs-string">&quot;/&quot;</span> <span class="hljs-function">indexAction</span>
+    <span class="hljs-keyword">}</span>
+</code></pre>
+<p>The <code>indexAction</code> tells Saturn to create an HTML page using the <code>index</code> function inside "HelloViews.fs"</p>
+<p><code>helloView</code> lets Saturn know that the page is located at the root.</p>
+<h2>Adding the 2 new files to the project</h2>
+<p>For the project to see the new files, modify SaturnSample.fsproj as below:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="xml"><span class="k">&lt;</span><span class="i">ItemGroup</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">Compile</span> <span class="o">Include</span><span class="k">="Database.fs"</span> <span class="k">/&gt;</span>
+    <span class="k">&lt;</span><span class="i">Compile</span> <span class="o">Include</span><span class="k">="Config.fs"</span> <span class="k">/&gt;</span>
+
+    <span class="k">&lt;</span><span class="i">Compile</span> <span class="o">Include</span><span class="k">="Hello\HelloViews.fs"</span> <span class="k">/&gt;</span>
+    <span class="k">&lt;</span><span class="i">Compile</span> <span class="o">Include</span><span class="k">="Hello\HelloController.fs"</span> <span class="k">/&gt;</span>
+    ...
+</code></pre></td></tr></table>
+<h2>Adding it to Router.fs</h2>
+<p>After setting up the route, you need to update the project with the new route.</p>
+<p>In "Router.fs", add the following to the inside of the <code>browserRouter</code> function:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-function">forward</span> <span class="hljs-string">&quot;/hello&quot;</span> <span class="hljs-function">Hello</span><span class="hljs-keyword">.</span><span class="hljs-function">Controller</span><span class="hljs-keyword">.</span><span class="hljs-function">helloView</span>
+</code></pre>
+<p>This means that when we navigate to <a href="http://localhost:8085/hello"><a href="http://localhost:8085/hello">http://localhost:8085/hello</a></a>, the <code>helloView</code> function will determine what page to load there. Looking inside the <code>helloView</code> function, we said that <code>indexAction</code> is called at the root. In conclusion, the page will be located at <a href="http://localhost:8085/hello/"><a href="http://localhost:8085/hello/">http://localhost:8085/hello/</a></a>. (Note the "/" at the end)</p>
+<p>Now run the program and go to <a href="http://localhost:8085/hello/"><a href="http://localhost:8085/hello/">http://localhost:8085/hello/</a></a> and you will see a page saying "Hello from Saturn!"</p>
+<h2>Sending a parameter to your page</h2>
+<p>What if you want the page to display your name?</p>
+<p>One way to retrieve your name is to get it from the route. So when you go to <a href="http://localhost:8085/hello/{yourname}"><a href="http://localhost:8085/hello/{yourname}">http://localhost:8085/hello/{yourname}</a></a> with {yourname} being your actual name, it will grab your name which can then be used to display on the page.</p>
+<p>To begin, add a new view in your <code>HelloViews.fs</code>:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp">  <span class="hljs-keyword">let</span> <span class="hljs-function">index2</span> <span class="hljs-keyword">(</span><span class="hljs-function">name</span> <span class="hljs-keyword">:</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="hljs-function">string</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">h2</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-function">rawText</span> <span class="hljs-keyword">(</span><span class="hljs-string">&quot;Hello &quot;</span> <span class="hljs-keyword">+</span> <span class="hljs-function">name</span> <span class="hljs-keyword">+</span> <span class="hljs-string">&quot;!&quot;</span><span class="hljs-keyword">)</span><span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>This function requires passing in the name to be displayed. The name will be retrieved from the route.</p>
+<p>Add the following to the <code>HelloController.fs</code> file below the <code>helloView</code> handler:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span class="hljs-function">index2Action</span> <span class="hljs-function">name</span><span class="hljs-keyword">=</span>
+    <span class="hljs-function">htmlView</span> <span class="hljs-keyword">(</span><span class="hljs-function">Hello</span><span class="hljs-keyword">.</span><span class="hljs-function">Views</span><span class="hljs-keyword">.</span><span class="hljs-function">index2</span> <span class="hljs-function">name</span><span class="hljs-keyword">)</span>
+</code></pre>
+<p>Now to set up the route. Add the following to the <code>HelloView</code> handler:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-function">getf</span> <span class="hljs-string">&quot;/%s&quot;</span> <span class="hljs-function">index2Action</span>
+</code></pre>
+<p>"%s" is a format string. This lets Saturn know to save whatever you type in that spot. Since we want to save a name, we want to save it as a string so we use <code>%s</code>.</p>
+<p>There are other format strings for different types:</p>
+<table>
+<thead>
+<tr class="header">
+<th><p>Format String</p></th>
+<th><p>Type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p><code>%b</code></p></td>
+<td><p><code>bool</code></p></td>
+</tr>
+<tr class="even">
+<td><p><code>%c</code></p></td>
+<td><p><code>char</code></p></td>
+</tr>
+<tr class="odd">
+<td><p><code>%s</code></p></td>
+<td><p><code>string</code></p></td>
+</tr>
+<tr class="even">
+<td><p><code>%i</code></p></td>
+<td><p><code>int</code></p></td>
+</tr>
+<tr class="odd">
+<td><p><code>%d</code></p></td>
+<td><p><code>int64</code></p></td>
+</tr>
+<tr class="even">
+<td><p><code>%f</code></p></td>
+<td><p><code>float</code>/<code>double</code></p></td>
+</tr>
+<tr class="odd">
+<td><p><code>%O</code></p></td>
+<td><p><code>Guid</code></p></td>
+</tr>
+</tbody>
+</table>
+
+<p>Now run the program and go to <a href="http://localhost:8085/hello/{yourname}"><a href="http://localhost:8085/hello/{yourname}">http://localhost:8085/hello/{yourname}</a></a> and replace <code>{yourname}</code> with your name to see a page that will greet you.</p>
+<div class="tip" id="fs1">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />--------------------<br />type string = System.String</div>
+
+
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

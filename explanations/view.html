@@ -1,0 +1,576 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | View Engine
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="active-link padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <h1>View Engine</h1>
+<blockquote>
+<p>This post has been originally part of the <a href="https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md#giraffe-view-engine">Giraffe documentation</a></p>
+</blockquote>
+<p>Saturn is built on top of Giraffe and can use any helpers it provides. This is a case for suggested view engine that you can use in Saturn - Giraffe has its own functional view engine which can be used to build rich UIs for web applications. The single biggest and best contrast to other view engines (e.g. Razor, Liquid, etc.) is that the Giraffe View Engine is entirely functional written in normal (and compiled) F# code.</p>
+<p>This means that the Giraffe View Engine is by definition one of the most feature rich view engines available, requires no disk IO to load a view and views are automatically compiled at build time.</p>
+<p>The Giraffe View Engine uses traditional functions and F# record types to generate rich HTML/XML views.</p>
+<h3>HTML Elements and Attributes</h3>
+<p>HTML elements and attributes are defined as F# objects:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="hljs-function">indexView</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">html</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">head</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">title</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;Giraffe Sample&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+        <span class="hljs-function">body</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">h1</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;I |&gt; F#&quot;</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-function">p</span> <span class="hljs-keyword">[</span> <span class="hljs-function">_class</span> <span class="hljs-string">&quot;some-css-class&quot;</span><span class="hljs-keyword">;</span> <span class="hljs-function">_id</span> <span class="hljs-string">&quot;someId&quot;</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">str</span> <span class="hljs-string">&quot;Hello World&quot;</span>
+            <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>A HTML element can either be a <code>ParentNode</code>, a <code>VoidElement</code> or a <code>Text</code> element.</p>
+<p>For example the <code>&lt;html&gt;</code> or <code>&lt;div&gt;</code> tags are typical <code>ParentNode</code> elements. They can hold an <code>XmlAttribute list</code> and a second <code>XmlElement list</code> for their child elements:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="hljs-function">someHtml</span> <span class="hljs-keyword">=</span> <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span>
+</code></pre>
+<p>All <code>ParentNode</code> elements accept these two parameters:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 3)" onmouseover="showTip(event, 'fs2', 3)" class="hljs-function">someHtml</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span> <span class="hljs-function">_id</span> <span class="hljs-string">&quot;someId&quot;</span><span class="hljs-keyword">;</span> <span class="hljs-function">_class</span> <span class="hljs-string">&quot;css-class&quot;</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">a</span> <span class="hljs-keyword">[</span> <span class="hljs-function">_href</span> <span class="hljs-string">&quot;https://example.org&quot;</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;Some text...&quot;</span> <span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>Most HTML tags are <code>ParentNode</code> elements, however there is a few HTML tags which cannot hold any child elements, such as <code>&lt;br&gt;</code>, <code>&lt;hr&gt;</code> or <code>&lt;meta&gt;</code> tags. These are represented as <code>VoidElement</code> objects and only accept the <code>XmlAttribute list</code> as single parameter:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 4)" onmouseover="showTip(event, 'fs2', 4)" class="hljs-function">someHtml</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">br</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span>
+        <span class="hljs-function">hr</span> <span class="hljs-keyword">[</span> <span class="hljs-function">_class</span> <span class="hljs-string">&quot;css-class-for-hr&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;bla blah&quot;</span> <span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>Attributes are further classified into two different cases. First and most commonly there are <code>KeyValue</code> attributes:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-function">a</span> <span class="hljs-keyword">[</span>
+    <span class="hljs-function">_href</span> <span class="hljs-string">&quot;http://url.com&quot;</span>
+    <span class="hljs-function">_target</span> <span class="hljs-string">&quot;_blank&quot;</span>
+    <span class="hljs-function">_class</span> <span class="hljs-string">&quot;class1&quot;</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;Click here&quot;</span> <span class="hljs-keyword">]</span>
+</code></pre>
+<p>As the name suggests, they have a key, such as <code>class</code> and a value such as the name of a CSS class.</p>
+<p>The second category of attributes are <code>Boolean</code> flags. There are not many but some HTML attributes which do not require any value (e.g. <code>async</code> or <code>defer</code> in script tags). The presence of such an attribute means that the feature is turned on, otherwise it is turned off:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-function">script</span> <span class="hljs-keyword">[</span> <span class="hljs-function">_src</span> <span class="hljs-string">&quot;some.js&quot;</span><span class="hljs-keyword">;</span> <span class="hljs-function">_async</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span>
+</code></pre>
+<p>There's also a wealth of <a href="https://www.w3.org/TR/html-aria/">accessibility attributes</a> available under the <code>Giraffe.GiraffeViewEngine.Accessibility</code> module (needs to be explicitly opened).</p>
+<h3>Text Content</h3>
+<p>Naturally the most frequent content in any HTML document is pure text:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="html"><span class="k">&lt;</span><span class="i">div</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">h1</span><span class="k">&gt;</span>This is text content<span class="k">&lt;/</span><span class="i">h1</span><span class="k">&gt;</span>
+    <span class="k">&lt;</span><span class="i">p</span><span class="k">&gt;</span>This is even more text content!<span class="k">&lt;/</span><span class="i">p</span><span class="k">&gt;</span>
+<span class="k">&lt;/</span><span class="i">div</span><span class="k">&gt;</span>
+</code></pre></td></tr></table>
+<p>The Giraffe View Engine lets one create pure text content as a <code>Text</code> element. A <code>Text</code> element can either be generated via the <code>rawText</code> or <code>encodedText</code> (or the short alias <code>str</code>) functions:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="hljs-function">someHtml</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">rawText</span> <span class="hljs-string">&quot;&lt;div&gt;Hello World&lt;/div&gt;&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">encodedText</span> <span class="hljs-string">&quot;&lt;div&gt;Hello World&lt;/div&gt;&quot;</span> <span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>The <code>rawText</code> function will create an object of type <code>XmlNode</code> where the content will be rendered in its original form and the <code>encodedText</code>/<code>str</code> function will output a string where the content has been HTML encoded.</p>
+<p>In this example the first <code>p</code> element will literally output the string as it is (<code>&lt;div&gt;Hello World&lt;/div&gt;</code>) while the second <code>p</code> element will output the value as HTML encoded string <code>&amp;lt;div&amp;gt;Hello World&amp;lt;/div&amp;gt;</code>.</p>
+<p>Please be aware that the the usage of <code>rawText</code> is mainly designed for edge cases where someone would purposefully want to inject HTML (or JavaScript) code into a rendered view. If not used carefully this could potentially lead to serious security vulnerabilities and therefore should be used only when explicitly required.</p>
+<p>Most cases and particularly any user provided content should always be output via the <code>encodedText</code>/<code>str</code> function.</p>
+<h3>Javascript event handlers</h3>
+<p>It is possible to add JavaScript event handlers to HTML elements using the Giraffe View Engine.  These event handlers (all prefixed with names starting with <code>_on</code>, for example <code>_onclick</code>, <code>_onmouseover</code>) can either execute inline JavaScript code or can invoke functions that are part of the <code>window</code> scope.</p>
+<p>This example illustrates how inline JavaScript could be used to log to the console when a button is clicked:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span class="hljs-function">inlineJSButton</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">button</span> <span class="hljs-keyword">[</span><span class="hljs-function">_id</span> <span class="hljs-string">&quot;inline-js&quot;</span>
+            <span class="hljs-function">_onclick</span> <span class="hljs-string">&quot;console.log(\&quot;Hello from the &#39;inline-js&#39; button!\&quot;);&quot;</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-function">str</span> <span class="hljs-string">&quot;Say Hello&quot;</span> <span class="hljs-keyword">]</span>
+</code></pre>
+<p>There are some caveats with this approach, namely that
+<em> it is not very scalable to write JavaScript inline in this manner, and more pressing
+</em> the Giraffe View Engine HTML-encodes the text provided to the <code>_onX</code> attributes.</p>
+<p>To get around this, you can write dedicated scripts in your HTML and reference the functions from your event handlers:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span class="hljs-function">page</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">script</span> <span class="hljs-keyword">[</span><span class="hljs-function">_type</span> <span class="hljs-string">&quot;application/javascript&quot;</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">rawText</span> <span class="hljs-string">&quot;&quot;&quot;</span>
+<span class="hljs-string">            window.greet = function () {</span>
+<span class="hljs-string">                console.log(&quot;ping from the greet method&quot;);</span>
+<span class="hljs-string">            }</span>
+<span class="hljs-string">            &quot;&quot;&quot;</span>
+        <span class="hljs-keyword">]</span>
+        <span class="hljs-function">button</span> <span class="hljs-keyword">[</span><span class="hljs-function">_id</span> <span class="hljs-string">&quot;script-tag-js&quot;</span>
+                <span class="hljs-function">_onclick</span> <span class="hljs-string">&quot;greet();&quot;</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-function">str</span> <span class="hljs-string">&quot;Say Hello&quot;</span><span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>Here it's important to note that we've included the text of our script using the <code>rawText</code> tag.  This ensures that our text is not encoded by Giraffe so that it remains as we have written it.</p>
+<p>However, writing large quantities of JavaScript in this manner can be difficult, because you don't have access to the large ecosystem of javascript editor tooling.  In this case you should write your functions in another script and use a <code>script</code> tag element to reference your script, then add the desired function to your HTML element's event handler.</p>
+<p>Say you had a JavaScript file named <code>greet.js</code> and had configured Giraffe to serve that script from the WebRoot. Let us also say that the content of that script was:</p>
+<table class="pre"><tr><td class="snippet"><pre class="fssnip highlighted"><code lang="javascript"><span class="k">function</span> greet() {
+    console.log(<span class="s">"Hello from the greet function of greet.js!"</span>);
+}
+</code></pre></td></tr></table>
+<p>Then, you could reference that javascript via a script element, and use <code>greet</code> in your event handler like so:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span class="hljs-function">page</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">html</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">head</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">script</span> <span class="hljs-keyword">[</span><span class="hljs-function">_type</span> <span class="hljs-string">&quot;application/javascript&quot;</span>
+                    <span class="hljs-function">_src</span> <span class="hljs-string">&quot;/greet.js&quot;</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-comment">// include our `greet.js` function dynamically</span>
+        <span class="hljs-keyword">]</span>
+        <span class="hljs-function">body</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">button</span> <span class="hljs-keyword">[</span><span class="hljs-function">_id</span> <span class="hljs-string">&quot;greet-btn&quot;</span>
+                    <span class="hljs-function">_onclick</span> <span class="hljs-string">&quot;greet()&quot;</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-comment">// use the `greet()` function from `greet.js` to say hello</span>
+        <span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>In this way, you can write <code>greet.js</code> with all of your expected tooling, and still hook up the event handlers all in one place in Giraffe.</p>
+<h3>Naming Convention</h3>
+<p>The Giraffe View Engine has a naming convention which lets you easily determine the correct function name without having to know anything about the view engine's implementation.</p>
+<p>All HTML tags are defined as <code>XmlNode</code> elements under the exact same name as they are named in HTML. For example the <code>&lt;html&gt;</code> tag would be <code>html [] []</code>, an <code>&lt;a&gt;</code> tag would be <code>a [] []</code> and a <code>&lt;span&gt;</code> or <code>&lt;canvas&gt;</code> would be the <code>span [] []</code> or <code>canvas [] []</code> function.</p>
+<p>HTML attributes follow the same naming convention except that attributes have an underscore prepended. For example the <code>class</code> attribute would be <code>_class</code> and the <code>src</code> attribute would be <code>_src</code> in Giraffe.</p>
+<p>The underscore does not only help to distinguish an attribute from an element, but also avoid a naming conflict between tags and attributes of the same name (e.g. <code>&lt;form&gt;</code> vs. <code>&lt;input form="form1"&gt;</code>).</p>
+<p>If a HTML attribute has a hyphen in the name (e.g. <code>accept-charset</code>) then the equivalent Giraffe attribute would be written in camel case notion (e.g. <code>acceptCharset</code>).</p>
+<p><em>Should you find a HTML tag or attribute missing in the Giraffe View Engine then you can either <a href="#custom-elements-and-attributes">create it yourself</a> or send a <a href="https://github.com/giraffe-fsharp/Giraffe/pulls">pull request on GitHub</a>.</em></p>
+<h3>View Engine Best Practices</h3>
+<p>Due to the huge amount of available HTML tags and their fairly generic (and short) names (e.g. <code>&lt;form&gt;</code>, <code>&lt;option&gt;</code>, <code>&lt;select&gt;</code>, etc.) there is a significant danger of accidentally overriding a function of the same name in an application's codebase. For that reason the Giraffe View Engine becomes only available after opening the <code>GiraffeViewEngine</code> module.</p>
+<p>As a measure of good practice it is recommended to create all views in a separate module:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">module</span> <span class="hljs-function">MyWebApplication</span>
+
+<span class="hljs-keyword">module</span> <span class="hljs-function">Views</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">index</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">html</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">head</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">title</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;Giraffe Sample&quot;</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-keyword">]</span>
+            <span class="hljs-function">body</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">h1</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;I |&gt; F#&quot;</span> <span class="hljs-keyword">]</span>
+                <span class="hljs-function">p</span> <span class="hljs-keyword">[</span> <span class="hljs-function">_class</span> <span class="hljs-string">&quot;some-css-class&quot;</span><span class="hljs-keyword">;</span> <span class="hljs-function">_id</span> <span class="hljs-string">&quot;someId&quot;</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                    <span class="hljs-function">str</span> <span class="hljs-string">&quot;Hello World&quot;</span>
+                <span class="hljs-keyword">]</span>
+            <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">other</span> <span class="hljs-keyword">=</span> <span class="hljs-comment">//...</span>
+</code></pre>
+<p>This ensures that the opening of the <code>GiraffeViewEngine</code> is only contained in a small context of an application's codebase and therefore less of a threat to accidental overrides. In the above example views can always be accessed through the <code>Views</code> sub module (e.g. <code>Views.index</code>).</p>
+<h3>Custom Elements and Attributes</h3>
+<p>Adding new elements or attributes is normally as simple as a single line of code:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+
+<span class="hljs-comment">// If there was a new &lt;foo&gt;&lt;/foo&gt; HTML element:</span>
+<span class="hljs-keyword">let</span> <span class="hljs-function">foo</span> <span class="hljs-keyword">=</span> <span class="hljs-function">tag</span> <span class="hljs-string">&quot;foo&quot;</span>
+
+<span class="hljs-comment">// If &lt;foo&gt; is an element which cannot hold any content then create it as voidTag:</span>
+<span class="hljs-keyword">let</span> <span class="hljs-function">foo</span> <span class="hljs-keyword">=</span> <span class="hljs-function">voidTag</span> <span class="hljs-string">&quot;foo&quot;</span>
+
+<span class="hljs-comment">// If &lt;foo&gt; has a new attribute called bar then create a new bar attribute:</span>
+<span class="hljs-keyword">let</span> <span class="hljs-function">_bar</span> <span class="hljs-keyword">=</span> <span class="hljs-function">attr</span> <span class="hljs-string">&quot;bar&quot;</span>
+
+<span class="hljs-comment">// if the bar attribute is a boolean flag:</span>
+<span class="hljs-keyword">let</span> <span class="hljs-function">_bar</span> <span class="hljs-keyword">=</span> <span class="hljs-function">flag</span> <span class="hljs-string">&quot;bar&quot;</span>
+</code></pre>
+<p>Alternatively you can also create new elements and attributes from inside another element:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 6)" onmouseover="showTip(event, 'fs2', 6)" class="hljs-function">someHtml</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">tag</span> <span class="hljs-string">&quot;foo&quot;</span> <span class="hljs-keyword">[</span> <span class="hljs-function">attr</span> <span class="hljs-string">&quot;bar&quot;</span> <span class="hljs-string">&quot;blah&quot;</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">voidTag</span> <span class="hljs-string">&quot;otherFoo&quot;</span> <span class="hljs-keyword">[</span> <span class="hljs-function">flag</span> <span class="hljs-string">&quot;flag1&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<h3>Rendering Views</h3>
+<p>Rendering views in Giraffe is done through one of the following functions:</p>
+<ul>
+<li><code>renderHtmlDocument</code></li>
+<li><code>renderHtmlNodes</code></li>
+<li><code>renderHtmlNode</code></li>
+<li><code>renderXmlNodes</code></li>
+<li><code>renderXmlNode</code></li>
+</ul>
+<p>The Giraffe View Engine cannot only be used to render HTML views, but also for any other XML based content such as <code>&lt;svg&gt;</code> images or other arbitrary XML based data.</p>
+<p>The <code>renderHtmlDocument</code> function takes a single <code>XmlNode</code> as input parameter and renders a HTML page with a <code>DOCTYPE</code> declaration. This function should be used for rendering a complete HTML document. The <code>WriteHtmlViewAsync</code> extension method and the <code>htmlView</code> http handler both use the <code>renderHtmlDocument</code> function under the covers.</p>
+<p>The <code>renderHtmlNodes</code> function takes an <code>XmlNode list</code> as input parameter and will output a single HTML string containing all the rendered HTML code. The <code>renderHtmlNode</code> function renders a single <code>XmlNode</code> element into a valid HTML string. Both, the <code>renderHtmlNodes</code> and <code>renderHtmlNode</code> function are useful for use cases where a HTML snippet needs to be created without a <code>DOCTYPE</code> declaration (e.g. templated emails, etc.).</p>
+<p>The <code>renderXmlNodes</code> and <code>renderXmlNode</code> function are identical to <code>renderHtmlNodes</code> and <code>renderHtmlNode</code>, except that they will render void elements differently:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span class="hljs-function">someTag</span> <span class="hljs-keyword">=</span> <span class="hljs-function">voidTag</span> <span class="hljs-string">&quot;foo&quot;</span>
+<span class="hljs-keyword">let</span> <span class="hljs-function">someContent</span> <span class="hljs-keyword">=</span> <span class="hljs-function">someTag</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span>
+
+<span class="hljs-comment">// Void tag will be rendered to valid HTML: &lt;foo&gt;</span>
+<span class="hljs-keyword">let</span> <span class="hljs-function">output1</span> <span class="hljs-keyword">=</span> <span class="hljs-function">renderHtmlNode</span> <span class="hljs-function">someContent</span>
+
+<span class="hljs-comment">// Void tag will be rendered to valid XML: &lt;foo /&gt;</span>
+<span class="hljs-keyword">let</span> <span class="hljs-function">output2</span> <span class="hljs-keyword">=</span> <span class="hljs-function">renderXmlNode</span> <span class="hljs-function">someContent</span>
+</code></pre>
+<p>All <code>GiraffeViewEngine</code> http handlers are using a thread static <code>StringBuilderPool</code> to avoid the creation of large <code>StringBuilder</code> objects for each render call and dynamically grow/shrink that pool based on the application's needs. However if the application is running into any memory issues then this performance feature can be disabled by setting <code>StringBuilderPool.IsEnabled &lt;- false</code>.</p>
+<p>Additionally with Giraffe 3.0.0 or higher there is a new module called <code>ViewBuilder</code> under the <code>Giraffe.GiraffeViewEngine</code> namespace. This module exposes additional view rendering functions which compile a view into a <code>StringBuilder</code> object instead of returning a single <code>string</code>:</p>
+<ul>
+<li><code>ViewBuilder.buildHtmlDocument</code></li>
+<li><code>ViewBuilder.buildHtmlNodes</code></li>
+<li><code>ViewBuilder.buildHtmlNode</code></li>
+<li><code>ViewBuilder.buildXmlNodes</code></li>
+<li><code>ViewBuilder.buildXmlNode</code></li>
+</ul>
+<p>The <code>ViewBuilder.build[...]</code> functions can be useful if there is additional string processing required before/after composing a view by the <code>GiraffeViewEngine</code> (e.g. embedding HTML snippets in an email template, etc.). These functions also serve as the lower level building blocks of the equivalent <code>render[...]</code> functions.</p>
+<p>Example usage:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">open</span> <span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="hljs-function">System</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="hljs-function">Text</span>
+<span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 9)" onmouseover="showTip(event, 'fs2', 9)" class="hljs-function">someHtml</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">div</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-function">tag</span> <span class="hljs-string">&quot;foo&quot;</span> <span class="hljs-keyword">[</span> <span class="hljs-function">attr</span> <span class="hljs-string">&quot;bar&quot;</span> <span class="hljs-string">&quot;blah&quot;</span> <span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">voidTag</span> <span class="hljs-string">&quot;otherFoo&quot;</span> <span class="hljs-keyword">[</span> <span class="hljs-function">flag</span> <span class="hljs-string">&quot;flag1&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+    <span class="hljs-keyword">]</span>
+
+<span class="hljs-keyword">let</span> <span class="hljs-function">sb</span> <span class="hljs-keyword">=</span> <span class="hljs-keyword">new</span> <span class="hljs-function">StringBuilder</span><span class="hljs-keyword">(</span><span class="hljs-keyword">)</span>
+
+<span class="hljs-comment">// Perform actions on the `sb` object...</span>
+<span class="hljs-function">sb</span><span class="hljs-keyword">.</span><span class="hljs-function">AppendLine</span> <span class="hljs-string">&quot;This is a HTML snippet inside a markdown string:&quot;</span>
+  <span class="hljs-keyword">.</span><span class="hljs-function">AppendLine</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-keyword">.</span><span class="hljs-function">AppendLine</span> <span class="hljs-string">&quot;```html&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs5', 10)" onmouseover="showTip(event, 'fs5', 10)" class="hljs-function">ignore</span>
+
+<span class="hljs-keyword">let</span> <span class="hljs-function">sb&#39;</span> <span class="hljs-keyword">=</span> <span class="hljs-function">ViewBuilder</span><span class="hljs-keyword">.</span><span class="hljs-function">buildHtmlNode</span> <span class="hljs-function">sb</span> <span onmouseout="hideTip(event, 'fs2', 11)" onmouseover="showTip(event, 'fs2', 11)" class="hljs-function">someHtml</span>
+
+<span class="hljs-comment">// Perform more actions on the `sb` object...</span>
+<span class="hljs-function">sb&#39;</span><span class="hljs-keyword">.</span><span class="hljs-function">AppendLine</span> <span class="hljs-string">&quot;```&quot;</span> <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs5', 12)" onmouseover="showTip(event, 'fs5', 12)" class="hljs-function">ignore</span>
+
+<span class="hljs-keyword">let</span> <span class="hljs-function">markdownOutput</span> <span class="hljs-keyword">=</span> <span class="hljs-function">sb&#39;</span><span class="hljs-keyword">.</span><span class="hljs-function">ToString</span><span class="hljs-keyword">(</span><span class="hljs-keyword">)</span>
+</code></pre>
+<h3>Common View Engine Features</h3>
+<p>The Giraffe View Engine doesn't have any specially built functions for commonly known features such as master pages or partial views, mainly because the nature of the view engine itself doesn't require it in most cases.</p>
+<h4>Master Pages</h4>
+<p>Creating a master page is a simple matter of piping two functions together:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">module</span> <span class="hljs-function">Views</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">master</span> <span class="hljs-keyword">(</span><span class="hljs-function">pageTitle</span> <span class="hljs-keyword">:</span> <span onmouseout="hideTip(event, 'fs6', 13)" onmouseover="showTip(event, 'fs6', 13)" class="hljs-function">string</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">(</span><span class="hljs-function">content</span><span class="hljs-keyword">:</span> <span class="hljs-function">XmlNode</span> <span onmouseout="hideTip(event, 'fs7', 14)" onmouseover="showTip(event, 'fs7', 14)" class="hljs-function">list</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">html</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">head</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">title</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-keyword">]</span>
+            <span class="hljs-function">body</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-function">content</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">index</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-keyword">let</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">=</span> <span class="hljs-string">&quot;Giraffe Sample&quot;</span>
+        <span class="hljs-keyword">[</span>
+            <span class="hljs-function">h1</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;Hello world!&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span> <span class="hljs-keyword">|&gt;</span> <span class="hljs-function">master</span> <span class="hljs-function">pageTitle</span>
+</code></pre>
+<p>... or even have multiple nested master pages:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">module</span> <span class="hljs-function">Views</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">master1</span> <span class="hljs-keyword">(</span><span class="hljs-function">pageTitle</span> <span class="hljs-keyword">:</span> <span onmouseout="hideTip(event, 'fs6', 15)" onmouseover="showTip(event, 'fs6', 15)" class="hljs-function">string</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">(</span><span class="hljs-function">content</span><span class="hljs-keyword">:</span> <span class="hljs-function">XmlNode</span> <span onmouseout="hideTip(event, 'fs7', 16)" onmouseover="showTip(event, 'fs7', 16)" class="hljs-function">list</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">html</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">head</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">title</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-keyword">]</span>
+            <span class="hljs-function">body</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-function">content</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">master2</span> <span class="hljs-keyword">(</span><span class="hljs-function">content</span><span class="hljs-keyword">:</span> <span class="hljs-function">XmlNode</span> <span onmouseout="hideTip(event, 'fs7', 17)" onmouseover="showTip(event, 'fs7', 17)" class="hljs-function">list</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-keyword">[</span>
+            <span class="hljs-function">main</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-function">content</span>
+            <span class="hljs-function">footer</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                    <span class="hljs-function">str</span> <span class="hljs-string">&quot;Copyright ...&quot;</span>
+                <span class="hljs-keyword">]</span>
+            <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">index</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-keyword">let</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">=</span> <span class="hljs-string">&quot;Giraffe Sample&quot;</span>
+        <span class="hljs-keyword">[</span>
+            <span class="hljs-function">h1</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;Hello world!&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span> <span class="hljs-keyword">|&gt;</span> <span class="hljs-function">master2</span> <span class="hljs-keyword">|&gt;</span> <span class="hljs-function">master1</span> <span class="hljs-function">pageTitle</span>
+</code></pre>
+<h4>Partial Views</h4>
+<p>A partial view is nothing more than one function or object being called from within another function:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">module</span> <span class="hljs-function">Views</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">partial</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">footer</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">str</span> <span class="hljs-string">&quot;Copyright...&quot;</span>
+            <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">master</span> <span class="hljs-keyword">(</span><span class="hljs-function">pageTitle</span> <span class="hljs-keyword">:</span> <span onmouseout="hideTip(event, 'fs6', 18)" onmouseover="showTip(event, 'fs6', 18)" class="hljs-function">string</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">(</span><span class="hljs-function">content</span><span class="hljs-keyword">:</span> <span class="hljs-function">XmlNode</span> <span onmouseout="hideTip(event, 'fs7', 19)" onmouseover="showTip(event, 'fs7', 19)" class="hljs-function">list</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">html</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">head</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">title</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-keyword">]</span>
+            <span class="hljs-function">body</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-function">content</span>
+            <span class="hljs-function">partial</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">index</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-keyword">let</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">=</span> <span class="hljs-string">&quot;Giraffe Sample&quot;</span>
+        <span class="hljs-keyword">[</span>
+            <span class="hljs-function">h1</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-string">&quot;Hello world!&quot;</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span> <span class="hljs-keyword">|&gt;</span> <span class="hljs-function">master</span> <span class="hljs-function">pageTitle</span>
+</code></pre>
+<h4>Working with Models</h4>
+<p>A view which accepts a model is basically a function with an additional parameter:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">module</span> <span class="hljs-function">Views</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-keyword">open</span> <span class="hljs-function">Giraffe</span><span class="hljs-keyword">.</span><span class="hljs-function">GiraffeViewEngine</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">partial</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">footer</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">str</span> <span class="hljs-string">&quot;Copyright...&quot;</span>
+            <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">master</span> <span class="hljs-keyword">(</span><span class="hljs-function">pageTitle</span> <span class="hljs-keyword">:</span> <span onmouseout="hideTip(event, 'fs6', 20)" onmouseover="showTip(event, 'fs6', 20)" class="hljs-function">string</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">(</span><span class="hljs-function">content</span><span class="hljs-keyword">:</span> <span class="hljs-function">XmlNode</span> <span onmouseout="hideTip(event, 'fs7', 21)" onmouseover="showTip(event, 'fs7', 21)" class="hljs-function">list</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-function">html</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+            <span class="hljs-function">head</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+                <span class="hljs-function">title</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">pageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-keyword">]</span>
+            <span class="hljs-function">body</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-function">content</span>
+            <span class="hljs-function">partial</span>
+        <span class="hljs-keyword">]</span>
+
+    <span class="hljs-keyword">let</span> <span class="hljs-function">index</span> <span class="hljs-keyword">(</span><span class="hljs-function">model</span> <span class="hljs-keyword">:</span> <span class="hljs-function">IndexViewModel</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+        <span class="hljs-keyword">[</span>
+            <span class="hljs-function">h1</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">model</span><span class="hljs-keyword">.</span><span class="hljs-function">PageTitle</span> <span class="hljs-keyword">]</span>
+            <span class="hljs-function">p</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">model</span><span class="hljs-keyword">.</span><span class="hljs-function">WelcomeText</span> <span class="hljs-keyword">]</span>
+        <span class="hljs-keyword">]</span> <span class="hljs-keyword">|&gt;</span> <span class="hljs-function">master</span> <span class="hljs-function">model</span><span class="hljs-keyword">.</span><span class="hljs-function">PageTitle</span>
+</code></pre>
+<h4>If Statements, Loops, etc.</h4>
+<p>Things like if statements, loops and other normal F# language constructs work just as expected:</p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span class="hljs-function">partial</span> <span class="hljs-keyword">(</span><span class="hljs-function">books</span> <span class="hljs-keyword">:</span> <span class="hljs-function">Book</span> <span onmouseout="hideTip(event, 'fs7', 22)" onmouseover="showTip(event, 'fs7', 22)" class="hljs-function">list</span><span class="hljs-keyword">)</span> <span class="hljs-keyword">=</span>
+    <span class="hljs-function">ul</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span>
+        <span class="hljs-keyword">yield!</span>
+            <span class="hljs-function">books</span>
+            <span class="hljs-keyword">|&gt;</span> <span onmouseout="hideTip(event, 'fs8', 23)" onmouseover="showTip(event, 'fs8', 23)" class="hljs-function">List</span><span class="hljs-keyword">.</span><span onmouseout="hideTip(event, 'fs9', 24)" onmouseover="showTip(event, 'fs9', 24)" class="hljs-function">map</span> <span class="hljs-keyword">(</span><span class="hljs-keyword">fun</span> <span class="hljs-function">b</span> <span class="hljs-keyword">-&gt;</span> <span class="hljs-function">li</span> <span class="hljs-keyword">[</span><span class="hljs-keyword">]</span> <span class="hljs-keyword">[</span> <span class="hljs-function">str</span> <span class="hljs-function">book</span><span class="hljs-keyword">.</span><span class="hljs-function">Title</span> <span class="hljs-keyword">]</span><span class="hljs-keyword">)</span>
+    <span class="hljs-keyword">]</span>
+</code></pre>
+<p>Overall the Giraffe View Engine is extremely flexible and feature rich by nature based on the fact that it is generated via normal compiled F# code.</p>
+<div class="tip" id="fs1">val indexView : obj</div>
+<div class="tip" id="fs2">val someHtml : obj</div>
+<div class="tip" id="fs3">namespace System</div>
+<div class="tip" id="fs4">namespace System.Text</div>
+<div class="tip" id="fs5">val ignore : value:&#39;T -&gt; unit</div>
+<div class="tip" id="fs6">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />--------------------<br />type string = System.String</div>
+<div class="tip" id="fs7">type &#39;T list = List&lt;&#39;T&gt;</div>
+<div class="tip" id="fs8">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;&#160;&#160;interface IReadOnlyList&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;interface IEnumerable<br />&#160;&#160;&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;&#160;&#160;member GetReverseIndex : rank:int * offset:int -&gt; int<br />&#160;&#160;&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;&#160;&#160;member Head : &#39;T<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;&#160;&#160;member Length : int<br />&#160;&#160;&#160;&#160;...</div>
+<div class="tip" id="fs9">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list</div>
+
+
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

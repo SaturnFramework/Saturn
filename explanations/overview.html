@@ -1,0 +1,300 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | Saturn Overview
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="active-link padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <h1>Saturn Overview</h1>
+<p>Saturn is a web development framework written in F# which implements the server-side MVC pattern. Many of its components and concepts will seem familiar to those of us with experience in other web frameworks like Ruby on Rails or Python’s Django. It's heavily inspired by Elixir's <a href="http://phoenixframework.org/">Phoenix</a>.</p>
+<p>Built on top of the battle-tested ASP.NET Core foundation and the highly flexible, extendable model of Giraffe, Saturn provides high level abstractions, helpers and tools to enable high developer productivity, at the same time keeping high application performance provided by Kestrel and Giraffe.</p>
+<p>Saturn is made up of a number of distinct parts, each with its own purpose and role to play in building a web application.</p>
+<ul>
+<li>
+Application
+<ul>
+<li>the start and end of the request life cycle</li>
+<li>handles all aspects of requests up until the point where the router takes over</li>
+<li>provides a core set of plugs to apply to all requests</li>
+<li>dispatches requests into a router</li>
+<li>enables application and hosting configuration</li>
+</ul>
+</li>
+<li>
+<a href="routing.html">Router</a>
+<ul>
+<li>parses incoming requests and dispatches them to the correct controller/action, passing parameters as needed</li>
+<li>provides helpers to generate route paths or urls to resources</li>
+<li>defines named pipelines through which we may pass our requests</li>
+<li>allows easy application of groups of plugs to a set of routes</li>
+</ul>
+</li>
+<li>
+<a href="controller.html">Controllers</a>
+<ul>
+<li>provide functions, called <em>actions</em>, to handle requests</li>
+<li>
+actions:
+<ul>
+<li>prepare data and pass it into views</li>
+<li>invoke rendering via views</li>
+<li>perform redirects</li>
+<li>return data as JSON or XML</li>
+<li>and much more</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="view.html">Views</a>
+<ul>
+<li>render templates</li>
+<li>act as a presentation layer</li>
+<li>define helper functions, available in templates, to decorate data for presentation</li>
+</ul>
+</li>
+<li>
+Channels
+<ul>
+<li>manage sockets for easy realtime communication</li>
+<li>are analogous to controllers except that they allow bi-directional communication with persistent connections</li>
+</ul>
+</li>
+<li>
+<a href="scaffolding.html">Scaffolding scripts</a>
+<ul>
+<li><code>dotnet new</code> template providing good starting point for new applications - <a href="https://github.com/SaturnFramework/Saturn.Template"><a href="https://github.com/SaturnFramework/Saturn.Template">https://github.com/SaturnFramework/Saturn.Template</a></a></li>
+<li><code>dotnet saturn</code> CLI tool that controls migrations and let you easily scaffold new parts of application - <a href="https://github.com/SaturnFramework/Saturn.Dotnet"><a href="https://github.com/SaturnFramework/Saturn.Dotnet">https://github.com/SaturnFramework/Saturn.Dotnet</a></a></li>
+</ul>
+</li>
+</ul>
+<h3>Saturn rings</h3>
+<p>Saturn itself is the top layer of a multi-layer system designed to create a flexible, productive environment for creating web applications.</p>
+<h4>Kestrel and ASP.NET Core</h4>
+<p>ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected applications. Kestrel is a cross-platform web server for ASP.NET Core based on <code>libuv</code>, a cross-platform asynchronous I/O library. ASP.NET Core documentation can be found <a href="https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-3.1">here</a></p>
+<h4><a href="https://github.com/giraffe-fsharp/Giraffe">Giraffe</a></h4>
+<p>Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to <a href="https://suave.io">Suave</a>, but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. Giraffe applications are composed of so-called HttpHandler functions which can be thought of as a mixture of Suave's WebParts and ASP.NET Core's middleware. As Saturn shares many basic helper functions with Giraffe it's highly recommended to also check out <a href="https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md">Giraffe documentation</a></p>
+<h3>Saturn moons</h3>
+<p>Saturn is not only a library building on top of Giraffe, but also a set of opinionated tooling for scaffolding a whole project and then generating some boilerplate code. At the moment our template is using (by default):</p>
+<h4><a href="https://github.com/StackExchange/Dapper">Dapper</a></h4>
+<p>A simple, focused on performance object mapper for .Net that you can add in to your project and will extend your <code>IDbConnection</code> interface.</p>
+<h4><a href="https://github.com/canton7/Simple.Migrations">Simple.Migrations</a></h4>
+<p>Simple.Migrations is a simple bare-bones migration framework for .NET Core (.NET Standard 1.2 and .NET 4.5). It doesn't provide SQL generation, nor an out-of-the-box command-line tool, nor any other fancy feature. It does however provide a set of simple, extendable, and composable tools for integrating migrations into your application.</p>
+
+
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
