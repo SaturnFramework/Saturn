@@ -7,17 +7,16 @@ framework: netcoreapp3.1
 nuget Expecto
 nuget Newtonsoft.Json
 nuget NSubstitute
-nuget System.Threading.Tasks.Dataflow >= 4.9
 nuget BenchmarkDotNet
 nuget Microsoft.AspNetCore.TestHost
 
 nuget Giraffe prerelease
 nuget Giraffe.ViewEngine
 
-nuget Microsoft.AspNetCore.Authentication.JwtBearer < 3.1
-nuget Microsoft.AspNetCore.Authentication.Google < 3.1
-nuget Microsoft.AspNetCore.Authentication.OpenIdConnect < 3.1
-nuget Microsoft.NET.Sdk.Functions < 3.1
+nuget Microsoft.AspNetCore.Authentication.JwtBearer
+nuget Microsoft.AspNetCore.Authentication.Google
+nuget Microsoft.AspNetCore.Authentication.OpenIdConnect
+nuget Microsoft.NET.Sdk.Functions
 nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
 nuget FSharp.Control.Websockets >= 0.2
