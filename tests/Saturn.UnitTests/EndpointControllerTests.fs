@@ -204,7 +204,7 @@ let implicitStringToHtmlTestController = controller {
 
 [<Tests>]
 let htmlRendererTests =
-    testList "Controller HTML rendering" [
+    testList "Endpoint Controller HTML rendering" [
         testCase "doctype is added to implicit index html" <| fun _ ->
             let ctx = getEmptyContext "GET" "/"
             ctx.Request.Headers.Add("Accept", StringValues("text/html"))
