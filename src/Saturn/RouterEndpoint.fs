@@ -216,12 +216,12 @@ module Router =
     member __.PatchF(state, path, action) : RouterState =
       addRouteF RouteType.Patch state path action
 
-    ///Forwards calls to different `Endpoint`. Modifies the `HttpRequest.Path` to allow subrouting.
+    ///Forwards calls to different `Endpoint`.
     [<CustomOperation("forward")>]
     member __.Forward(state, path : string, action : Endpoint) : RouterState =
       addForward state path [action]
 
-    ///Forwards calls to different list of `Endpoint`. Modifies the `HttpRequest.Path` to allow subrouting.
+    ///Forwards calls to different list of `Endpoint`.
     member __.Forward(state, path : string, actions : Endpoint list) : RouterState =
       addForward state path actions
 
