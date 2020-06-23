@@ -9,6 +9,7 @@ nuget Newtonsoft.Json
 nuget NSubstitute
 nuget System.Threading.Tasks.Dataflow >= 4.9
 nuget BenchmarkDotNet
+nuget Microsoft.AspNetCore.TestHost
 
 nuget Giraffe prerelease
 nuget Giraffe.ViewEngine
