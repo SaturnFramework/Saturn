@@ -391,7 +391,7 @@ module Controller =
           | k when k = typeof<uint64> -> true
           | k -> failwithf
                   "Type %A is not a supported type for controller<'T>. Supported types include bool, char, float, guid int32, int64, and string" k
-      let keyFormat =
+      let keyFormat () =
         match typeof<'Key> with
         | k when k = typeof<bool> -> "/%b"
         | k when k = typeof<char> -> "/%c"
@@ -445,14 +445,13 @@ module Controller =
           if not (subRoute.StartsWith("/")) then
             failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." subRoute)
 
-          let fullRoute = keyFormat + subRoute
-          let anyRoute = keyFormat + subRoute + "/{**any}"
+          let fullRoute = keyFormat() + subRoute
+          let anyRoute = keyFormat() + subRoute + "/{**any}"
 
           yield
             routef (PrintfFormat<'Key -> obj,_,_,_,'Key> anyRoute) (fun key -> fun nxt ctx -> task {
               let x = ctx.Request.Path.Value.LastIndexOf subRoute
               let v = ctx.Request.Path.Value.Substring(0,x + subRoute.Length)
-              printfn "2URL: %s" v
               ctx.Items.Item "giraffe_route" <- v
               return! sCs key nxt ctx
             })
@@ -461,11 +460,9 @@ module Controller =
               let v = ctx.Request.Path.Value
               let v =
                 if (v.EndsWith "/") then
-                  printfn "TEST"
                   v.Substring(0, v.Length - 1)
                 else
                   v
-              printfn "1URL: %s" v
               ctx.Items.Item "giraffe_route" <- v
               return! sCs key nxt ctx
             })

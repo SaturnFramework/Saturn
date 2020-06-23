@@ -3,3 +3,4 @@ NSubstitute
 BenchmarkDotNet
 FSharp.Core
 Giraffe
+Microsoft.AspNetCore.TestHost

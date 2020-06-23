@@ -15,6 +15,8 @@
     <Compile Include="ControllerTests.fs" />
     <Compile Include="LinksTests.fs" />
     <Compile Include="RouterTests.fs" />
+    <Compile Include="EndpointRouterTests.fs" />
+    <Compile Include="EndpointControllerTests.fs" />
     <Compile Include="BenchmarkTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

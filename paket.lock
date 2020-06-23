@@ -148,6 +148,8 @@ NUGET
       Microsoft.Extensions.Options (>= 2.2)
     Microsoft.AspNetCore.Routing.Abstractions (2.2)
       Microsoft.AspNetCore.Http.Abstractions (>= 2.2)
+    Microsoft.AspNetCore.TestHost (3.1.5)
+      System.IO.Pipelines (>= 4.7.1)
     Microsoft.AspNetCore.WebUtilities (2.2)
       Microsoft.Net.Http.Headers (>= 2.2)
       System.Text.Encodings.Web (>= 4.5)

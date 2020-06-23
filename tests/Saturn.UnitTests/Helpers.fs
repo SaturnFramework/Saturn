@@ -13,6 +13,11 @@ open Microsoft.AspNetCore.Http.Features
 open Expecto.Tests
 open Expecto
 open Giraffe.Serialization
+open Microsoft.Extensions.Hosting
+open Microsoft.AspNetCore.TestHost
+open Saturn.Application
+open Microsoft.Extensions.Logging
+open Microsoft.Extensions.DependencyInjection
 
 type IDependency =
   abstract member Call : unit -> unit
@@ -63,6 +68,21 @@ let getEmptyContext (method: string) (path : string) =
 
   ctx
 
+let testHostWithContext (host: IHost) (ctx: HttpContext) =
+  use host =
+    host.StartAsync () |> Async.AwaitTask |> Async.RunSynchronously
+    host
+  use server = host.GetTestServer()
+  let result = server.SendAsync(fun c ->
+    c.Request.Method <- ctx.Request.Method
+    c.Request.Scheme  <- ctx.Request.Scheme
+    c.Request.Host  <- ctx.Request.Host
+    c.Request.PathBase  <- ctx.Request.PathBase
+    c.Request.Path  <- ctx.Request.Path
+    c.Request.QueryString  <- ctx.Request.QueryString
+  )
+  result.Result
+
 let next : HttpFunc = Some >> Task.FromResult
 
 let runTask task =
@@ -77,7 +97,13 @@ let getStatusCode (ctx : HttpContext) =
   ctx.Response.StatusCode
 
 let getBody (ctx : HttpContext) =
+
   ctx.Response.Body.Position <- 0L
+  use reader = new StreamReader(ctx.Response.Body, Encoding.UTF8)
+  reader.ReadToEnd()
+
+let getBody' (ctx : HttpContext) =
+
   use reader = new StreamReader(ctx.Response.Body, Encoding.UTF8)
   reader.ReadToEnd()
 
@@ -102,3 +128,19 @@ let responseTestCase handler method path expected () =
       let result = handler next ctx |> runTask
       expectResponse expected result
   with ex -> failtestf "failed because %A" ex
+
+let responseEndpointTestCase host method path expected () =
+  try
+    let ctx = getEmptyContext method path
+    let res = testHostWithContext host ctx
+    Expect.equal (getBody' res) expected "Result should be equal"
+  with ex -> failtestf "failed because %A" ex
+
+let hostFromController ctr =
+  let app = application {
+    use_endpoint_router ctr
+    webhost_config (fun hs -> hs.UseTestServer ())
+    logging (fun lg -> lg.ClearProviders() |> ignore)
+    service_config (fun sc -> sc.AddSingleton<IDependency>(dependency ()))
+  }
+  app.Build()
