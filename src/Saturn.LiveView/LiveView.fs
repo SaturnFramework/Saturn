@@ -91,7 +91,7 @@ module LiveComponentBuilder =
         /// Returns: `'View` (Giraffe.ViewEngine)
         [<CustomOperation("view")>]
         member __.View(state, handler): LiveComponentBuilderState<'State, 'Msg, 'View> =
-            let (renderer, view) = handler
+            let (view, renderer) = handler
             { state with
                   View = view
                   HtmlRenderer = renderer }
