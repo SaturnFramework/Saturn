@@ -643,4 +643,4 @@ module Application =
 
   ///Helpers for getting configuration
   module Config =
-    let getConfinguration (services: #IServiceCollection) = services.BuildServiceProvider() .GetService<IConfiguration>()
+    let getConfiguration (services: #IServiceCollection) = services.BuildServiceProvider() .GetService<IConfiguration>()
