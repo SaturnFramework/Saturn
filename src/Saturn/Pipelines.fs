@@ -177,7 +177,7 @@ module PipelineHelpers =
   ///  * x-download-options - set to noopen to instruct the browser not to open a download directly in the browser, to avoid HTML files rendering inline and accessing the security context of the application (like critical domain cookies)
   ///  * x-permitted-cross-domain-policies - set to none to restrict Adobe Flash Player’s access to data
   let putSecureBrowserHeaders : HttpHandler = pipeline {
-      set_header "x-frame-option" "SAMEORIGIN"
+      set_header "x-frame-options" "SAMEORIGIN"
       set_header "x-xss-protection" "1; mode=block"
       set_header "x-content-type-options" "nosniff"
       set_header "x-download-options" "noopen"
