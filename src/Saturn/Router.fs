@@ -15,6 +15,8 @@ module Router =
   ///Type representing route type, used in internal state of the `application` computation expression
   type RouteType =
     | Get
+    | Head
+    | GetOrHead
     | Post
     | Put
     | Delete
@@ -145,6 +147,8 @@ module Router =
         let v =
           match typ with
           | RouteType.Get -> "GET"
+          | RouteType.Head -> "HEAD"
+          | RouteType.GetOrHead -> "GET_HEAD"
           | RouteType.Post -> "POST"
           | RouteType.Put -> "PUT"
           | RouteType.Patch -> "PATCH"
@@ -177,6 +181,8 @@ module Router =
         routes, routesf
 
       let gets, getsf = generateRoutes RouteType.Get
+      let heads, headsf = generateRoutes RouteType.Head
+      let getOrHeads, getOrHeadsf = generateRoutes RouteType.GetOrHead
       let posts, postsf = generateRoutes RouteType.Post
       let patches, patchesf = generateRoutes RouteType.Patch
 
@@ -211,6 +217,16 @@ module Router =
             yield GET >=> e
           for e in getsf do
             yield GET >=> e
+
+          for e in heads do
+            yield HEAD >=> e
+          for e in headsf do
+            yield HEAD >=> e
+
+          for e in getOrHeads do
+            yield GET_HEAD >=> e
+          for e in getOrHeadsf do
+            yield GET_HEAD >=> e
 
           for e in posts do
             yield POST >=> e
@@ -256,6 +272,26 @@ module Router =
     [<CustomOperation("getf")>]
     member __.GetF(state, path : PrintfFormat<_,_,_,_,'f>, action) : RouterState =
       addRouteF RouteType.Get state path action
+
+    ///Adds handler for `HEAD` request.
+    [<CustomOperation("head")>]
+    member __.Head(state, path : string, action: HttpHandler) : RouterState =
+      addRoute RouteType.Head state path action
+
+    ///Adds handler for `HEAD` request.
+    [<CustomOperation("headf")>]
+    member __.HeadF(state, path : PrintfFormat<_,_,_,_,'f>, action) : RouterState =
+      addRouteF RouteType.Head state path action
+
+    ///Adds handler for either `GET` or `HEAD` request.
+    [<CustomOperation("get_head")>]
+    member __.GetOrHead(state, path : string, action: HttpHandler) : RouterState =
+      addRoute RouteType.GetOrHead state path action
+
+    ///Adds handler for either `GET` or `HEAD` request.
+    [<CustomOperation("get_headf")>]
+    member __.GetOrHeadF(state, path : PrintfFormat<_,_,_,_,'f>, action) : RouterState =
+      addRouteF RouteType.GetOrHead state path action
 
     ///Adds handler for `POST` request.
     [<CustomOperation("post")>]
