@@ -241,9 +241,19 @@ module Router =
       addRoute RouteType.Get state path action
 
     ///Adds handler for `GET` request.
+    [<CustomOperation("get_di")>]
+    member x.GetDI(state, path, action) : RouterState =
+      x.Get(state, path, DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `GET` request.
     [<CustomOperation("getf")>]
     member __.GetF(state, path : PrintfFormat<_,_,_,_,'f>, action) : RouterState =
       addRouteF RouteType.Get state path action
+
+    ///Adds handler for `GET` request.
+    [<CustomOperation("getf_di")>]
+    member x.GetFDI(state, path : PrintfFormat<_,_,_,_,'f>, action) : RouterState =
+      x.GetF(state, path, DependencyInjectionHelper.withInjectedDependenciesp1 action)
 
     ///Adds handler for `POST` request.
     [<CustomOperation("post")>]
@@ -251,9 +261,19 @@ module Router =
       addRoute RouteType.Post state path action
 
     ///Adds handler for `POST` request.
+    [<CustomOperation("post_di")>]
+    member x.PostDI(state, path, action) : RouterState =
+      x.Post(state, path, DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `POST` request.
     [<CustomOperation("postf")>]
     member __.PostF(state, path, action) : RouterState =
       addRouteF RouteType.Post state path action
+
+    ///Adds handler for `POST` request.
+    [<CustomOperation("postf_di")>]
+    member x.PostFDI(state, path, action) : RouterState =
+      x.PostF(state, path, DependencyInjectionHelper.withInjectedDependenciesp1 action)
 
     ///Adds handler for `PUT` request.
     [<CustomOperation("put")>]
@@ -261,9 +281,19 @@ module Router =
       addRoute RouteType.Put state path action
 
     ///Adds handler for `PUT` request.
+    [<CustomOperation("put_di")>]
+    member x.PutDI(state, path, action) : RouterState =
+      x.Put(state, path, DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `PUT` request.
     [<CustomOperation("putf")>]
     member __.PutF(state, path, action) : RouterState =
       addRouteF RouteType.Put state path action
+
+    ///Adds handler for `PUT` request.
+    [<CustomOperation("putf_di")>]
+    member x.PutFDI(state, path, action) : RouterState =
+      x.PutF(state, path, DependencyInjectionHelper.withInjectedDependenciesp1 action)
 
     ///Adds handler for `DELETE` request.
     [<CustomOperation("delete")>]
@@ -271,9 +301,19 @@ module Router =
       addRoute RouteType.Delete state path action
 
     ///Adds handler for `DELETE` request.
+    [<CustomOperation("delete_di")>]
+    member x.DeleteDI(state, path, action) : RouterState =
+      x.Delete(state, path, DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `DELETE` request.
     [<CustomOperation("deletef")>]
     member __.DeleteF(state, path, action) : RouterState =
       addRouteF RouteType.Delete state path action
+
+    ///Adds handler for `DELETE` request.
+    [<CustomOperation("deletef_di")>]
+    member x.DeleteFDI(state, path, action) : RouterState =
+      x.DeleteF(state, path, DependencyInjectionHelper.withInjectedDependenciesp1 action)
 
     ///Adds handler for `PATCH` request.
     [<CustomOperation("patch")>]
@@ -281,9 +321,19 @@ module Router =
       addRoute RouteType.Patch state path action
 
     ///Adds handler for `PATCH` request.
+    [<CustomOperation("patch_di")>]
+    member x.PatchDI(state, path, action) : RouterState =
+      x.Patch(state, path, DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `PATCH` request.
     [<CustomOperation("patchf")>]
     member __.PatchF(state, path, action) : RouterState =
       addRouteF RouteType.Patch state path action
+
+    ///Adds handler for `PATCH` request.
+    [<CustomOperation("patchf_di")>]
+    member x.PatchFDI(state, path, action) : RouterState =
+      x.PatchF(state, path, DependencyInjectionHelper.withInjectedDependenciesp1 action)
 
     ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
     [<CustomOperation("forward")>]
@@ -291,19 +341,39 @@ module Router =
       addRoute RouteType.Forward state path action
 
     ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
+    [<CustomOperation("forward_di")>]
+    member x.ForwardDI(state, path, action) : RouterState =
+      x.Forward(state, path, DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
     [<CustomOperation("forwardf")>]
     member __.Forwardf(state, path, action) : RouterState =
       addRouteF RouteType.Forward state path action
+
+    ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
+    [<CustomOperation("forwardf_di")>]
+    member x.ForwardfDI(state, path, action) : RouterState =
+      x.Forwardf(state, path, DependencyInjectionHelper.withInjectedDependenciesp1 action)
 
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through")>]
     member __.PipeThrough(state, pipe) : RouterState =
       {state with Pipelines = pipe::state.Pipelines}
 
+    ///Adds pipeline to the list of pipelines that will be used for every request
+    [<CustomOperation("pipe_through_di")>]
+    member x.PipeThroughDI(state, pipe) : RouterState =
+      x.PipeThrough(state, DependencyInjectionHelper.withInjectedDependencies pipe)
+
     ///Adds not-found handler for current scope
     [<CustomOperation("not_found_handler")>]
     member __.NotFoundHandler(state, handler) : RouterState =
       {state with NotFoundHandler = Some handler}
+
+    ///Adds not-found handler for current scope
+    [<CustomOperation("not_found_handler_di")>]
+    member x.NotFoundHandlerDI(state, handler) : RouterState =
+      x.NotFoundHandler(state, DependencyInjectionHelper.withInjectedDependencies handler)
 
     ///Toggle case insensitve routing
     [<CustomOperation("case_insensitive")>]

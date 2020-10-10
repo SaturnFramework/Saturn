@@ -46,7 +46,7 @@ module Application =
     CookiesAlreadyAdded: bool
     NoRouter: bool
     NoWebhost: bool
-    Channels: (string * IChannel) list
+    Channels: (string * (IServiceProvider -> IChannel)) list
   }
 
   let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
@@ -137,7 +137,7 @@ module Application =
 
         useParts.Add(fun (ab: IApplicationBuilder) -> ab.UseWebSockets())
         channels
-        |> List.iter (fun (url, chnl) -> useParts.Add (fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl)))
+        |> List.iter (fun (url, chnl) -> useParts.Add (fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl ab.ApplicationServices)))
 
       /// user-provided middleware
       state.AppConfigs |> List.iter (useParts.Add)
@@ -171,6 +171,11 @@ module Application =
     member __.Router(state, handler) =
       {state with Router = Some handler}
 
+    ///Defines top-level router used for the application
+    [<CustomOperation("use_router_di")>]
+    member x.RouterDI(state, handler) =
+      x.Router(state, DependencyInjectionHelper.withInjectedDependencies handler)
+
     ///Disable warning message about lack of `router` definition. Should be used for channels-only or gRPC applications.
     [<CustomOperation("no_router")>]
     member __.NoRouter(state) =
@@ -186,10 +191,20 @@ module Application =
     member __.PipeThrough(state : ApplicationState, pipe) =
       {state with Pipelines = pipe::state.Pipelines}
 
+    ///Adds pipeline to the list of pipelines that will be used for every request
+    [<CustomOperation("pipe_through_di")>]
+    member x.PipeThroughDI(state : ApplicationState, pipe) =
+      x.PipeThrough(state, DependencyInjectionHelper.withInjectedDependencies pipe)
+
     ///Adds error/not-found handler for current scope
     [<CustomOperation("error_handler")>]
     member __.ErrorHandler(state : ApplicationState, handler) =
       {state with ErrorHandler = Some handler}
+
+    ///Adds error/not-found handler for current scope
+    [<CustomOperation("error_handler_di")>]
+    member x.ErrorHandlerDI(state : ApplicationState, handler) =
+      x.ErrorHandler(state, DependencyInjectionHelper.withInjectedDependenciesp2 handler)
 
     ///Adds custom application configuration step.
     [<CustomOperation("app_config")>]
@@ -575,7 +590,13 @@ module Application =
     [<CustomOperation("add_channel")>]
     member __.AddChannel (state, url: string, channel: IChannel ) =
       { state with
-          Channels = (url, channel) :: state.Channels }
+          Channels = (url, (fun _ -> channel)) :: state.Channels }
+
+    ///Registers channel for given url.
+    [<CustomOperation("add_channel_di")>]
+    member __.AddChannelDI<'Dependencies> (state, url: string, channel: 'Dependencies -> IChannel ) =
+      { state with
+          Channels = (url, fun svcs -> channel (DependencyInjectionHelper.buildDependencies svcs)) :: state.Channels }
 
     /// Turns on the developer exception page, if the environment is in development mode.
     [<CustomOperation "use_developer_exceptions">]

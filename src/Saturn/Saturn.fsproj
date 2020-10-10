@@ -14,6 +14,7 @@
     <Compile Include="Diagnostics.fs" />
     <Compile Include="CORS.fs" />
     <Compile Include="CSRF.fs" />
+    <Compile Include="DependencyInjectionHelper.fs" />
     <Compile Include="Pipelines.fs" />
     <Compile Include="Router.fs" />
     <Compile Include="ControllerHelpers.fs" />
