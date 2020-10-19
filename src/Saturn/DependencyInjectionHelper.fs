@@ -19,7 +19,7 @@ let buildDependencies<'Dependencies> (svcs: IServiceProvider) =
       let fields = FSharpType.GetTupleElements t
       fun svcs ->
         let fields = fields |> Array.map svcs.GetService
-        FSharpValue.MakeRecord(t, fields)
+        FSharpValue.MakeTuple(fields, t)
     elif t = typeof<obj> then
       fun _ -> obj()
     else
