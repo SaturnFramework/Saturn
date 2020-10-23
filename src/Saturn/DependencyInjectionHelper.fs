@@ -9,21 +9,23 @@ open Microsoft.FSharp.Reflection
 let private constructors = ConcurrentDictionary<Type, IServiceProvider -> obj>()
 
 let buildDependencies<'Dependencies> (svcs: IServiceProvider) =
+  let getService (svcs: IServiceProvider) (t: Type) =
+    let res = svcs.GetService(t)
+    if isNull res then failwithf "No service for type '%s' has been registered" t.FullName
+    res
+
   let getCtor (t: Type) : IServiceProvider -> obj =
-    if FSharpType.IsRecord t then
-      let fields = FSharpType.GetRecordFields t |> Array.map (fun p -> p.PropertyType)
-      fun svcs ->
-        let fields = fields |> Array.map svcs.GetService
-        FSharpValue.MakeRecord(t, fields)
-    elif FSharpType.IsTuple t then
+    if FSharpType.IsTuple t then
       let fields = FSharpType.GetTupleElements t
       fun svcs ->
-        let fields = fields |> Array.map svcs.GetService
+        let fields = fields |> Array.map (getService svcs)
         FSharpValue.MakeTuple(fields, t)
     elif t = typeof<obj> then
       fun _ -> obj()
+    elif t = typeof<unit> then
+      fun _ -> box ()
     else
-      fun svcs -> svcs.GetService t
+      fun svcs -> getService svcs t
 
   let ctor = constructors.GetOrAdd(typeof<'Dependencies>, Func<_,_> getCtor)
   ctor svcs |> unbox<'Dependencies>
