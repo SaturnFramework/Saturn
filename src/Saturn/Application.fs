@@ -255,7 +255,7 @@ module Application =
                 "application/x-javascript";
                 "text/javascript";
               |]
-              o.MimeTypes <- if not (isNull o.MimeTypes) then  Seq.append o.MimeTypes additionalMime else Seq.ofArray (additionalMime)
+              o.MimeTypes <- Seq.append ResponseCompressionDefaults.MimeTypes additionalMime
           )
       let middleware (app : IApplicationBuilder) = app.UseResponseCompression()
 
