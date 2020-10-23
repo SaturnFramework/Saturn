@@ -64,6 +64,17 @@ let userController = controller {
     subController "/comment" commentController
 }
 
+let userControllerV2 = controller {
+    not_found_handler (setStatusCode 404 >=> text "Users 404 V2")
+    version "2"
+
+    index (fun ctx -> "Index handler V2" |> Controller.text ctx)
+    add (fun ctx -> "Add handler V2" |> Controller.text ctx)
+    show (fun ctx id -> (sprintf "Show handler V2 - %s" id) |> Controller.text ctx)
+    edit (fun ctx id -> (sprintf "Edit handler V2 - %s" id) |> Controller.text ctx)
+    subController "/comment" commentController
+}
+
 
 let topRouter = router {
     pipe_through headerPipe
@@ -86,6 +97,7 @@ let topRouter = router {
     forward "/api" apiRouter
 
     // same with controllers
+    forward "/users" userControllerV2
     forward "/users" userController
 }
 

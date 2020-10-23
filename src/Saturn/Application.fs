@@ -31,6 +31,32 @@ open Giraffe.EndpointRouting
 [<AutoOpen>]
 ///Module containing `application` computation expression
 module Application =
+  type private VersionMatcherPolicy() =
+    inherit Routing.MatcherPolicy()
+
+    override x.Order with get () = 100
+
+    interface Routing.Matching.IEndpointSelectorPolicy with
+        member this.AppliesToEndpoints(endpoints: Collections.Generic.IReadOnlyList<Http.Endpoint>): bool =
+            endpoints |> Seq.exists (fun e ->
+              let m = e.Metadata.GetMetadata<Saturn.Endpoint.Controller.ControllerVersionMetadata>()
+              not (isNull (box m)))
+
+        member this.ApplyAsync(ctx: HttpContext, candidates: Routing.Matching.CandidateSet): Task =
+          task {
+            let logger = ctx.GetLogger ()
+            logger.Log(LogLevel.Information, sprintf "CandidateSet - %A" candidates.Count)
+            for i = 0 to (candidates.Count-1) do
+              let c = candidates.Item i
+              let metadata = c.Endpoint.Metadata.GetMetadata<Saturn.Endpoint.Controller.ControllerVersionMetadata> ()
+              logger.Log(LogLevel.Information, sprintf "%d. Metadata - %A" i metadata)
+              let header = ctx.TryGetRequestHeader "x-controller-version"
+              match isNull (box metadata), header with
+              | true, None -> ()
+              | true, Some _ -> candidates.SetValidity(i, false)
+              | false, None -> candidates.SetValidity(i, false)
+              | false, Some h -> candidates.SetValidity(i, metadata.Value = h)
+          } :> _
 
   ///Type representing internal state of the `application` computation expression
   type ApplicationState = {
@@ -170,6 +196,15 @@ module Application =
         useParts.Add (fun app ->
           app.UseRouting()
              .UseEndpoints(fun e-> e.MapGiraffeEndpoints(endpoints)))
+
+      let host =
+        host.ConfigureServices(fun svcs ->
+          let mp = VersionMatcherPolicy ()
+          svcs.AddSingleton<Routing.MatcherPolicy>(mp)
+              .AddSingleton<Routing.Matching.IEndpointSelectorPolicy>(mp)
+
+          |> ignore
+        )
 
       if state.NoWebhost then
         host

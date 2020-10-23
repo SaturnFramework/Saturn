@@ -15,6 +15,11 @@ module Controller =
   open FSharp.Control.Tasks.V2.ContextInsensitive
   open System.Threading.Tasks
 
+  ///Using `x-controller-version` for endpoint routing
+  type ControllerVersionMetadata = {
+    Value: string
+  }
+
   ///Type used for `plug` operation, allowing you to choose for which actions given plug should work
   type Action =
     | Index
@@ -333,14 +338,15 @@ module Controller =
           plugs >=> actionHandler
         | None -> actionHandler
 
-      //Adds controler versioning
-      let actionHandler =
-        match state.Version with
-        | None -> actionHandler
-        | Some v ->
-          Saturn.PipelineHelpers.requireHeader "x-controller-version" (v.ToString()) >=> actionHandler
+      let endp = endpoint actionHandler
 
-      endpoint actionHandler
+      //Adds controler versioning
+      let endp =
+        match state.Version with
+        | None -> endp
+        | Some v ->
+          endp |> addMetadata { Value = v.ToString()}
+      endp
 
     member private x.AddKeyHandler<'Output> state action (actionHandler: HttpContext -> 'Key -> Task<'Output>) =
       let endpoint = x.ActionToIdEndpoint state action
@@ -366,14 +372,15 @@ module Controller =
           fun key -> plugs >=> (actionHandler key)
         | None -> actionHandler
 
-      //Adds controler versioning
-      let actionHandler =
-        match state.Version with
-        | None -> actionHandler
-        | Some v ->
-          fun key -> Saturn.PipelineHelpers.requireHeader "x-controller-version" (v.ToString()) >=> (actionHandler key)
-
-      endpoint |> List.map (fun e -> e actionHandler)
+      endpoint |> List.map (fun e ->
+        let endp = e actionHandler
+        //Adds controler versioning
+        let endp =
+          match state.Version with
+          | None -> endp
+          | Some v ->
+            endp |> addMetadata {Value = v.ToString()}
+        endp)
 
     member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : Endpoint list =
       let isKnownKey =
