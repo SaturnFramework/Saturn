@@ -171,9 +171,7 @@ module Application =
     member __.Router(state, handler) =
       {state with Router = Some handler}
 
-    ///Defines top-level router used for the application
-    [<CustomOperation("use_router_di")>]
-    member x.RouterDI(state, handler) =
+    member x.Router(state, handler) =
       x.Router(state, DependencyInjectionHelper.withInjectedDependencies handler)
 
     ///Disable warning message about lack of `router` definition. Should be used for channels-only or gRPC applications.
@@ -191,9 +189,7 @@ module Application =
     member __.PipeThrough(state : ApplicationState, pipe) =
       {state with Pipelines = pipe::state.Pipelines}
 
-    ///Adds pipeline to the list of pipelines that will be used for every request
-    [<CustomOperation("pipe_through_di")>]
-    member x.PipeThroughDI(state : ApplicationState, pipe) =
+    member x.PipeThrough(state : ApplicationState, pipe) =
       x.PipeThrough(state, DependencyInjectionHelper.withInjectedDependencies pipe)
 
     ///Adds error/not-found handler for current scope
@@ -201,9 +197,7 @@ module Application =
     member __.ErrorHandler(state : ApplicationState, handler) =
       {state with ErrorHandler = Some handler}
 
-    ///Adds error/not-found handler for current scope
-    [<CustomOperation("error_handler_di")>]
-    member x.ErrorHandlerDI(state : ApplicationState, handler) =
+    member x.ErrorHandler(state : ApplicationState, handler) =
       x.ErrorHandler(state, DependencyInjectionHelper.withInjectedDependenciesp2 handler)
 
     ///Adds custom application configuration step.
@@ -592,9 +586,7 @@ module Application =
       { state with
           Channels = (url, (fun _ -> channel)) :: state.Channels }
 
-    ///Registers channel for given url.
-    [<CustomOperation("add_channel_di")>]
-    member __.AddChannelDI<'Dependencies> (state, url: string, channel: 'Dependencies -> IChannel ) =
+    member __.AddChannel<'Dependencies> (state, url: string, channel: 'Dependencies -> IChannel ) =
       { state with
           Channels = (url, fun svcs -> channel (DependencyInjectionHelper.buildDependencies svcs)) :: state.Channels }
 

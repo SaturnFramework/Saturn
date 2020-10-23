@@ -222,16 +222,7 @@ module ChannelBuilder =
         member __.Join(state, handler) =
             {state with Join= Some handler}
 
-        [<CustomOperation("join_di")>]
-        ///Action executed when client tries to join the channel.
-        ///You can either return `Ok` if channel allows join, or reject it with `Rejected`
-        ///Typical cases for rejection may include authorization/authentication,
-        ///not being able to handle more connections or other business logic reasons.
-        ///
-        /// As arguments, `join` action gets:
-        /// *  current `HttpContext` for the request
-        /// * `ClientInfo` instance representing additional information about client sending request
-        member __.JoinDI(state, handler) =
+        member __.Join(state, handler) =
             {state with Join= Some <| DependencyInjectionHelper.mapFromHttpContext handler}
 
         [<CustomOperation("handle")>]
@@ -248,14 +239,7 @@ module ChannelBuilder =
 
             {state with Handlers=state.Handlers.Add(topic, objHandler)}
 
-        [<CustomOperation("handle_di")>]
-        ///Action executed when client sends a message to the channel to the given topic.
-        ///
-        /// As arguments, `handle` action gets:
-        /// *  current `HttpContext` for the request
-        /// * `ClientInfo` instance representing additional information about client sending request
-        /// * `Message<'a>` instance representing message sent from client to the channel
-        member __.HandleDI<'Dependencies, 'a>(state, topic, (handler : HttpContext -> 'Dependencies -> ClientInfo -> Message<'a> -> Task<unit>)) =
+        member __.Handle<'Dependencies, 'a>(state, topic, (handler : HttpContext -> 'Dependencies -> ClientInfo -> Message<'a> -> Task<unit>)) =
             let handler = DependencyInjectionHelper.mapFromHttpContext handler
             let objHandler = fun (serializer: IJsonSerializer) ctx ci (msg: string) ->
               let nmsg = serializer.Deserialize<Message<'a>> msg
@@ -272,13 +256,7 @@ module ChannelBuilder =
         member __.Terminate(state, handler) =
             {state with Terminate= Some handler}
 
-        [<CustomOperation("terminate_di")>]
-        ///Action executed when client disconnects from the channel
-        ///
-        /// As arguments, `join` action gets:
-        /// *  current `HttpContext` for the request
-        /// * `ClientInfo` instance representing additional information about client sending request
-        member __.TerminateDI(state, handler) =
+        member __.Terminate(state, handler) =
             {state with Terminate= Some <| DependencyInjectionHelper.mapFromHttpContext handler}
 
         [<CustomOperation("not_found_handler")>]
@@ -291,14 +269,7 @@ module ChannelBuilder =
         member __.NotFoundHandler(state, handler) =
             {state with ChannelBuilderState.NotFoundHandler= Some handler}
 
-        [<CustomOperation("not_found_handler_di")>]
-        ///Action executed when clients sends a message to the topic for which `handle` was not registered
-        ///
-        /// As arguments, `not_found_handler` action gets:
-        /// *  current `HttpContext` for the request
-        /// * `ClientInfo` instance representing additional information about client sending request
-        /// * `Message<'a>` instance representing message sent from client to the channel
-        member __.NotFoundHandlerDI(state, handler) =
+        member __.NotFoundHandler(state, handler) =
             {state with ChannelBuilderState.NotFoundHandler= Some <| DependencyInjectionHelper.mapFromHttpContext handler}
 
         [<CustomOperation("error_handler")>]
@@ -310,13 +281,7 @@ module ChannelBuilder =
         member __.ErrorHandler(state, handler) =
             {state with ChannelBuilderState.ErrorHandler= handler}
 
-        [<CustomOperation("error_handler_di")>]
-        ///Action executed when unhandled exception happens in the
-        /// As arguments, `not_found_handler` action gets:
-        /// *  current `HttpContext` for the request
-        /// * `ClientInfo` instance representing additional information about client sending request
-        /// * `Message<'a>` instance representing message sent from client to the channel
-        member __.ErrorHandlerDI(state, handler) =
+        member __.ErrorHandler(state, handler) =
             {state with ChannelBuilderState.ErrorHandler= DependencyInjectionHelper.mapFromHttpContext handler}
 
         member __.Run(state: ChannelBuilderState) : IChannel =
