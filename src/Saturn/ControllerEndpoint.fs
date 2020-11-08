@@ -42,9 +42,10 @@ module Controller =
       allSet - inputSet |> Set.toList
 
   ///Type representing internal state of the `controller` computation expression
-  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = {
+  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = {
     Index: (HttpContext -> Task<'IndexOutput>) option
     Show: (HttpContext -> 'Key -> Task<'ShowOutput>) option
+    Exists: (HttpContext -> 'Key -> Task<'ExistsOutput>) option
     Add: (HttpContext -> Task<'AddOutput>) option
     Edit: (HttpContext -> 'Key -> Task<'EditOutput>) option
     Create: (HttpContext -> Task<'CreateOutput>) option
@@ -109,10 +110,10 @@ module Controller =
   ///     edit (fun (ctx, id) -> (sprintf "Edit handler no version - %i" id) |> Controller.text ctx)
   /// }
   /// ```
-  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
+  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
 
-    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex); }
+    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
+      { Index = None; Show = None; Exists = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex); }
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
@@ -188,7 +189,7 @@ module Controller =
 
     ///Define not-found handler for the controller
     [<CustomOperation("not_found_handler")>]
-    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_,_>, handler) =
+    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_,_,_>, handler) =
       {state with NotFoundHandler = Some handler}
 
     ///Define error for the controller
@@ -382,7 +383,7 @@ module Controller =
             endp |> addMetadata {Value = v.ToString()}
         endp)
 
-    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : Endpoint list =
+    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : Endpoint list =
       let isKnownKey =
         match state with
         | { Show = None; Edit = None; Update = None; Delete = None; Patch = None; SubControllers = [] } -> false
@@ -476,7 +477,7 @@ module Controller =
     ]
 
   ///Computation expression used to create controllers
-  let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
+  let controller<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
 
   ///Computation expression used to create HttpHandlers representing subcontrollers.
-  let subcontroller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = Saturn.Controller.ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
+  let subcontroller<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = Saturn.Controller.ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()

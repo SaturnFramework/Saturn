@@ -18,6 +18,7 @@ module Controller =
   type Action =
     | Index
     | Show
+    | Exists
     | Add
     | Edit
     | Create
@@ -32,13 +33,14 @@ module Controller =
     let inputSet = Set actions
     if inputSet |> Set.contains All then []
     else
-      let allSet = Set [Index;Show;Add;Edit;Create;Update;Patch;Delete;DeleteAll]
+      let allSet = Set [Index;Show;Exists;Add;Edit;Create;Update;Patch;Delete;DeleteAll]
       allSet - inputSet |> Set.toList
 
   ///Type representing internal state of the `controller` computation expression
-  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = {
+  type ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = {
     Index: (HttpContext -> Task<'IndexOutput>) option
     Show: (HttpContext -> 'Key -> Task<'ShowOutput>) option
+    Exists: (HttpContext -> 'Key -> Task<'ExistsOutput>) option
     Add: (HttpContext -> Task<'AddOutput>) option
     Edit: (HttpContext -> 'Key -> Task<'EditOutput>) option
     Create: (HttpContext -> Task<'CreateOutput>) option
@@ -104,10 +106,10 @@ module Controller =
   ///     edit (fun (ctx, id) -> (sprintf "Edit handler no version - %i" id) |> Controller.text ctx)
   /// }
   /// ```
-  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
+  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
 
-    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex); CaseInsensitive = false }
+    member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
+      { Index = None; Show = None; Exists = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex); CaseInsensitive = false }
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
@@ -124,6 +126,14 @@ module Controller =
 
     member x.Show (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'ShowOutput>) =
       {state with Show = Some (x.MapDependencyHandlerToHandler' handler)}
+
+    ///Operation that should handle a HEAD request and return a bodiless 200 OK or 404 NOT FOUND for a single entry
+    [<CustomOperation("exists")>]
+    member __.Exists (state, handler: HttpContext -> 'Key -> Task<'ExistsOutput>) =
+      {state with Exists = Some handler}
+
+    member x.Exists (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'ExistsOutput>) =
+      {state with Exists = Some (x.MapDependencyHandlerToHandler' handler)}
 
     ///Operation that should render form for adding new item
     [<CustomOperation("add")>]
@@ -183,7 +193,7 @@ module Controller =
 
     ///Define not-found handler for the controller
     [<CustomOperation("not_found_handler")>]
-    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_,_>, handler) =
+    member __.NotFoundHandler(state : ControllerState<_,_,_,_,_,_,_,_,_,_,_>, handler) =
       {state with NotFoundHandler = Some handler}
 
     ///Define error for the controller
@@ -206,7 +216,7 @@ module Controller =
 
     ///Toggle case insensitve routing
     [<CustomOperation("case_insensitive")>]
-    member __.CaseInsensitive (state : ControllerState<_,_,_,_,_,_,_,_,_,_> ) =
+    member __.CaseInsensitive (state : ControllerState<_,_,_,_,_,_,_,_,_,_,_> ) =
       {state with CaseInsensitive = true}
 
     ///Inject a controller into the routing table rooted at a given route. All of that controller's actions will be anchored off of the route as a prefix.
@@ -226,7 +236,7 @@ module Controller =
         {state with Plugs = newplugs}
 
       if actions |> List.contains All then
-        [Index;Show;Add;Edit;Create;Update;Patch;Delete;DeleteAll] |> List.fold (fun acc e -> addPlug acc e handler) state
+        [Index;Show;Exists;Add;Edit;Create;Update;Patch;Delete;DeleteAll] |> List.fold (fun acc e -> addPlug acc e handler) state
       else
         actions |> List.fold (fun acc e -> addPlug acc e handler) state
 
@@ -324,12 +334,12 @@ module Controller =
 
       | None -> routeHandler actionHandler
 
-    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
+    member this.Run (state: ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput>) : HttpHandler =
       let siteMap = HandlerMap()
       let addToSiteMap v p = siteMap.AddPath p v
       let keyFormat =
         match state with
-        | { Show = None; Edit = None; Update = None; Delete = None; Patch = None; SubControllers = [] } -> None
+        | { Show = None; Exists = None; Edit = None; Update = None; Delete = None; Patch = None; SubControllers = [] } -> None
         | _ ->
           match typeof<'Key> with
           | k when k = typeof<bool> -> "/%b"
@@ -379,6 +389,15 @@ module Controller =
                 let route = keyFormat.Value
                 addToSiteMap route
                 yield this.AddKeyHandler state Show state.Show.Value route
+          ]
+          yield HEAD >=> choose [
+            let addToSiteMap = addToSiteMap "HEAD"
+
+            if keyFormat.IsSome then
+              if state.Exists.IsSome then
+                let route = keyFormat.Value
+                addToSiteMap route
+                yield this.AddKeyHandler state Exists state.Exists.Value route
           ]
           yield POST >=> choose [
             let addToSiteMap = addToSiteMap "POST"
@@ -467,4 +486,4 @@ module Controller =
       res
 
   ///Computation expression used to create controllers
-  let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
+  let controller<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'ExistsOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
