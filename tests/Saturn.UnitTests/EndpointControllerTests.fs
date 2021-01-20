@@ -262,11 +262,17 @@ let implicitConversionTest =
     let host = hostFromController implicitConversionsController
     let responseTestCase () = responseEndpointTestCase host
     testList "Endpoint Controller implicit conversion" [
-        testCase "convert list to JSON" <|
-            responseTestCase () "GET" "/" """[{"a":"test","b":1,"c":false},{"a":"test2","b":2,"c":true}]"""
+        testCase "convert list to JSON" <| (fun  _ ->
+            let host = hostFromController implicitConversionsController
+            let responseTestCase = responseEndpointTestCase host
+            responseTestCase "GET" "/" """[{"a":"test","b":1,"c":false},{"a":"test2","b":2,"c":true}]""" ()
+        )
 
-        testCase "convert record to JSON" <|
-            responseTestCase () "GET" "/1" """{"a":"test","b":1,"c":false}"""
+        testCase "convert record to JSON" <| (fun  _ ->
+            let host = hostFromController implicitConversionsController
+            let responseTestCase = responseEndpointTestCase host
+            responseTestCase "GET" "/1" """{"a":"test","b":1,"c":false}""" ()
+        )
 
 
 
