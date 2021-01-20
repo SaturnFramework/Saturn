@@ -12,7 +12,6 @@ open System.Collections.Generic
 open Microsoft.AspNetCore.Http.Features
 open Expecto.Tests
 open Expecto
-open Giraffe.Serialization
 open Microsoft.Extensions.Hosting
 open Microsoft.AspNetCore.TestHost
 open Saturn.Application
@@ -52,8 +51,8 @@ let getEmptyContext (method: string) (path : string) =
   ctx.Response.Body <- new MemoryStream()
 
   ctx.RequestServices
-     .GetService(typeof<Json.IJsonSerializer>)
-     .Returns(NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings))
+     .GetService(typeof<Json.ISerializer>)
+     .Returns(NewtonsoftJson.Serializer(NewtonsoftJson.Serializer.DefaultSettings))
     |> ignore
 
   ctx.RequestServices

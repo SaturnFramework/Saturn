@@ -2,7 +2,7 @@ module EndpointControllerTests
 
 open Expecto
 open Saturn
-open FSharp.Control.Tasks.V2.ContextInsensitive
+open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open System
 open Saturn.Endpoint

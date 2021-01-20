@@ -1,16 +1,12 @@
 namespace Saturn
 
 open Microsoft.AspNetCore.Http
-open Microsoft.AspNetCore.Http.Extensions
 open System
 open System.Threading.Tasks
 open Giraffe.Core
 open Giraffe.Auth
-open Giraffe.ResponseWriters
-open Giraffe.Negotiation
-open Giraffe.Routing
-open Giraffe.ModelBinding
-open FSharp.Control.Tasks.ContextInsensitive
+open Giraffe
+open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Authorization
 
 [<AutoOpen>]

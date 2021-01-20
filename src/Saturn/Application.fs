@@ -19,12 +19,11 @@ open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.StaticFiles
 open Microsoft.Extensions.Configuration
 open Microsoft.AspNetCore.Authentication
-open FSharp.Control.Tasks.V2
+open FSharp.Control.Tasks
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Threading.Tasks
 open Channels
-open Giraffe.Serialization.Json
 open Microsoft.Extensions.Hosting
 open Giraffe.EndpointRouting
 
@@ -160,7 +159,7 @@ module Application =
         // as both the interface _and_ itself, so that users can use `ISocketHub` without getting the add/remove socket members
         host.ConfigureServices(fun svcs ->
           let provider = svcs.BuildServiceProvider()
-          let serializer = provider.GetRequiredService(typeof<IJsonSerializer>) :?> IJsonSerializer
+          let serializer = provider.GetRequiredService(typeof<Json.ISerializer>) :?> Json.ISerializer
           let hub = Channels.SocketHub(serializer)
           svcs
             .AddSingleton<Channels.ISocketHub>(hub)
@@ -608,15 +607,15 @@ module Application =
     [<CustomOperation("use_json_settings")>]
     member __.ConfigJSONSerializer (state, settings) =
       let jsonSettingsService (s: IServiceCollection) =
-        s.AddSingleton<Giraffe.Serialization.Json.IJsonSerializer>(Giraffe.Serialization.Json.NewtonsoftJsonSerializer settings)
+        s.AddSingleton<Giraffe.Json.ISerializer>(NewtonsoftJson.Serializer settings)
       { state with
           ServicesConfig = jsonSettingsService :: state.ServicesConfig }
 
     ///Replaces built in JSON.Net (de)serializer with custom serializer
     [<CustomOperation("use_json_serializer")>]
-    member __.UseCustomJSONSerializer (state, serializer : #Giraffe.Serialization.Json.IJsonSerializer ) =
+    member __.UseCustomJSONSerializer (state, serializer : #Giraffe.Json.ISerializer ) =
       let jsonService (s: IServiceCollection) =
-        s.AddSingleton<Giraffe.Serialization.Json.IJsonSerializer>(serializer)
+        s.AddSingleton<Giraffe.Json.ISerializer>(serializer)
       { state with
           ServicesConfig = jsonService :: state.ServicesConfig }
 
@@ -624,15 +623,15 @@ module Application =
     [<CustomOperation("use_xml_settings")>]
     member __.ConfigXMLSerializer (state, settings) =
       let xmlService (s: IServiceCollection) =
-        s.AddSingleton<Giraffe.Serialization.Xml.IXmlSerializer>(Giraffe.Serialization.Xml.DefaultXmlSerializer settings)
+        s.AddSingleton<Xml.ISerializer>(SystemXml.Serializer settings)
       { state with
           ServicesConfig = xmlService :: state.ServicesConfig }
 
     ///Replaces built in XML (de)serializer with custom serializer
     [<CustomOperation("use_xml_serializer")>]
-    member __.UseCustomXMLSerializer (state, serializer : #Giraffe.Serialization.Xml.IXmlSerializer ) =
+    member __.UseCustomXMLSerializer (state, serializer : #Xml.ISerializer ) =
       let xmlService (s: IServiceCollection) =
-        s.AddSingleton<Giraffe.Serialization.Xml.IXmlSerializer>(serializer)
+        s.AddSingleton<Xml.ISerializer>(serializer)
       { state with
           ServicesConfig = xmlService :: state.ServicesConfig }
 

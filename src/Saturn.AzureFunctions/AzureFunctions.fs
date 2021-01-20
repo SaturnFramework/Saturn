@@ -2,13 +2,11 @@ namespace Saturn
 
 open Saturn
 open Giraffe
-open FSharp.Control.Tasks.V2.ContextInsensitive
+open FSharp.Control.Tasks
 open System
 open Microsoft.AspNetCore.Http
 open System.Threading.Tasks
 open Microsoft.Extensions.Logging
-open Giraffe.Serialization.Json
-open Giraffe.Serialization.Xml
 open Microsoft.AspNetCore.Mvc
 
 module AzureFunctions =
@@ -19,8 +17,8 @@ module AzureFunctions =
     ErrorHandler: (System.Exception -> HttpHandler)
     NotFoundHandler: HttpHandler
     HostPrefix: string
-    JsonSerializer: IJsonSerializer
-    XmlSerializer: IXmlSerializer
+    JsonSerializer: Json.ISerializer
+    XmlSerializer: Xml.ISerializer
     NegotiationConfig: INegotiationConfig
   }
 
@@ -39,14 +37,14 @@ module AzureFunctions =
 
         let notFoundHandler =
             clearResponse >=> Giraffe.HttpStatusCodeHandlers.RequestErrors.NOT_FOUND "Not found"
-        {Logger = None; Router = None; ErrorHandler = errorHandler; NotFoundHandler = notFoundHandler; HostPrefix = "/api"; JsonSerializer = NewtonsoftJsonSerializer(NewtonsoftJsonSerializer.DefaultSettings); XmlSerializer = DefaultXmlSerializer(DefaultXmlSerializer.DefaultSettings);  NegotiationConfig = DefaultNegotiationConfig() }
+        {Logger = None; Router = None; ErrorHandler = errorHandler; NotFoundHandler = notFoundHandler; HostPrefix = "/api"; JsonSerializer = NewtonsoftJson.Serializer(NewtonsoftJson.Serializer.DefaultSettings); XmlSerializer = SystemXml.Serializer(SystemXml.Serializer.DefaultSettings);  NegotiationConfig = DefaultNegotiationConfig() }
 
     member __.Run(state: FunctionState) : (HttpRequest -> Task<IActionResult>) =
       let wrapGiraffeServices (existing:IServiceProvider) =
         { new IServiceProvider with
             member __.GetService(t:Type) =
-              if (t = typeof<IJsonSerializer>) then upcast state.JsonSerializer
-              elif (t = typeof<IXmlSerializer>) then upcast state.XmlSerializer
+              if (t = typeof<Json.ISerializer>) then upcast state.JsonSerializer
+              elif (t = typeof<Xml.ISerializer>) then upcast state.XmlSerializer
               elif (t = typeof<INegotiationConfig>) then upcast state.NegotiationConfig
               else existing.GetService(t)
         }
@@ -108,21 +106,21 @@ module AzureFunctions =
         ///Configures built in JSON.Net (de)serializer with custom settings.
     [<CustomOperation("use_json_settings")>]
     member __.ConfigJSONSerializer (state, settings) =
-      { state with JsonSerializer = NewtonsoftJsonSerializer settings }
+      { state with JsonSerializer = NewtonsoftJson.Serializer settings }
 
     ///Replaces built in JSON.Net (de)serializer with custom serializer
     [<CustomOperation("use_json_serializer")>]
-    member __.UseCustomJSONSerializer (state, serializer : #Giraffe.Serialization.Json.IJsonSerializer ) =
+    member __.UseCustomJSONSerializer (state, serializer : #Json.ISerializer ) =
       { state with JsonSerializer = serializer }
 
     ///Configures built in XML (de)serializer with custom settings.
     [<CustomOperation("use_xml_settings")>]
     member __.ConfigXMLSerializer (state, settings) =
-      { state with XmlSerializer = DefaultXmlSerializer settings }
+      { state with XmlSerializer = SystemXml.Serializer settings }
 
     ///Replaces built in XML (de)serializer with custom serializer
     [<CustomOperation("use_xml_serializer")>]
-    member __.UseCustomXMLSerializer (state, serializer : #Giraffe.Serialization.Xml.IXmlSerializer ) =
+    member __.UseCustomXMLSerializer (state, serializer : #Xml.ISerializer ) =
       { state with XmlSerializer = serializer }
 
     ///Configures negotiation config

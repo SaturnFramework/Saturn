@@ -150,16 +150,11 @@ module Router =
 
       let lst =
         [
-          for e in gets do
-            yield GET => e
-          for e in posts do
-            yield POST => e
-          for e in patches do
-            yield PATCH => e
-          for e in puts do
-            yield PUT => e
-          for e in deletes do
-            yield DELETE => e
+          GET gets
+          POST posts
+          PATCH patches
+          PUT puts
+          DELETE deletes
 
           yield! forwards
       ]

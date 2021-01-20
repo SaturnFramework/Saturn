@@ -1,8 +1,7 @@
-version 5.241.6
 source https://api.nuget.org/v3/index.json
 
 storage: none
-framework: netcoreapp3.1
+framework: net5.0
 
 nuget Expecto
 nuget Newtonsoft.Json
@@ -32,7 +31,7 @@ group Docs
 
 group DocsAsp
   source https://api.nuget.org/v3/index.json
-  framework: netcoreapp3.1
+  framework: net5.0
   storage: symlink
 
   nuget Microsoft.AspNetCore.App.Ref

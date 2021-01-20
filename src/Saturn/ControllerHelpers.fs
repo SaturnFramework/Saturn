@@ -4,9 +4,8 @@ open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Http.Extensions
 open Giraffe.HttpStatusCodeHandlers
 open Giraffe.Core
-open Giraffe.ResponseWriters
-open Giraffe.ModelBinding
-open FSharp.Control.Tasks.ContextInsensitive
+open Giraffe
+open FSharp.Control.Tasks
 open Microsoft.Net.Http.Headers
 open Microsoft.Extensions.Primitives
 

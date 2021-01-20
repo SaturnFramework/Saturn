@@ -1,9 +1,9 @@
 module ChannelsSample
 
 open Saturn
-open Giraffe.ResponseWriters
+open Giraffe
 open Giraffe.Core
-open FSharp.Control.Tasks.V2
+open FSharp.Control.Tasks
 open Saturn.Channels
 open Microsoft.Extensions.Logging
 open Giraffe.HttpStatusCodeHandlers
