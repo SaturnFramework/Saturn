@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0-preview02] - 20.01.2021
+
+### Added
+
+* Added DI support for all CEs we provide - the `_di` versions of custom operations are avaliable in following modules: `ApplicationDI`, `ChannelsDI`, `ControllerDI` (both standard, and endpoint routing), `PipelinesDI`, and `RouterDI` (both standard, and endpoint routing) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak) and [@Arshia001](https://github.com/Arshia001))
+* Added controller versioning for endpoint routing (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+
+### Changed
+
+* Updated to Giraffe 5.0-rc-6
+* Updated to net5.0 and ASP.NET Core 5
+
+### Fixed
+
+* Fix typo getConfiguration (by [@kaashyapan](https://github.com/kaashyapan))
+* Fix putSecureBrowserHeaders header typo (by [@Shmew](https://github.com/Shmew))
+* Fix application/json not being compressed in response (by [@may-day](https://github.com/may-day))
+* Include querystring in Turbolinks-location (by [@viktorvan](https://github.com/viktorvan))
+
+
 ## [0.15.0-preview01] - 23.06.2020
 
 ### Added
