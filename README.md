@@ -1,6 +1,8 @@
 # Saturn
 
-![Azure DevOps builds](https://img.shields.io/azure-devops/build/SaturnFramework/f6855c7f-1326-401f-8268-b21cb1a1d536/1?style=flat-square) ![GitHub last commit](https://img.shields.io/github/last-commit/SaturnFramework/Saturn?style=flat-square) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Saturn?style=flat-square)
+![GitHub branch checks state](https://img.shields.io/github/checks-status/SaturnFramework/Saturn/master) ![GitHub last commit](https://img.shields.io/github/last-commit/SaturnFramework/Saturn?style=flat-square) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Saturn?style=flat-square)
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/SaturnFramework/Saturn)
 
 Saturn is a web development framework written in F# which implements the server-side MVC pattern. Many of its components and concepts will seem familiar to anyone with experience in other web frameworks like Ruby on Rails or Python’s Django.
 
@@ -14,7 +16,7 @@ Saturn has nice [documentation](https://saturnframework.org/explanations/overvie
 
 ## How to build
 
-1. Install the .NET Core 3.1 SDK from https://dotnet.microsoft.com/download/dotnet-core/3.1
+1. Install the .NET 5.0 SDK from https://dotnet.microsoft.com/download/dotnet-core/5.0
 2. Restore dotnet SDK tools: `dotnet tool restore`
 3. Inside the repo directory, run `dotnet fake build`
 
