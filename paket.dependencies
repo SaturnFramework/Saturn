@@ -1,8 +1,7 @@
-version 5.241.6
 source https://api.nuget.org/v3/index.json
 
 storage: none
-framework: netcoreapp3.1
+framework: net5.0
 
 nuget Expecto
 nuget Newtonsoft.Json
@@ -19,6 +18,7 @@ nuget Microsoft.AspNetCore.Authentication.OpenIdConnect
 nuget Microsoft.NET.Sdk.Functions
 nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
+nuget System.ServiceModel.Primitives
 nuget FSharp.Control.Websockets >= 0.2
 nuget FSharp.Core >= 4.2.3
 
@@ -32,7 +32,7 @@ group Docs
 
 group DocsAsp
   source https://api.nuget.org/v3/index.json
-  framework: netcoreapp3.1
+  framework: net5.0
   storage: symlink
 
   nuget Microsoft.AspNetCore.App.Ref

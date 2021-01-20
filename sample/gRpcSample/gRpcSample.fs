@@ -6,14 +6,14 @@ open Microsoft.AspNetCore.Server.Kestrel.Core
 open Shared
 open System.Threading.Tasks
 
-open Giraffe.Serialization
+open Giraffe
 
 type MyCalculator() =
     interface ICalculator with
         member __.MultiplyAsync request =
             ValueTask<_> { Result = request.X * request.Y }
 
-type MyCalculatorWithDI(serializer: IJsonSerializer) =
+type MyCalculatorWithDI(serializer: Json.ISerializer) =
     interface ICalculator with
         member __.MultiplyAsync request =
             printfn "Multiply reques serialized: %s" (serializer.SerializeToString request)

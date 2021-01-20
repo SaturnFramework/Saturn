@@ -1,8 +1,7 @@
 namespace Saturn
 
-open FSharp.Control.Tasks.V2
+open FSharp.Control.Tasks
 open FSharp.Control.Websockets
-open Giraffe.Serialization.Json
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Logging
@@ -46,7 +45,7 @@ module Channels =
     /// Shouldn't be used manually, you get its instance from the `channel` Computation Expression
     type IChannel =
         abstract member Join: HttpContext * ClientInfo -> Task<JoinResult>
-        abstract member HandleMessage: HttpContext * ClientInfo * IJsonSerializer * string -> Task<unit>
+        abstract member HandleMessage: HttpContext * ClientInfo * Giraffe.Json.ISerializer * string -> Task<unit>
         abstract member Terminate: HttpContext * ClientInfo -> Task<unit>
 
     /// Interface representing server side Socket Hub, giving you ability to brodcast messages (either to particular socket or to all sockets).
@@ -56,7 +55,7 @@ module Channels =
         abstract member SendMessageToClient: ChannelPath -> SocketId -> Topic -> 'a -> Task<unit>
 
     /// A type that wraps access to connected websockets by endpoint
-    type SocketHub(serializer: IJsonSerializer) =
+    type SocketHub(serializer:  Giraffe.Json.ISerializer) =
       let sockets = Dictionary<ChannelPath, ConcurrentDictionary<SocketId, Socket.ThreadSafeWebSocket>>()
 
       let sendMessage (msg: 'a Message) (socket: Socket.ThreadSafeWebSocket) = task {
@@ -76,7 +75,7 @@ module Channels =
         sockets.[path].AddOrUpdate(id, socket, fun _ _ -> socket) |> ignore
         id
 
-      member __.DisconnectSocketForPath path socketId =
+      member __.DisconnectSocketForPath path (socketId: SocketId) =
         sockets.[path].TryRemove socketId |> ignore
 
       interface ISocketHub with
@@ -95,7 +94,7 @@ module Channels =
           | _ -> ()
         }
 
-    type SocketMiddleware(next : RequestDelegate, serializer: IJsonSerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
+    type SocketMiddleware(next : RequestDelegate, serializer:  Giraffe.Json.ISerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
         do sockets.NewPath path
 
         member __.Invoke(ctx : HttpContext) =
@@ -159,7 +158,7 @@ module ChannelBuilder =
     ///Type representing internal state of the `channel` computation expression
     type ChannelBuilderState = {
         Join: (HttpContext -> ClientInfo -> Task<JoinResult>) option
-        Handlers: Map<string, (IJsonSerializer -> HttpContext-> ClientInfo -> string -> Task<unit>)>
+        Handlers: Map<string, (Giraffe.Json.ISerializer -> HttpContext-> ClientInfo -> string -> Task<unit>)>
         Terminate: (HttpContext -> ClientInfo -> Task<unit>) option
         NotFoundHandler: (HttpContext -> ClientInfo -> Message<obj> -> Task<unit>) option
         ErrorHandler: HttpContext -> ClientInfo -> Message<obj> -> Exception -> Task<unit>
@@ -230,7 +229,7 @@ module ChannelBuilder =
         /// * `ClientInfo` instance representing additional information about client sending request
         /// * `Message<'a>` instance representing message sent from client to the channel
         member __.Handle<'a>(state, topic, (handler : HttpContext -> ClientInfo -> Message<'a> -> Task<unit>)) =
-            let objHandler = fun (serializer: IJsonSerializer) ctx ci (msg: string) ->
+            let objHandler = fun (serializer: Giraffe.Json.ISerializer) ctx ci (msg: string) ->
               let nmsg = serializer.Deserialize<Message<'a>> msg
               handler ctx ci nmsg
 
@@ -279,7 +278,7 @@ module ChannelBuilder =
                 state.Handlers.TryFind msgTopic
 
             let handler =
-                fun (serializer: IJsonSerializer) (ctx: HttpContext) (si: ClientInfo) (rawMsg : string) -> task {
+                fun (serializer: Giraffe.Json.ISerializer) (ctx: HttpContext) (si: ClientInfo) (rawMsg : string) -> task {
                     let logger = ctx.RequestServices.GetRequiredService<ILogger<IChannel>>()
                     let msg = serializer.Deserialize<Message<obj>> rawMsg
                     logger.LogInformation("got message {message}", msg)
@@ -345,7 +344,7 @@ module ChannelsDI =
       /// * `Message<'a>` instance representing message sent from client to the channel
       member __.HandleDI<'Dependencies, 'a>(state, topic, (handler : HttpContext -> 'Dependencies -> ClientInfo -> Message<'a> -> Task<unit>)) =
         let handler = DependencyInjectionHelper.mapFromHttpContext handler
-        let objHandler = fun (serializer: IJsonSerializer) ctx ci (msg: string) ->
+        let objHandler = fun (serializer: Giraffe.Json.ISerializer) ctx ci (msg: string) ->
           let nmsg = serializer.Deserialize<Message<'a>> msg
           handler ctx ci nmsg
 

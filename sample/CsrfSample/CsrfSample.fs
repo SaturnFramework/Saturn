@@ -1,7 +1,7 @@
 module Sample
 
 open Saturn
-open Giraffe.ResponseWriters
+open Giraffe
 open Microsoft.Extensions.Logging
 
 

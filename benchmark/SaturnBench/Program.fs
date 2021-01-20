@@ -1,6 +1,4 @@
-﻿open System
-open Giraffe.ResponseWriters
-open Giraffe.Core
+﻿open Giraffe
 open Saturn
 open Microsoft.Extensions.Logging
 

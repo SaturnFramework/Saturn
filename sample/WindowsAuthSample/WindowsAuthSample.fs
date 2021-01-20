@@ -1,7 +1,7 @@
 module WindowsAuthSample
 
 open Saturn
-open Giraffe.ResponseWriters
+open Giraffe
 
 let app = application {
     use_router (fun f c ->

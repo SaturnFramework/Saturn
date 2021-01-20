@@ -11,7 +11,7 @@ open Microsoft.AspNetCore.Http
 module Controller =
 
   open Giraffe
-  open FSharp.Control.Tasks.V2.ContextInsensitive
+  open FSharp.Control.Tasks
   open System.Threading.Tasks
 
   ///Type used for `plug` operation, allowing you to choose for which actions given plug should work

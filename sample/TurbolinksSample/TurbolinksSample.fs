@@ -1,7 +1,7 @@
 module WindowsAuthSample
 
 open Saturn
-open Giraffe.ResponseWriters
+open Giraffe
 open Giraffe.Core
 
 let browser = pipeline {

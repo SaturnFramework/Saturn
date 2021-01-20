@@ -12,7 +12,7 @@ dotnet build ./SaturnEndpointBench/SaturnEndpointBench.fsproj -c Release
 wait $!
 echo 'Saturn-Endpoint build'
 
-sh -c 'dotnet GiraffeBench/bin/Release/netcoreapp3.1/GiraffeBench.dll' &
+sh -c 'dotnet GiraffeBench/bin/Release/net5.0/GiraffeBench.dll' &
 G_PID=$!
 echo ''
 sleep 3
@@ -28,7 +28,7 @@ echo 'Giraffe tested'
 sleep 5
 echo ''
 
-sh -c 'dotnet SaturnBench/bin/Release/netcoreapp3.1/SaturnBench.dll' &
+sh -c 'dotnet SaturnBench/bin/Release/net5.0/SaturnBench.dll' &
 S_PID=$!
 echo ''
 sleep 3
@@ -43,7 +43,7 @@ echo 'Saturn tested'
 sleep 5
 echo ''
 
-sh -c 'dotnet SaturnEndpointBench/bin/Release/netcoreapp3.1/SaturnEndpointBench.dll' &
+sh -c 'dotnet SaturnEndpointBench/bin/Release/net5.0/SaturnEndpointBench.dll' &
 S_PID=$!
 echo ''
 sleep 3

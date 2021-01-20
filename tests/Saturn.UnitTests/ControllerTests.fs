@@ -2,7 +2,7 @@ module ControllerTests
 
 open Expecto
 open Saturn
-open FSharp.Control.Tasks.V2.ContextInsensitive
+open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open System
 
@@ -305,7 +305,7 @@ let diController = controller {
         Controller.text ctx v
     )
 
-    add_di (fun ctx (d: (IDependency * obj))->
+    add_di (fun ctx (d: (IDependency * IDependency))->
         let (d,_) = d
         d.Call ()
         d.Call ()
@@ -344,14 +344,14 @@ let diRouter = router {
         text v
     )
 
-    getf_di "/%d" (fun (d: IDependency) (id: int) ->
+    getf_di "/%i" (fun (d: IDependency) (id: int) ->
         d.Call ()
         d.Call ()
         let v = (id + d.Value()).ToString()
         text v
     )
 
-    get_di "/add" (fun (d: (IDependency * obj)) ->
+    get_di "/add" (fun (d: (IDependency * IDependency)) ->
         let (d,_) = d
         d.Call ()
         d.Call ()

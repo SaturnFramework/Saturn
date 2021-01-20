@@ -3,10 +3,7 @@ module SimpleTets
 open Expecto
 open Saturn
 open Giraffe
-open FSharp.Control.Tasks.V2.ContextInsensitive
-open Microsoft.Extensions.Primitives
-open Microsoft.AspNetCore.Http
-open System
+open FSharp.Control.Tasks
 
 
 //---------------------------`Response.accepted` tests----------------------------------------

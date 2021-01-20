@@ -12,7 +12,7 @@ module Controller =
 
   open Giraffe.Core
   open Giraffe.EndpointRouting
-  open FSharp.Control.Tasks.V2.ContextInsensitive
+  open FSharp.Control.Tasks
   open System.Threading.Tasks
 
   ///Using `x-controller-version` for endpoint routing
@@ -197,10 +197,10 @@ module Controller =
 
     member private __.ActionToEndpoint action =
       match action with
-      | Index -> (fun hdl -> GET => route "/" hdl)
-      | Add -> (fun hdl -> GET => route "/add" hdl)
-      | Create -> (fun hdl -> POST => route "/" hdl)
-      | DeleteAll -> (fun hdl -> DELETE => route "/" hdl)
+      | Index -> (fun hdl -> GET  [route "/" hdl])
+      | Add -> (fun hdl -> GET [route "/add" hdl])
+      | Create -> (fun hdl -> POST [route "/" hdl])
+      | DeleteAll -> (fun hdl -> DELETE [route "/" hdl])
       | Show | Edit |  Update | Patch | Delete -> failwith "Shouldn't happen - operations based on id"
       | All -> failwith "Shouldn't happen"
 
@@ -223,12 +223,12 @@ module Controller =
           |> Some
       let route = keyFormat.Value
       match action with
-      | Show -> [fun hdl -> GET => routef (PrintfFormat<_,_,_,_,'Key> route) hdl]
-      | Edit -> [fun hdl -> GET => routef (PrintfFormat<_,_,_,_,'Key> (route + "/edit")) hdl]
-      | Update -> [fun hdl -> POST => routef (PrintfFormat<_,_,_,_,'Key> route) hdl;
-                   fun hdl -> PUT => routef (PrintfFormat<_,_,_,_,'Key> route) hdl]
-      | Patch -> [fun hdl -> PATCH => routef (PrintfFormat<_,_,_,_,'Key> route) hdl]
-      | Delete -> [fun hdl -> DELETE => routef (PrintfFormat<_,_,_,_,'Key> route) hdl]
+      | Show -> [fun hdl -> GET [routef (PrintfFormat<_,_,_,_,'Key> route) hdl]]
+      | Edit -> [fun hdl -> GET [routef (PrintfFormat<_,_,_,_,'Key> (route + "/edit")) hdl]]
+      | Update -> [fun hdl -> POST [routef (PrintfFormat<_,_,_,_,'Key> route) hdl];
+                   fun hdl -> PUT [routef (PrintfFormat<_,_,_,_,'Key> route) hdl]]
+      | Patch -> [fun hdl -> PATCH [routef (PrintfFormat<_,_,_,_,'Key> route) hdl]]
+      | Delete -> [fun hdl -> DELETE [routef (PrintfFormat<_,_,_,_,'Key> route) hdl]]
       | Index | Add | Create | DeleteAll -> failwith "Shouldn't happen - operations based without id"
       | All -> failwith "Shouldn't happen"
 

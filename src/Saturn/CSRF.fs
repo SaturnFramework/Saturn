@@ -2,9 +2,9 @@ namespace Saturn
 
 ///Module containing helpers for CSRF Antiforgery protection
 module CSRF =
-  open FSharp.Control.Tasks.ContextInsensitive
+  open FSharp.Control.Tasks
   open Giraffe.Core
-  open Giraffe.ResponseWriters
+  open Giraffe
   open Microsoft.AspNetCore.Antiforgery
   open Microsoft.AspNetCore.Http
   open Microsoft.Extensions.Logging

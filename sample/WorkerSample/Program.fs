@@ -2,7 +2,7 @@
 
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
-open FSharp.Control.Tasks.V2.ContextInsensitive
+open FSharp.Control.Tasks
 open System.Threading
 open Microsoft.Extensions.DependencyInjection
 open Saturn
