@@ -230,10 +230,6 @@ module Application =
     member __.Router(state, handler) =
       {state with Router = Some handler}
 
-
-    member x.Router(state, handler) =
-      x.Router(state, DependencyInjectionHelper.withInjectedDependencies handler)
-
     ///Defines top-level endpoint router used for the application
     [<CustomOperation("use_endpoint_router")>]
     member __.EndpointRouter(state, routes) =
@@ -254,16 +250,11 @@ module Application =
     member __.PipeThrough(state : ApplicationState, pipe) =
       {state with Pipelines = pipe::state.Pipelines}
 
-    member x.PipeThrough(state : ApplicationState, pipe) =
-      x.PipeThrough(state, DependencyInjectionHelper.withInjectedDependencies pipe)
-
     ///Adds error/not-found handler for current scope
     [<CustomOperation("error_handler")>]
     member __.ErrorHandler(state : ApplicationState, handler) =
       {state with ErrorHandler = Some handler}
 
-    member x.ErrorHandler(state : ApplicationState, handler) =
-      x.ErrorHandler(state, DependencyInjectionHelper.withInjectedDependenciesp2 handler)
 
     ///Adds custom application configuration step.
     [<CustomOperation("app_config")>]
@@ -651,10 +642,6 @@ module Application =
       { state with
           Channels = (url, (fun _ -> channel)) :: state.Channels }
 
-    member __.AddChannel<'Dependencies> (state, url: string, channel: 'Dependencies -> IChannel ) =
-      { state with
-          Channels = (url, fun svcs -> channel (DependencyInjectionHelper.buildDependencies svcs)) :: state.Channels }
-
     /// Turns on the developer exception page, if the environment is in development mode.
     [<CustomOperation "use_developer_exceptions">]
     member __.ActivateDeveloperExceptions (state: ApplicationState) =
@@ -676,6 +663,33 @@ module Application =
                .ConfigureKestrel(fun options -> options.ListenLocalhost(portNumber, Action<Server.Kestrel.Core.ListenOptions> listenOptions))
 
         {state with WebHostConfigs = config::state.WebHostConfigs}
+
+  ///Module containing DI versions of some of the `application` custom operations
+  module ApplicationDI =
+    type ApplicationBuilder with
+
+        ///Defines top-level router used for the application
+        [<CustomOperation("use_router_di")>]
+        member x.RouterDI(state, handler) =
+          x.Router(state, DependencyInjectionHelper.withInjectedDependencies handler)
+
+        ///Adds pipeline to the list of pipelines that will be used for every request
+        [<CustomOperation("pipe_through_di")>]
+        member x.PipeThroughDI(state : ApplicationState, pipe) =
+          x.PipeThrough(state, DependencyInjectionHelper.withInjectedDependencies pipe)
+
+
+        ///Adds error/not-found handler for current scope
+        [<CustomOperation("error_handler_di")>]
+        member x.ErrorHandlerDI(state : ApplicationState, handler) =
+          x.ErrorHandler(state, DependencyInjectionHelper.withInjectedDependenciesp2 handler)
+
+        ///Registers channel for given url.
+        [<CustomOperation("add_channel_di")>]
+        member __.AddChannelDI<'Dependencies> (state, url: string, channel: 'Dependencies -> IChannel ) =
+          { state with
+              Channels = (url, fun svcs -> channel (DependencyInjectionHelper.buildDependencies svcs)) :: state.Channels }
+
 
   ///Computation expression used to configure Saturn application
   let application = ApplicationBuilder()

@@ -114,72 +114,45 @@ module Controller =
     member __.Index (state, (handler : HttpContext -> Task<'IndexOutput>)) =
       {state with Index = Some handler}
 
-    member __.Index (state, (handler : HttpContext -> 'Dependency -> Task<'IndexOutput>)) =
-      {state with Index = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
-
     ///Operation that should render (or return in case of API controllers) single entry of data
     [<CustomOperation("show")>]
     member __.Show (state, handler: HttpContext -> 'Key -> Task<'ShowOutput>) =
       {state with Show = Some handler}
-
-    member __.Show (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'ShowOutput>) =
-      {state with Show = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
 
     ///Operation that should render form for adding new item
     [<CustomOperation("add")>]
     member __.Add (state, handler: HttpContext -> Task<'AddOutput>) =
       {state with Add = Some handler}
 
-    member __.Add (state, handler : HttpContext -> 'Dependency -> Task<'AddOutput>) =
-      {state with Add = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
-
     ///Operation that should render form for editing existing item
     [<CustomOperation("edit")>]
     member __.Edit (state, handler: HttpContext -> 'Key -> Task<'EditOutput>) =
       {state with Edit = Some handler}
-
-    member __.Edit (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'EditOutput>) =
-      {state with Edit = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
 
     ///Operation that creates new item
     [<CustomOperation("create")>]
     member __.Create (state, handler: HttpContext -> Task<'CreateOutput>) =
       {state with Create = Some handler}
 
-    member __.Create (state, handler: HttpContext -> 'Dependency -> Task<'AddOutput>) =
-      {state with Create = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
-
     ///Operation that updates existing item
     [<CustomOperation("update")>]
     member __.Update (state, handler: HttpContext -> 'Key -> Task<'UpdateOutput>) =
       {state with Update = Some handler}
-
-    member __.Update (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'UpdateOutput>) =
-      {state with Update = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
 
     ///Operation that patches existing item
     [<CustomOperation("patch")>]
     member __.Patch (state, handler: HttpContext -> 'Key -> Task<'PatchOutput>) =
       {state with Patch = Some handler}
 
-    member __.Patch (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'PatchOutput>) =
-      {state with Patch = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
-
     ///Operation that deletes existing item
     [<CustomOperation("delete")>]
     member __.Delete (state, handler: HttpContext -> 'Key -> Task<'DeleteOutput>) =
       {state with Delete = Some handler}
 
-    member __.Delete (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'DeleteOutput>) =
-      {state with Delete = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
-
     ///Operation that deletes all items
     [<CustomOperation("delete_all")>]
     member __.DeleteAll (state, handler: HttpContext -> Task<'DeleteAllOutput>) =
       {state with DeleteAll = Some handler}
-
-    member __.DeleteAll (state, handler: HttpContext -> 'Dependency -> Task<'DeleteAllOutput>) =
-      {state with DeleteAll = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
 
     ///Define not-found handler for the controller
     [<CustomOperation("not_found_handler")>]
@@ -190,9 +163,6 @@ module Controller =
     [<CustomOperation("error_handler")>]
     member __.ErrorHandler(state, handler: HttpContext -> Exception -> HttpFuncResult) =
       {state with ErrorHandler = handler}
-
-    member __.ErrorHandler(state, handler: HttpContext -> 'Dependency -> Exception -> HttpFuncResult) =
-      {state with ErrorHandler = DependencyInjectionHelper.mapFromHttpContext handler}
 
     ///Define version of controller. Adds checking of `x-controller-version` header
     [<CustomOperation("version")>]
@@ -419,3 +389,65 @@ module Controller =
 
   ///Computation expression used to create controllers
   let controller<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> = ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> ()
+
+
+module ControllerDI =
+  open System.Threading.Tasks
+  open Giraffe
+
+  type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> with
+
+    ///Operation that should render (or return in case of API controllers) list of data
+    [<CustomOperation("index_di")>]
+    member __.IndexDI (state, (handler : HttpContext -> 'Dependency -> Task<'IndexOutput>)) =
+      {state with Index = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that should render (or return in case of API controllers) single entry of data
+    [<CustomOperation("show_di")>]
+    member __.ShowDI (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'ShowOutput>) =
+          {state with Show = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that should render form for adding new item
+    [<CustomOperation("add_di")>]
+    member __.AddDI (state, handler : HttpContext -> 'Dependency -> Task<'AddOutput>) =
+          {state with Add = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that should render form for editing existing item
+    [<CustomOperation("edit_di")>]
+    member __.EditDI (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'EditOutput>) =
+          {state with Edit = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that creates new item
+    [<CustomOperation("create_di")>]
+    member __.CreateDI (state, handler: HttpContext -> 'Dependency -> Task<'AddOutput>) =
+          {state with Create = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that updates existing item
+    [<CustomOperation("update_di")>]
+    member __.UpdateDI (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'UpdateOutput>) =
+          {state with Update = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that patches existing item
+    [<CustomOperation("patch_di")>]
+    member __.PatchDI (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'PatchOutput>) =
+          {state with Patch = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that deletes existing item
+    [<CustomOperation("delete_di")>]
+    member __.DeleteDI (state, handler: HttpContext -> 'Dependency -> 'Key -> Task<'DeleteOutput>) =
+          {state with Delete = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+    ///Operation that deletes all items
+    [<CustomOperation("delete_all_di")>]
+    member __.DeleteAllDI (state, handler: HttpContext -> 'Dependency -> Task<'DeleteAllOutput>) =
+          {state with DeleteAll = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
+
+     ///Define not-found handler for the controller
+    [<CustomOperation("not_found_handler_di")>]
+    member __.NotFoundHandlerDI(state : ControllerState<_,_,_,_,_,_,_,_,_,_>, handler) =
+      {state with NotFoundHandler = Some (DependencyInjectionHelper.withInjectedDependencies handler)}
+
+    ///Define error for the controller
+    [<CustomOperation("error_handler_di")>]
+    member __.ErrorHandlerDI(state, handler: HttpContext -> 'Dependency -> Exception -> HttpFuncResult) =
+          {state with ErrorHandler = DependencyInjectionHelper.mapFromHttpContext handler}
