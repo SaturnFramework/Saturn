@@ -1,6 +1,6 @@
 # Saturn
 
-![GitHub branch checks state](https://img.shields.io/github/checks-status/SaturnFramework/Saturn/master) ![GitHub last commit](https://img.shields.io/github/last-commit/SaturnFramework/Saturn?style=flat-square) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Saturn?style=flat-square)
+![Build](https://github.com/SaturnFramework/Saturn/workflows/Build/badge.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/SaturnFramework/Saturn?style=flat-square) ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Saturn?style=flat-square)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/SaturnFramework/Saturn)
 
