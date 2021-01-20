@@ -74,7 +74,7 @@ module Application =
     CookiesAlreadyAdded: bool
     NoRouter: bool
     NoWebhost: bool
-    Channels: (string * IChannel) list
+    Channels: (string * (IServiceProvider -> IChannel)) list
   }
 
   let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
@@ -170,7 +170,7 @@ module Application =
 
         useParts.Add(fun (ab: IApplicationBuilder) -> ab.UseWebSockets())
         channels
-        |> List.iter (fun (url, chnl) -> useParts.Add (fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl)))
+        |> List.iter (fun (url, chnl) -> useParts.Add (fun ab -> ab.UseMiddleware<SocketMiddleware>(url, chnl ab.ApplicationServices)))
 
       // user-provided middleware
       state.AppConfigs |> List.iter (useParts.Add)
@@ -230,6 +230,10 @@ module Application =
     member __.Router(state, handler) =
       {state with Router = Some handler}
 
+
+    member x.Router(state, handler) =
+      x.Router(state, DependencyInjectionHelper.withInjectedDependencies handler)
+
     ///Defines top-level endpoint router used for the application
     [<CustomOperation("use_endpoint_router")>]
     member __.EndpointRouter(state, routes) =
@@ -250,10 +254,16 @@ module Application =
     member __.PipeThrough(state : ApplicationState, pipe) =
       {state with Pipelines = pipe::state.Pipelines}
 
+    member x.PipeThrough(state : ApplicationState, pipe) =
+      x.PipeThrough(state, DependencyInjectionHelper.withInjectedDependencies pipe)
+
     ///Adds error/not-found handler for current scope
     [<CustomOperation("error_handler")>]
     member __.ErrorHandler(state : ApplicationState, handler) =
       {state with ErrorHandler = Some handler}
+
+    member x.ErrorHandler(state : ApplicationState, handler) =
+      x.ErrorHandler(state, DependencyInjectionHelper.withInjectedDependenciesp2 handler)
 
     ///Adds custom application configuration step.
     [<CustomOperation("app_config")>]
@@ -639,7 +649,11 @@ module Application =
     [<CustomOperation("add_channel")>]
     member __.AddChannel (state, url: string, channel: IChannel ) =
       { state with
-          Channels = (url, channel) :: state.Channels }
+          Channels = (url, (fun _ -> channel)) :: state.Channels }
+
+    member __.AddChannel<'Dependencies> (state, url: string, channel: 'Dependencies -> IChannel ) =
+      { state with
+          Channels = (url, fun svcs -> channel (DependencyInjectionHelper.buildDependencies svcs)) :: state.Channels }
 
     /// Turns on the developer exception page, if the environment is in development mode.
     [<CustomOperation "use_developer_exceptions">]
