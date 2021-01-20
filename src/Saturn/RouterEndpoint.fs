@@ -236,3 +236,61 @@ module Router =
 
   ///Computation expression used to create routing in Saturn application
   let router = RouterBuilder()
+
+module RouterDI =
+  type RouterBuilder with
+
+    ///Adds handler for `GET` request.
+    [<CustomOperation("get_di")>]
+    member x.GetDI(state, path, action) : RouterState =
+      x.Get(state, path, Saturn.DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `GET` request.
+    [<CustomOperation("getf_di")>]
+    member x.GetFDI(state, path : PrintfFormat<_,_,_,_,'f>, action) : RouterState =
+          x.GetF(state, path, Saturn.DependencyInjectionHelper.withInjectedDependenciesp1 action)
+
+    ///Adds handler for `POST` request.
+    [<CustomOperation("post_di")>]
+    member x.PostDI(state, path, action) : RouterState =
+          x.Post(state, path, Saturn.DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `POST` request.
+    [<CustomOperation("postf_di")>]
+    member x.PostFDI(state, path, action) : RouterState =
+          x.PostF(state, path, Saturn.DependencyInjectionHelper.withInjectedDependenciesp1 action)
+
+    ///Adds handler for `PUT` request.
+    [<CustomOperation("put_di")>]
+    member x.PutDI(state, path, action) : RouterState =
+          x.Put(state, path, Saturn.DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `PUT` request.
+    [<CustomOperation("putf_di")>]
+    member x.PutFDI(state, path, action) : RouterState =
+          x.PutF(state, path, Saturn.DependencyInjectionHelper.withInjectedDependenciesp1 action)
+
+    ///Adds handler for `DELETE` request.
+    [<CustomOperation("delete_di")>]
+    member x.DeleteDI(state, path, action) : RouterState =
+          x.Delete(state, path, Saturn.DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `DELETE` request.
+    [<CustomOperation("deletef_di")>]
+    member x.DeleteFDI(state, path, action) : RouterState =
+          x.DeleteF(state, path, Saturn.DependencyInjectionHelper.withInjectedDependenciesp1 action)
+
+    ///Adds handler for `PATCH` request.
+    [<CustomOperation("patch_di")>]
+    member x.PatchDI(state, path, action) : RouterState =
+          x.Patch(state, path, Saturn.DependencyInjectionHelper.withInjectedDependencies action)
+
+    ///Adds handler for `PATCH` request.
+    [<CustomOperation("patchf_di")>]
+    member x.PatchFDI(state, path, action) : RouterState =
+          x.PatchF(state, path, Saturn.DependencyInjectionHelper.withInjectedDependenciesp1 action)
+
+    ///Adds pipeline to the list of pipelines that will be used for every request
+    [<CustomOperation("pipe_through_di")>]
+    member x.PipeThroughDI(state, pipe) : RouterState =
+          x.PipeThrough(state, Saturn.DependencyInjectionHelper.withInjectedDependencies pipe)

@@ -369,7 +369,7 @@ module RouterDI =
 
     ///Adds handler for `PATCH` request.
     [<CustomOperation("patch_di")>]
-    member x.Patch(state, path, action) : RouterState =
+    member x.PatchDI(state, path, action) : RouterState =
           x.Patch(state, path, DependencyInjectionHelper.withInjectedDependencies action)
 
     ///Adds handler for `PATCH` request.
@@ -379,7 +379,7 @@ module RouterDI =
 
     ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
     [<CustomOperation("forward_di")>]
-    member x.Forward(state, path, action) : RouterState =
+    member x.ForwardDI(state, path, action) : RouterState =
           x.Forward(state, path, DependencyInjectionHelper.withInjectedDependencies action)
 
     ///Forwards calls to different `scope`. Modifies the `HttpRequest.Path` to allow subrouting.
@@ -389,11 +389,11 @@ module RouterDI =
 
     ///Adds pipeline to the list of pipelines that will be used for every request
     [<CustomOperation("pipe_through_di")>]
-    member x.PipeThrough(state, pipe) : RouterState =
+    member x.PipeThroughDI(state, pipe) : RouterState =
           x.PipeThrough(state, DependencyInjectionHelper.withInjectedDependencies pipe)
 
     ///Adds not-found handler for current scope
     [<CustomOperation("not_found_handler_di")>]
-    member x.NotFoundHandler(state, handler) : RouterState =
+    member x.NotFoundHandlerDI(state, handler) : RouterState =
           x.NotFoundHandler(state, DependencyInjectionHelper.withInjectedDependencies handler)
 
