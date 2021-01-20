@@ -271,26 +271,29 @@ let implicitConversionTest =
 
     ]
 
-//---------------------------DI tests----------------------------------------
+//---------------------------Controller DI tests----------------------------------------
 
 type Dependency = {dep : IDependency}
 
+//Include _di operations in controller
+open ControllerDI
+
 let diController = controller {
-    index (fun ctx d ->
+    index_di (fun ctx d ->
         d.dep.Call ()
         d.dep.Call ()
         let v = d.dep.Value().ToString()
         Controller.text ctx v
     )
 
-    show (fun ctx (d: IDependency) (id: int) ->
+    show_di (fun ctx (d: IDependency) (id: int) ->
         d.Call ()
         d.Call ()
         let v = (id + d.Value()).ToString()
         Controller.text ctx v
     )
 
-    add (fun ctx (d: (IDependency * obj))->
+    add_di (fun ctx (d: (IDependency * obj))->
         let (d,_) = d
         d.Call ()
         d.Call ()
@@ -301,17 +304,65 @@ let diController = controller {
 
 [<Tests>]
 let automaticDiTest =
-    let responseTestCase () = responseEndpointTestCase (hostFromController diController)
-    testList "Endpoint Controller automatic DI" [
+    let responseTestCase = responseEndpointTestCase (hostFromController diController)
+    testList "Controller automatic DI" [
         testCase "can inject record" <|
-            responseTestCase () "GET" "/" "2"
+            responseTestCase "GET" "/" "2"
 
         testCase "can inject interface" <|
-            responseTestCase () "GET" "/1" "3"
+            responseTestCase "GET" "/1" "3"
 
         testCase "can inject tupple" <|
-            responseTestCase () "GET" "/add" "2"
+            responseTestCase "GET" "/add" "2"
     ]
+
+//---------------------------Router DI tests----------------------------------------
+
+type RoutDependency = {dep : IDependency}
+
+//Include _di operations in rouer
+open RouterDI
+open Giraffe
+
+let diRouter = router {
+    get_di "/" (fun d ->
+        d.dep.Call ()
+        d.dep.Call ()
+        let v = d.dep.Value().ToString()
+        text v
+    )
+
+    getf_di "/%d" (fun (d: IDependency) (id: int) ->
+        d.Call ()
+        d.Call ()
+        let v = (id + d.Value()).ToString()
+        text v
+    )
+
+    get_di "/add" (fun (d: (IDependency * obj)) ->
+        let (d,_) = d
+        d.Call ()
+        d.Call ()
+        let v = d.Value().ToString()
+        text v
+    )
+}
+
+[<Tests>]
+let routerDiTest =
+    let responseTestCase = responseEndpointTestCase (hostFromController diRouter)
+    testList "Router automatic DI" [
+        testCase "can inject record" <|
+            responseTestCase "GET" "/" "2"
+
+        testCase "can inject interface" <|
+            responseTestCase "GET" "/1" "3"
+
+        testCase "can inject tupple" <|
+            responseTestCase "GET" "/add" "2"
+    ]
+
+
 
 //---------------------------Routing tests with string id----------------------------------------
 
