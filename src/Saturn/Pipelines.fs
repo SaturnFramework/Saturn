@@ -42,8 +42,6 @@ module Pipeline =
     [<CustomOperation("plug")>]
     member __.Plug(state, plug) : HttpHandler  = state >=> plug
 
-    member x.Plug(state, plug) : HttpHandler  = x.Plug(state, DependencyInjectionHelper.withInjectedDependencies plug)
-
     ///`must_accept` filters a request by the `Accept` HTTP header. You can use it to check if a client accepts a certain mime type before returning a response.
     [<CustomOperation("must_accept")>]
     member __.MustAccept(state, accepts) : HttpHandler  = state >=> (mustAccept accepts)
@@ -59,8 +57,6 @@ module Pipeline =
     ///`requires_auth_policy` validates if a user satisfies policy requirement, if not then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_auth_policy")>]
     member __.RequiresAuthPolicy(state, check, authFailedHandler) : HttpHandler  = state >=> (authorizeUser check authFailedHandler)
-
-    member x.RequiresAuthPolicy(state, check, authFailedHandler) : HttpHandler  = x.RequiresAuthPolicy(state, check, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
 
     ///`requires_policy` validates if a user satisfies a defined policy requirement, if not then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_policy")>]
@@ -78,25 +74,17 @@ module Pipeline =
                 return! authFailedHandler (Some >> Task.FromResult) ctx
             }
 
-    member x.RequiresPolicy(state, policy, authFailedHandler) : HttpHandler  = x.RequiresPolicy (state, policy, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
-
     ///`requires_authentication` validates if a user is authenticated/logged in. If the user is not authenticated then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_authentication")>]
     member __.RequiresAuthentication (state, authFailedHandler) : HttpHandler  = state >=> (requiresAuthentication authFailedHandler)
-
-    member x.RequiresAuthentication (state, authFailedHandler) : HttpHandler  = x.RequiresAuthentication(state, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
 
     ///`requires_role` validates if an authenticated user is in a specified role. If the user fails to be in the required role then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_role")>]
     member __.RequiresRole (state, role, authFailedHandler) : HttpHandler  = state >=> (requiresRole role authFailedHandler)
 
-    member x.RequiresRole (state, role, authFailedHandler) : HttpHandler  = x.RequiresRole(state, role, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
-
     ///`requires_role_of` validates if an authenticated user is in one of the supplied roles. If the user fails to be in one of the required roles then the handler will execute the `authFailedHandler` function.
     [<CustomOperation("requires_role_of")>]
     member __.RequiresRoleOf (state, roles, authFailedHandler) : HttpHandler  = state >=> (requiresRoleOf roles authFailedHandler)
-
-    member x.RequiresRoleOf (state, roles, authFailedHandler) : HttpHandler  = x.RequiresRoleOf(state, roles, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
 
     ///`clear_response` tries to clear the current response. This can be useful inside an error handler to reset the response before writing an error message to the body of the HTTP response object.
     [<CustomOperation("clear_response")>]
@@ -137,8 +125,6 @@ module Pipeline =
     ///`negotiateWith` sets or modifies the body of the `HttpResponse` by inspecting the `Accept` header of the HTTP request and deciding in what mimeType the response should be sent. A dictionary of type `IDictionary<string, obj -> HttpHandler>` is used to determine which `obj -> HttpHandler` function should be used to convert an object into a `HttpHandler` for a given mime type. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.
     [<CustomOperation("negotiate_with")>]
     member __.NegotiateWith(state, rules, unaccepted, cnt) : HttpHandler  = state >=> (negotiateWith rules unaccepted cnt)
-
-    member x.NegotiateWith(state, rules, unaccepted, cnt) : HttpHandler  = x.NegotiateWith(state, rules, DependencyInjectionHelper.withInjectedDependencies unaccepted, cnt)
 
     ///`html` sets or modifies the body of the `HttpResponse` with the contents of a single string variable. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.
     [<CustomOperation("html")>]
@@ -251,3 +237,34 @@ module PipelineHelpers =
         match v.ToArray() with
         | [| v |] when v = value -> nxt ctx
         | _ -> Task.FromResult None
+
+module PipelinesDI =
+  type PipelineBuilder with
+
+    ///`plug` enables adding any additional `HttpHandler` to the pipeline
+    [<CustomOperation("plug_di")>]
+    member x.PlugDI(state, plug) : HttpHandler  = x.Plug(state, DependencyInjectionHelper.withInjectedDependencies plug)
+
+    ///`requires_auth_policy` validates if a user satisfies policy requirement, if not then the handler will execute the `authFailedHandler` function.
+    [<CustomOperation("requires_auth_policy_di")>]
+    member x.RequiresAuthPolicyDI(state, check, authFailedHandler) : HttpHandler  = x.RequiresAuthPolicy(state, check, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
+
+    ///`requires_policy` validates if a user satisfies a defined policy requirement, if not then the handler will execute the `authFailedHandler` function.
+    [<CustomOperation("requires_policy_di")>]
+    member x.RequiresPolicyDI(state, policy, authFailedHandler) : HttpHandler  = x.RequiresPolicy (state, policy, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
+
+    ///`requires_authentication` validates if a user is authenticated/logged in. If the user is not authenticated then the handler will execute the `authFailedHandler` function.
+    [<CustomOperation("requires_authentication_di")>]
+    member x.RequiresAuthenticationDI (state, authFailedHandler) : HttpHandler  = x.RequiresAuthentication(state, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
+
+    ///`requires_role` validates if an authenticated user is in a specified role. If the user fails to be in the required role then the handler will execute the `authFailedHandler` function.
+    [<CustomOperation("requires_role_di")>]
+    member x.RequiresRoleDI (state, role, authFailedHandler) : HttpHandler  = x.RequiresRole(state, role, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
+
+    ///`requires_role_of` validates if an authenticated user is in one of the supplied roles. If the user fails to be in one of the required roles then the handler will execute the `authFailedHandler` function.
+    [<CustomOperation("requires_role_of_di")>]
+    member x.RequiresRoleOfDI (state, roles, authFailedHandler) : HttpHandler  = x.RequiresRoleOf(state, roles, DependencyInjectionHelper.withInjectedDependencies authFailedHandler)
+
+    ///`negotiateWith` sets or modifies the body of the `HttpResponse` by inspecting the `Accept` header of the HTTP request and deciding in what mimeType the response should be sent. A dictionary of type `IDictionary<string, obj -> HttpHandler>` is used to determine which `obj -> HttpHandler` function should be used to convert an object into a `HttpHandler` for a given mime type. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.
+    [<CustomOperation("negotiate_with_di")>]
+    member x.NegotiateWithDI(state, rules, unaccepted, cnt) : HttpHandler  = x.NegotiateWith(state, rules, DependencyInjectionHelper.withInjectedDependencies unaccepted, cnt)
