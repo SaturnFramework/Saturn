@@ -93,7 +93,7 @@ Target.create "Docs" (fun _ ->
 )
 
 Target.create "Test" (fun _ ->
-    exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj -c Release" "."
+    exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj -c Release -- --summary" "."
 )
 
 // --------------------------------------------------------------------------------------
@@ -157,4 +157,4 @@ Target.create "Release" DoNothing
 "Pack"
   ==> "Push"
 
-Target.runOrDefault "Pack"
+Target.runOrDefault "Build"

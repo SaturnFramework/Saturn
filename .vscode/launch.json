@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug tests",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_tests",
+            "program": "${workspaceFolder}/tests/Saturn.UnitTests/bin/Debug/net5.0/Saturn.UnitTests.dll",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "justMyCode": false,
+            "symbolOptions": {
+              "searchPaths": [],
+              "searchMicrosoftSymbolServer": true,
+              "searchNuGetOrgSymbolServer": true
+            },
+            "sourceLinkOptions": {
+              "*": {
+                "enabled": true
+              }
+            },
+            "enableStepFiltering": false
+        }
+    ]
+}
