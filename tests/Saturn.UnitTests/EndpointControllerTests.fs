@@ -305,7 +305,7 @@ let diController = controller {
 [<Tests>]
 let automaticDiTest =
     let responseTestCase = responseEndpointTestCase (hostFromController diController)
-    testList "Controller automatic DI" [
+    testList "Endpoint Controller automatic DI" [
         testCase "can inject record" <|
             responseTestCase "GET" "/" "2"
 
@@ -351,7 +351,7 @@ let diRouter = router {
 [<Tests>]
 let routerDiTest =
     let responseTestCase = responseEndpointTestCase (hostFromController diRouter)
-    testList "Router automatic DI" [
+    testList "Endpoint Router automatic DI" [
         testCase "can inject record" <|
             responseTestCase "GET" "/" "2"
 
