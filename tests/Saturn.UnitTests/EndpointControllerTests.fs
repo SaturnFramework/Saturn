@@ -212,7 +212,7 @@ let htmlRendererTests =
 
             try
                 let result = testHostWithContext (hostFromController implicitNodeToHtmlTestController) ctx
-                let body = getBody result
+                let body = getBody' result
                 Expect.stringStarts (body.ToUpperInvariant()) (expectedContent.ToUpperInvariant()) "Should start with a doctype element"
             with ex -> failtestf "failed because %A" ex
 
@@ -223,7 +223,7 @@ let htmlRendererTests =
             let expectedContent = "<!doctype html>"
             try
                 let result = testHostWithContext (hostFromController explicitNodeToHtmlTestController) ctx
-                let body = getBody result
+                let body = getBody' result
                 Expect.stringStarts (body.ToUpperInvariant()) (expectedContent.ToUpperInvariant()) "Should start with a doctype element"
             with ex -> failtestf "failed because %A" ex
 
@@ -233,7 +233,7 @@ let htmlRendererTests =
 
             try
                 let result = testHostWithContext (hostFromController implicitStringToHtmlTestController) ctx
-                let body = getBody result
+                let body = getBody' result
                 if body.Contains(notExpectedContent, StringComparison.InvariantCultureIgnoreCase) then
                     Tests.failtest "Doctype element was present even though it should not be automatically added to string results."
                 else
@@ -259,7 +259,8 @@ let implicitConversionsController = controller {
 
 [<Tests>]
 let implicitConversionTest =
-    let responseTestCase = responseEndpointTestCase (hostFromController implicitConversionsController)
+    let host = hostFromController implicitConversionsController
+    let responseTestCase = responseEndpointTestCase host
     testList "Endpoint Controller implicit conversion" [
         testCase "convert list to JSON" <|
             responseTestCase "GET" "/" """[{"a":"test","b":1,"c":false},{"a":"test2","b":2,"c":true}]"""
@@ -293,7 +294,7 @@ let diController = controller {
         Controller.text ctx v
     )
 
-    add_di (fun ctx (d: (IDependency * obj))->
+    add_di (fun ctx (d: (IDependency * IDependency))->
         let (d,_) = d
         d.Call ()
         d.Call ()
@@ -304,16 +305,20 @@ let diController = controller {
 
 [<Tests>]
 let automaticDiTest =
-    let responseTestCase = responseEndpointTestCase (hostFromController diController)
     testList "Endpoint Controller automatic DI" [
-        testCase "can inject record" <|
-            responseTestCase "GET" "/" "2"
+        testCase "can inject record" <| (fun _ ->
+            let host = hostFromController diController
+            responseEndpointTestCase host "GET" "/" "2" () )
 
-        testCase "can inject interface" <|
-            responseTestCase "GET" "/1" "3"
+        testCase "can inject interface" <| (fun _ ->
+            let host = hostFromController diController
+            responseEndpointTestCase host "GET" "/1" "3" ()
+        )
 
-        testCase "can inject tupple" <|
-            responseTestCase "GET" "/add" "2"
+        testCase "can inject tupple" <| (fun _ ->
+            let host = hostFromController diController
+            responseEndpointTestCase host "GET" "/add" "2" ()
+        )
     ]
 
 //---------------------------Router DI tests----------------------------------------
@@ -332,14 +337,14 @@ let diRouter = router {
         text v
     )
 
-    getf_di "/%d" (fun (d: IDependency) (id: int) ->
+    getf_di "/%i" (fun (d: IDependency) (id: int) ->
         d.Call ()
         d.Call ()
         let v = (id + d.Value()).ToString()
         text v
     )
 
-    get_di "/add" (fun (d: (IDependency * obj)) ->
+    get_di "/add" (fun (d: (IDependency * IDependency)) ->
         let (d,_) = d
         d.Call ()
         d.Call ()
@@ -350,16 +355,21 @@ let diRouter = router {
 
 [<Tests>]
 let routerDiTest =
-    let responseTestCase = responseEndpointTestCase (hostFromController diRouter)
     testList "Endpoint Router automatic DI" [
-        testCase "can inject record" <|
-            responseTestCase "GET" "/" "2"
+        testCase "can inject record" <| (fun _ ->
+            let host = hostFromController diRouter
+            responseEndpointTestCase host "GET" "/" "2" ()
+        )
 
-        testCase "can inject interface" <|
-            responseTestCase "GET" "/1" "3"
+        testCase "can inject interface" <| (fun _ ->
+            let host = hostFromController diRouter
+            responseEndpointTestCase host "GET" "/1" "3" ()
+        )
 
-        testCase "can inject tupple" <|
-            responseTestCase "GET" "/add" "2"
+        testCase "can inject tupple" <| (fun _ ->
+            let host = hostFromController diRouter
+            responseEndpointTestCase host "GET" "/add" "2" ()
+        )
     ]
 
 

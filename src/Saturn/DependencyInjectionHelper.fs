@@ -15,7 +15,12 @@ let buildDependencies<'Dependencies> (svcs: IServiceProvider) =
     res
 
   let getCtor (t: Type) : IServiceProvider -> obj =
-    if FSharpType.IsTuple t then
+    if FSharpType.IsRecord t then
+      let fields = FSharpType.GetRecordFields t
+      fun svcs ->
+        let flds = fields |> Array.map (fun t -> getService svcs t.PropertyType)
+        FSharpValue.MakeRecord(t, flds)
+    elif FSharpType.IsTuple t then
       let fields = FSharpType.GetTupleElements t
       fun svcs ->
         let fields = fields |> Array.map (getService svcs)

@@ -66,7 +66,7 @@ type Requesters() =
 
 
 
-[<Tests>]
+// [<Tests>]
 let tests =
   testList "performance tests" [
     test "compare plain Giraffe with Router" {
