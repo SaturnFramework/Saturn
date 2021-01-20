@@ -1,7 +1,8 @@
 image:
   file: .devcontainer/Dockerfile
 tasks:
-  - command: dotnet tool restore && dotnet restore
+  - before: dotnet tool restore
+    command: dotnet restore
 vscode:
   extensions:
     - ms-dotnettools.csharp@1.21.17:5/iI88WHX4j3iL5jASDTYQ==
