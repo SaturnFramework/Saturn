@@ -18,6 +18,7 @@ nuget Microsoft.AspNetCore.Authentication.OpenIdConnect
 nuget Microsoft.NET.Sdk.Functions
 nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
+nuget System.ServiceModel.Primitives
 nuget FSharp.Control.Websockets >= 0.2
 nuget FSharp.Core >= 4.2.3
 

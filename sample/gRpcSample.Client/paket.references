@@ -2,3 +2,4 @@
 FSharp.Core
 Ply
 protobuf-net.Grpc.HttpClient
+System.ServiceModel.Primitives
