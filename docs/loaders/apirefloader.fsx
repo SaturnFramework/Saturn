@@ -36,7 +36,6 @@ let loader (projectRoot: string) (siteContet: SiteContents) =
           "Saturn.Extensions.Authorization", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Authorization.dll")
           "Saturn.Extensions.gRPC", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.gRPC.dll")
           "Saturn.Extensions.HttpSys", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.HttpSys.dll")
-          "Saturn.Extensions.OpenIdConnect", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.OpenIdConnect.dll")
           "Saturn.Extensions.Turbolinks", Path.Combine(projectRoot, "..", "temp", "Saturn.Extensions.Turbolinks.dll")
         ]
       let libs =
@@ -44,8 +43,9 @@ let loader (projectRoot: string) (siteContet: SiteContents) =
           Path.Combine (projectRoot, "..", "temp")
           Path.Combine (projectRoot, "..", "packages", "docsasp", "Microsoft.AspNetCore.app.ref", "ref", "netcoreapp3.1")
         ]
+      let sourceFolder = Path.Combine(projectRoot, "..")
       for (label, dll) in dlls do
-        let output = MetadataFormat.Generate(dll, markDownComments = true, publicOnly = true, libDirs = libs)
+        let output = MetadataFormat.Generate(dll, markDownComments = true, publicOnly = true, libDirs = libs, sourceRepo = "https://github.com/SaturnFramework/Saturn/tree/master", sourceFolder = sourceFolder)
 
         let allModules =
             output.AssemblyGroup.Namespaces

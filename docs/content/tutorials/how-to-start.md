@@ -32,7 +32,7 @@ If you want to start from scratch with a minimal Saturn webserver:
 1. Create a new F# Project (for example with `dotnet new console -lang F#`)
 2. Add the `Saturn` NuGet Package
 
-```f#
+```fsharp
 open Saturn
 open Giraffe
 
@@ -45,7 +45,7 @@ run app
 
 If you compile and run this application, it will unconditionally return the text regardless of the path.
 
-From here on out you can add [routers](../explanations/routing.md), [controllers](../explanations/controller.md) and [views](../explanations/view.md).
+From here on out you can add [routers](../explanations/routing.html), [controllers](../explanations/controller.html) and [views](../explanations/view.html).
 
 ## Deep Dive
 

@@ -85,9 +85,8 @@ module SiteMap =
             s.CollectPaths "" None state
             |> Seq.map (fun (a,b,c) -> {Route = a; Verb =b; Headers = Map.ofList [if c.IsSome then yield ("x-controller-version", c.Value)] })
 
-
     open Giraffe.ResponseWriters
-    open Giraffe.GiraffeViewEngine
+    open Giraffe.ViewEngine
     open Giraffe
 
     let page : HttpHandler =
@@ -167,5 +166,5 @@ module SiteMap =
                         ]
                     ]
                 ]
-            ctx.WriteHtmlStringAsync (Giraffe.GiraffeViewEngine.renderHtmlDocument index)
+            ctx.WriteHtmlStringAsync (RenderView.AsString.htmlDocument index)
 

@@ -1,6 +1,6 @@
 module OtherView
 
-open Giraffe.GiraffeViewEngine
+open Giraffe.ViewEngine
 
 
 let index =

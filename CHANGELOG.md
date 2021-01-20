@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0-preview01] - 23.06.2020
+
+### Added
+
+* Added `RouterEndpoint`, `ControllerEndpoint` modules allowing to create routing using ASP.NET Endpoint Routing
+* Added `use_endpoint_router` to `application` computation expression allowing to use Endpoint Routing in the application
+* [Infrastructure] Add performance benchmark for Saturn using Endpoint Routing
+
+
+### Changed
+
+* Updated to Giraffe 5.0-alpha02
+* Moved to `Giraffe.ViewEngine` package for view rendering support
+
 ## [0.14.1] - 18.06.2020
 
 ### Added

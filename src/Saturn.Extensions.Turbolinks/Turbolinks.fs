@@ -33,7 +33,7 @@ module TurbolinksHelpers =
 
   let internal handleTurbolinks (ctx: HttpContext) =
     if isTurbolink ctx then
-      ctx.Response.Headers.Add("Turbolinks-Location", StringValues ctx.Request.Path.Value)
+      ctx.Response.Headers.Add("Turbolinks-Location", StringValues (ctx.Request.Path.Value + ctx.Request.QueryString.Value))
 
 ///HttpHandler enabling Turbolinks support for given pipelines
 let turbolinks (nxt : HttpFunc) (ctx : HttpContext) : HttpFuncResult =

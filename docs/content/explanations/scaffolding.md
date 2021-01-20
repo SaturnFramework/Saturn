@@ -26,7 +26,7 @@ For example:
 
 Generates the following structure:
 
-```
+```bash
 src
 ├── Migrations
 │   └── 201903192143.Book.fs

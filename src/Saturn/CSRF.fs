@@ -99,7 +99,7 @@ or
   /// Contains view helpers for csrf tokens for various view engines.
   module View =
     module Giraffe =
-      open Giraffe.GiraffeViewEngine
+      open Giraffe.ViewEngine
 
       ///Creates a csrf token form input of the kind: <input type="hidden" name="TOKEN_NAME" value="TOKEN_VALUE" />
       let csrfTokenInput (ctx: HttpContext) =

@@ -1,6 +1,6 @@
 module App
 
-open Giraffe.GiraffeViewEngine
+open Giraffe.ViewEngine
 
 let layout (content: XmlNode list) =
     html [_class "has-navbar-fixed-top"] [

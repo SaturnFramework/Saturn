@@ -4,9 +4,10 @@ open Saturn
 open Giraffe.ResponseWriters
 open Microsoft.Extensions.Logging
 
+
 module Views =
   open Microsoft.AspNetCore.Http
-  open Giraffe.GiraffeViewEngine
+  open Giraffe.ViewEngine
   open Saturn.CSRF.View.Giraffe
 
   let index (ctx: HttpContext) =
@@ -23,6 +24,7 @@ module Views =
 /// The other requires the token to be present before returning a success message to you.
 let appRouter = router {
   pipe_through protectFromForgery
+
 
   get "/" (fun next ctx -> htmlView (Views.index ctx) next ctx)
   get "/csrftoken" (fun next ctx -> json (CSRF.getRequestTokens ctx) next ctx)

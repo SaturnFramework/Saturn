@@ -6,7 +6,7 @@ menu_order: 3
 
 # Adding Pages
 
-This guide uses the same project from the [how to start guide](how-to-start.md). Let's add two pages to it - one hello page and a page that can get your name from the URL.
+This guide uses the same project from the [how to start guide](how-to-start.html). Let's add two pages to it - one hello page and a page that can get your name from the URL.
 
 ## Creating the View
 
