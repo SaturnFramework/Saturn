@@ -48,7 +48,7 @@ module Controller =
     DeleteAll: (HttpContext -> Task<'DeleteAllOutput>) option
 
     NotFoundHandler: HttpHandler option
-    ErrorHandler: HttpContext -> Exception -> HttpFuncResult
+    ErrorHandler: (HttpContext -> Exception -> HttpFuncResult) option
     SubControllers : (string * ('Key -> HttpHandler)) list
     Plugs : Map<Action, HttpHandler list>
     Version: string option
@@ -107,7 +107,7 @@ module Controller =
   type ControllerBuilder<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> internal () =
 
     member __.Yield(_) : ControllerState<'Key, 'IndexOutput, 'ShowOutput, 'AddOutput, 'EditOutput, 'CreateOutput, 'UpdateOutput, 'PatchOutput, 'DeleteOutput, 'DeleteAllOutput> =
-      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = (fun _ ex -> raise ex); CaseInsensitive = false }
+      { Index = None; Show = None; Add = None; Edit = None; Create = None; Update = None; Patch = None; Delete = None; DeleteAll = None; NotFoundHandler = None; Version = None; SubControllers = []; Plugs = Map.empty<_,_>; ErrorHandler = None; CaseInsensitive = false }
 
     ///Operation that should render (or return in case of API controllers) list of data
     [<CustomOperation("index")>]
@@ -162,7 +162,7 @@ module Controller =
     ///Define error for the controller
     [<CustomOperation("error_handler")>]
     member __.ErrorHandler(state, handler: HttpContext -> Exception -> HttpFuncResult) =
-      {state with ErrorHandler = handler}
+      {state with ErrorHandler = Some handler}
 
     ///Define version of controller. Adds checking of `x-controller-version` header
     [<CustomOperation("version")>]
@@ -355,7 +355,7 @@ module Controller =
           try
             return! initialController nxt ctx
           with
-          | ex -> return! state.ErrorHandler ctx ex
+          | ex when state.ErrorHandler.IsSome -> return! state.ErrorHandler.Value ctx ex
         }
 
       let controllerWithSubs =
@@ -450,4 +450,4 @@ module ControllerDI =
     ///Define error for the controller
     [<CustomOperation("error_handler_di")>]
     member __.ErrorHandlerDI(state, handler: HttpContext -> 'Dependency -> Exception -> HttpFuncResult) =
-          {state with ErrorHandler = DependencyInjectionHelper.mapFromHttpContext handler}
+          {state with ErrorHandler = Some (DependencyInjectionHelper.mapFromHttpContext handler)}
