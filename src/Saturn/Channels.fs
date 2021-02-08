@@ -146,7 +146,7 @@ module Channels =
                             do! ctx.Response.WriteAsync msg
                     | false ->
                       ctx.Response.StatusCode <- 400
-                else do! next.Invoke(ctx) |> (Async.AwaitIAsyncResult >> Async.Ignore)
+                else do! next.Invoke(ctx)
             } :> Task
 
 
