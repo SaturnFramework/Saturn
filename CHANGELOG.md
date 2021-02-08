@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0-preview03] - 08.02.2021
+
+### Fixed
+
+* Preserve stack trace by default in controller (by [@retendo](https://github.com/retendo))
+* Fixes exception propagation when using channels (by [@retendo](https://github.com/retendo))
+
 ## [0.15.0-preview02] - 20.01.2021
 
 ### Added
