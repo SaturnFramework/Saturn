@@ -97,7 +97,7 @@ let menu (ctx : SiteContents) (page: string) =
         ]
     ]
 
-  let renderShortucuts =
+  let renderShortcuts =
     section [Id "shortcuts"] [
         h3 [] [!! "Shortcuts"]
         ul [] [
@@ -139,7 +139,7 @@ let menu (ctx : SiteContents) (page: string) =
       if hasTutorials then renderTuts
       if hasHowTos then renderHowTos
       renderRefs
-      renderShortucuts
+      renderShortcuts
       renderFooter
     ]
   ]
