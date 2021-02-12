@@ -97,9 +97,9 @@ let menu (ctx : SiteContents) (page: string) =
         ]
     ]
 
-  let renderShortucuts =
+  let renderShortcuts =
     section [Id "shortcuts"] [
-        h3 [] [!! "Shortucts"]
+        h3 [] [!! "Shortcuts"]
         ul [] [
           for s in shortcuts do
             yield
@@ -139,7 +139,7 @@ let menu (ctx : SiteContents) (page: string) =
       if hasTutorials then renderTuts
       if hasHowTos then renderHowTos
       renderRefs
-      renderShortucuts
+      renderShortcuts
       renderFooter
     ]
   ]
