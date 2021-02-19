@@ -92,7 +92,7 @@ module AzureFunctions =
     member __.NotFoundHandler(state : FunctionState, handler) =
       {state with NotFoundHandler = handler}
 
-    ///Adds logger for the function. Used for error reporting and passed to the actions as `ctx.Items.["TraceWriter"]`
+    ///Adds logger for the function. Used for error reporting and passed to the actions as `ctx.Items.["Logger"]`
     [<CustomOperation("logger")>]
     member __.Logger(state : FunctionState, logger) =
       __.LogWriter <- Some logger
