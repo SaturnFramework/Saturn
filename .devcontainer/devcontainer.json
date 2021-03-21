@@ -1,6 +1,6 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": "F# (.NET Core Latest)",
+	"name": "F# (.NET Core 5.0 Latest)",
 	"dockerFile": "Dockerfile",
 	// Uncomment the next line if you want to publish any ports.
 	// "appPort": [],
