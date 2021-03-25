@@ -327,6 +327,33 @@ module Application =
           ServicesConfig = service::state.ServicesConfig
           AppConfigs = middleware::state.AppConfigs
       }
+
+    ///Enables response caching to use with corresponding plugs in pipelines.
+    /// 
+    /// Giraffe has four HttpHandlers that can be used in plugs directly:
+    /// 
+    /// noResponseCaching, privateResponceCaching, publicResponseCaching and responseCaching
+    /// (from https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md#response-caching)
+    /// 
+    /// **Example:** (setting "Cache-Control: public, max-age=600" in the response header)
+    /// ```fsharp
+    /// let withCaching = pipeline {
+    ///   plug (publicResponseCaching 600 None)
+    /// }
+    /// ```
+    [<CustomOperation("use_response_caching")>]
+    member __.UseResponseCaching(state) =
+      let service (s : IServiceCollection) =
+        s.AddResponseCaching()
+
+      let middleware (app : IApplicationBuilder) =
+        app.UseResponseCaching()
+        
+      { state with
+          AppConfigs = middleware::state.AppConfigs
+          ServicesConfig = service::state.ServicesConfig
+      }
+
     ///Enables using static file hosting.
     [<CustomOperation("use_static")>]
     member __.UseStatic(state, path : string) =
