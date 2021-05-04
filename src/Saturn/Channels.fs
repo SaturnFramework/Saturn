@@ -9,6 +9,7 @@ open System
 open System.Collections.Concurrent
 open System.Collections.Generic
 open System.Net.WebSockets
+open System.Runtime.ExceptionServices
 open System.Threading
 open System.Threading.Tasks
 
@@ -94,6 +95,14 @@ module Channels =
           | _ -> ()
         }
 
+    let (|WebSocketError|_|) (e: ExceptionDispatchInfo) =
+      match e.SourceException with
+      | sourceExn when sourceExn.InnerException |> isNull |> not ->
+        match sourceExn.InnerException with
+        | :? WebSocketException as webSocketExn -> Some webSocketExn
+        | _ -> None
+      | _ -> None
+
     type SocketMiddleware(next : RequestDelegate, serializer:  Giraffe.Json.ISerializer, path: string, channel: IChannel, sockets: SocketHub, logger: ILogger<SocketMiddleware>) =
         do sockets.NewPath path
 
@@ -128,7 +137,10 @@ module Channels =
                                   logger.LogTrace(ex, "got message that was unable to be deserialized into a 'Message'")
                                 ()
                               | Error exn ->
-                                logger.LogError(exn.SourceException, "Error while receiving message")
+                                match exn with
+                                | WebSocketError socketError when socketError.WebSocketErrorCode = WebSocketError.ConnectionClosedPrematurely ->
+                                  logger.LogInformation("WebSocket error: Connection closed prematurely")
+                                | _ -> logger.LogError(exn.SourceException, "Error while receiving message")
                                 () // TODO: ?
 
                             do! channel.Terminate (ctx, socketInfo)
