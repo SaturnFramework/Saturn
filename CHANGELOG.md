@@ -4,46 +4,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.15.0-preview03] - 08.02.2021
+## [0.15.0] - 09.06.2021
+
+### Added
+
+* `add use_response_caching` to application CE (by [@groma84](https://github.com/groma84))
+* Log prematurely closed connections as info, not as error (by [@retendo](https://github.com/retendo))
+* Added DI support for all CEs we provide - the `_di` versions of custom operations are avaliable in following modules: `ApplicationDI`, `ChannelsDI`, `ControllerDI` (both standard, and endpoint routing), `PipelinesDI`, and `RouterDI` (both standard, and endpoint routing) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak) and [@Arshia001](https://github.com/Arshia001))
+* Added controller versioning for endpoint routing (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
+* Added `RouterEndpoint`, `ControllerEndpoint` modules allowing to create routing using ASP.NET Endpoint Routing
+* Added `use_endpoint_router` to `application` computation expression allowing to use Endpoint Routing in the application
+* [Infrastructure] Add performance benchmark for Saturn using Endpoint Routing
+
 
 ### Fixed
 
 * Preserve stack trace by default in controller (by [@retendo](https://github.com/retendo))
 * Fixes exception propagation when using channels (by [@retendo](https://github.com/retendo))
-
-## [0.15.0-preview02] - 20.01.2021
-
-### Added
-
-* Added DI support for all CEs we provide - the `_di` versions of custom operations are avaliable in following modules: `ApplicationDI`, `ChannelsDI`, `ControllerDI` (both standard, and endpoint routing), `PipelinesDI`, and `RouterDI` (both standard, and endpoint routing) (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak) and [@Arshia001](https://github.com/Arshia001))
-* Added controller versioning for endpoint routing (by [@Krzysztof-Cieslak](https://github.com/Krzysztof-Cieslak))
-
-### Changed
-
-* Updated to Giraffe 5.0-rc-6
-* Updated to net5.0 and ASP.NET Core 5
-
-### Fixed
-
 * Fix typo getConfiguration (by [@kaashyapan](https://github.com/kaashyapan))
 * Fix putSecureBrowserHeaders header typo (by [@Shmew](https://github.com/Shmew))
 * Fix application/json not being compressed in response (by [@may-day](https://github.com/may-day))
 * Include querystring in Turbolinks-location (by [@viktorvan](https://github.com/viktorvan))
 
 
-## [0.15.0-preview01] - 23.06.2020
-
-### Added
-
-* Added `RouterEndpoint`, `ControllerEndpoint` modules allowing to create routing using ASP.NET Endpoint Routing
-* Added `use_endpoint_router` to `application` computation expression allowing to use Endpoint Routing in the application
-* [Infrastructure] Add performance benchmark for Saturn using Endpoint Routing
-
-
 ### Changed
 
-* Updated to Giraffe 5.0-alpha02
+* Updated to Giraffe 5.0
+* Updated to net5.0 and ASP.NET Core 5
 * Moved to `Giraffe.ViewEngine` package for view rendering support
+
 
 ## [0.14.1] - 18.06.2020
 
