@@ -9,7 +9,7 @@ nuget NSubstitute
 nuget BenchmarkDotNet
 nuget Microsoft.AspNetCore.TestHost
 
-nuget Giraffe prerelease
+nuget Giraffe
 nuget Giraffe.ViewEngine
 
 nuget Microsoft.AspNetCore.Authentication.JwtBearer
