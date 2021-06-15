@@ -20,7 +20,9 @@ nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
 nuget System.ServiceModel.Primitives
 nuget FSharp.Control.Websockets >= 0.2
-nuget FSharp.Core >= 4.2.3
+
+# as a library, saturn should have a lower min version of fsharp.core. users can float
+nuget FSharp.Core 5.0.0
 
 group Docs
   source https://api.nuget.org/v3/index.json

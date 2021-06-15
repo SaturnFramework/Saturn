@@ -37,7 +37,7 @@ NUGET
     FSharp.Control.Websockets (0.2.2)
       FSharp.Core (>= 4.3.4)
       Microsoft.IO.RecyclableMemoryStream (>= 1.2.2)
-    FSharp.Core (5.0.1)
+    FSharp.Core (5.0)
     Giraffe (5.0)
       FSharp.Core (>= 5.0)
       Giraffe.ViewEngine (>= 1.3)
