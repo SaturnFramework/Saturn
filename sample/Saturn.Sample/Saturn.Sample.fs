@@ -5,7 +5,7 @@ open Giraffe
 open Microsoft.Extensions.Hosting
 open Microsoft.AspNetCore.Builder
 
-//Saturn is using standard HttpHandlers from Giraffe
+// Saturn is using standard HttpHandlers from Giraffe
 
 let apiHelloWorld = text "hello world from API"
 let apiHelloWorld2 = text "hello world from API 2"
@@ -18,11 +18,11 @@ let helloWorld2 = text "hello world2"
 let helloWorldName str = text ("hello world, " + str)
 let helloWorldNameAge (str, age) = text (sprintf "hello world, %s, You're %i" str age)
 
-//Pipeline CE is used to compose HttpHandlers together in more declarative way.
-//At the moment only low level helpers in form of custom CE keywords are prvovded.
-//But I hope to add some more high level helpers (for example `accept_json` instead of `must_accept "application/json" )
-//Phoenix default set of plugs can be good source of ideas.
-//Pipelines are composed together with `plug` keyowrd
+// Pipeline CE is used to compose HttpHandlers together in more declarative way.
+// At the moment only low level helpers in form of custom CE keywords are provided.
+// But I hope to add some more high level helpers (for example `accept_json` instead of `must_accept "application/json" )
+// Phoenix default set of plugs can be good source of ideas.
+// Pipelines are composed together with `plug` keyword
 
 let apiHeaderPipe = pipeline {
     set_header "myCustomHeaderApi" "api"
@@ -52,7 +52,7 @@ let endpointPipe = pipeline {
 // It automatically supports grouping handlers registered for same path into `choose` combinator, what is
 // not supported out of the box in TokenRouter - if you have multiple handlers registerd for `get "/"` they will be grouped,
 // on the TokenRouter matching we will create single `route "/"` call, but the HttpHandler passed to it will be `choose` build
-// from all registed handlers for this route.
+// from all registered handlers for this route.
 
 let apiRouter = router {
     pipe_through apiHeaderPipe
@@ -64,7 +64,7 @@ let apiRouter = router {
     deletef "/del/%s" apiDeleteExample2
 }
 
-//`controller<'Key>` CE is higher level abstraction following convention of Phoenix Controllers and `resources` macro. It will create
+// `controller<'Key>` CE is higher level abstraction following convention of Phoenix Controllers and `resources` macro. It will create
 // complex routing for predefined set of operations which looks like this:
 // [
 //     GET [
@@ -106,9 +106,9 @@ let userController = controller {
     edit (fun ctx id -> (sprintf "Edit handler - %s" id) |> Controller.text ctx)
 }
 
-//Since all computation expressions produces `HttpHandler` everything can be easily composed together in nice declarative way.
-//I belive that aim of the Saturn should be providing a more streamlined, higher level developer experiance on top of the great
-//Giraffe's model. It's bit like Phoenix using Plug model under the hood.
+// Since all computation expressions produces `HttpHandler` everything can be easily composed together in nice declarative way.
+// I belive that aim of the Saturn should be providing a more streamlined, higher level developer experience on top of the great
+// Giraffe's model. It's bit like Phoenix using Plug model under the hood.
 
 let topRouter = router {
     pipe_through headerPipe
@@ -128,7 +128,7 @@ let topRouter = router {
         get "/a" otherHelloWorld2
     })
 
-    // or can be defined separatly and used as HttpHandler
+    // or can be defined separately and used as HttpHandler
     forward "/api" apiRouter
 
     // same with controllers
@@ -137,7 +137,7 @@ let topRouter = router {
     forward "/error" (fun nxt ctx -> failwith "Sample error")
 }
 
-///Saturn provides easy, declarative way to define application and hosting configuratiuon.
+// Saturn provides easy, declarative way to define application and hosting configuration.
 // Things like enabling in-memory cache for session handling shouldn't require changes in multiple places, and be enabled with single "feature toggle"
 // It also enables defining common set of Pipelines that will be executed for every request, before dispatching to router
 
