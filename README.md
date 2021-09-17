@@ -20,6 +20,18 @@ Saturn has nice [documentation](https://saturnframework.org/explanations/overvie
 2. Restore dotnet SDK tools: `dotnet tool restore`
 3. Inside the repo directory, run `dotnet fake build`
 
+## How to run the automated tests for this project
+
+Here we will present two ways of running the automated tests for this project. The first one is the preferred way since it is the same command used in the [CI build script](https://github.com/SaturnFramework/Saturn/blob/master/.github/workflows/build.yml#L23):
+
+* Inside the repo directory, run `dotnet fake build -t Test`.
+
+Although, there is this second approach where you can specify a test scenario to run filtering by its statement:
+
+1. Change the directory to the tests folder using `cd tests/Saturn.UnitTests/`
+2. List all the tests statements with this command: `dotnet run --list-tests`
+3. Run only one test scenario, filtering by the test statement like in this example: `dotnet run --filter "Controller Routing Tests.Add works"`.
+
 ## How to contribute
 
 *Imposter syndrome disclaimer*: I want your help. No really, I do.
