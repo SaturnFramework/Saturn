@@ -192,6 +192,9 @@ module ControllerHelpers =
     let ok (ctx: HttpContext) res =
       Successful.OK res Common.halt ctx
 
+    let noContent (ctx: HttpContext) res =
+      Successful.NO_CONTENT res Common.halt ctx
+
     let created (ctx: HttpContext) res =
       Successful.CREATED res Common.halt ctx
 
