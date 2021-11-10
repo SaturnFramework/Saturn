@@ -1,8 +1,4 @@
-// --------------------------------------------------------------------------------------
-// FAKE build script
-// --------------------------------------------------------------------------------------
-#r "paket: groupref build //"
-#load ".fake/build.fsx/intellisense.fsx"
+module Build
 
 open Fake.Core
 open Fake.DotNet
@@ -12,6 +8,19 @@ open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 open Fake.Api
+open System
+open System.IO
+open Fake.Core
+open Fake.DotNet
+open Fake.Core.TargetOperators
+open Fake.IO
+open Farmer
+open Farmer.Builders
+open Fake.IO.FileSystemOperators
+open Fake.IO.Globbing.Operators
+open Fake.Tools
+open Helpers
+initializeContext()
 
 // --------------------------------------------------------------------------------------
 // Information about the project to be used at NuGet and in AssemblyInfo files
@@ -39,24 +48,27 @@ let changelog = Changelog.load changelogFilename
 let latestEntry = changelog.LatestEntry
 
 // --------------------------------------------------------------------------------------
-// Helpers
+// Standard DotNet Build Steps
 // --------------------------------------------------------------------------------------
-let isNullOrWhiteSpace = System.String.IsNullOrWhiteSpace
-let exec cmd args dir =
-    if Process.execSimple( fun info ->
+let install = lazy DotNet.install DotNet.Versions.FromGlobalJson
+let inline withWorkDir wd =
+    DotNet.Options.lift install.Value
+    >> DotNet.Options.withWorkingDirectory wd
 
-        { info with
-            FileName = cmd
-            WorkingDirectory =
-                if (isNullOrWhiteSpace dir) then info.WorkingDirectory
-                else dir
-            Arguments = args
-            }
-    ) System.TimeSpan.MaxValue <> 0 then
-        failwithf "Error while running '%s' with args: %s" cmd args
-let getBuildParam = Environment.environVar
+let runTool cmd args workingDir =
+    let arguments = args |> String.split ' ' |> Arguments.OfArgs
+    RawCommand (cmd, arguments)
+    |> CreateProcess.fromCommand
+    |> CreateProcess.withWorkingDirectory workingDir
+    |> CreateProcess.ensureExitCode
+    |> Proc.run
+    |> ignore
 
-let DoNothing = ignore
+let runDotNet cmd workingDir =
+    let result =
+        DotNet.exec (DotNet.Options.withWorkingDirectory workingDir) cmd ""
+    if result.ExitCode <> 0 then failwithf "'dotnet %s' failed in %s" cmd workingDir
+
 // --------------------------------------------------------------------------------------
 // Build Targets
 // --------------------------------------------------------------------------------------
@@ -71,7 +83,13 @@ Target.create "Restore" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
-    DotNet.build id ""
+    !! "src/**/*.fsproj"
+    |> Seq.filter (fun s ->
+        let name = Path.GetDirectoryName s
+        not (name.Contains "docs"))
+    |> Seq.iter (fun s ->
+        let dir = Path.GetDirectoryName s
+        DotNet.build id dir)
 )
 
 Target.create "Publish" (fun _ ->
@@ -89,11 +107,11 @@ Target.create "Publish" (fun _ ->
 
 Target.create "Docs" (fun _ ->
   Shell.cleanDirs ["docs\\_public";]
-  exec "dotnet"  @"fornax build" "docs"
+  runDotNet @"fornax build" "docs"
 )
 
 Target.create "Test" (fun _ ->
-    exec "dotnet"  @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj -c Release -- --summary" "."
+    runDotNet @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj -c Release -- --summary" "."
 )
 
 // --------------------------------------------------------------------------------------
@@ -127,12 +145,27 @@ Target.create "ReleaseGitHub" (fun _ ->
     Git.Branches.pushTag "" remote (sprintf "v%s" latestEntry.NuGetVersion)
 )
 
-Target.create "Push" (fun _ ->
+let getBuildParam = Environment.environVar
+let isNullOrWhiteSpace = String.IsNullOrWhiteSpace
+
+// Workaround for https://github.com/fsharp/FAKE/issues/2242
+let pushPackage _ =
+    let nugetCmd fileName key = sprintf "nuget push %s -k %s -s nuget.org" fileName key
     let key =
-        match getBuildParam "nuget-key" with
+        //Environment.environVarOrFail "nugetKey"
+        match getBuildParam "nugetkey" with
         | s when not (isNullOrWhiteSpace s) -> s
         | _ -> UserInput.getUserPassword "NuGet Key: "
-    Paket.push (fun p -> { p with WorkingDir = buildDir; ApiKey = key; ToolType = ToolType.CreateLocalTool() }))
+    IO.Directory.GetFiles(buildDir, "*.nupkg", SearchOption.TopDirectoryOnly)
+    |> Seq.map Path.GetFileName
+    |> Seq.iter (fun fileName ->
+        Trace.tracef "fileName %s" fileName
+        let cmd = nugetCmd fileName key
+        runDotNet cmd buildDir)
+Target.create "Push" (fun _ -> pushPackage [] )
+
+
+let DoNothing = ignore
 
 // --------------------------------------------------------------------------------------
 // Build order
@@ -140,21 +173,33 @@ Target.create "Push" (fun _ ->
 Target.create "Default" DoNothing
 Target.create "Release" DoNothing
 
-"Clean"
-  ==> "Build"
-  ==> "Test"
-  ==> "Default"
+let dependencies =
+    [ "Clean"
+      ==> "Build"
+      ==> "Test"
+      ==> "Default"
 
-"Clean"
- ==> "Publish"
- ==> "Docs"
+      "Clean"
+      ==> "Publish"
+      ==> "Docs"
 
-"Default"
-  ==> "Pack"
-  ==> "ReleaseGitHub"
-  ==> "Release"
+      "Default"
+      ==> "Pack"
+      ==> "ReleaseGitHub"
+      ==> "Release"
+      "Pack"
+      ==> "Push"
 
-"Pack"
-  ==> "Push"
+      "Build"]
 
-Target.runOrDefault "Build"
+
+[<EntryPoint>]
+let main args =
+    try
+        match args with
+        | [| target |] -> Target.runOrDefault target
+        | _ -> Target.runOrDefault "Run"
+        0
+    with e ->
+        printfn "%A" e
+        1
