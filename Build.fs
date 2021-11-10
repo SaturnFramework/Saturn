@@ -14,8 +14,6 @@ open Fake.Core
 open Fake.DotNet
 open Fake.Core.TargetOperators
 open Fake.IO
-open Farmer
-open Farmer.Builders
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Tools

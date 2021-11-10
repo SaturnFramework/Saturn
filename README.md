@@ -16,15 +16,15 @@ Saturn has nice [documentation](https://saturnframework.org/explanations/overvie
 
 ## How to build
 
-1. Install the .NET 5.0 SDK from https://dotnet.microsoft.com/download/dotnet-core/5.0
+1. Install the .NET 6.0 SDK from https://dotnet.microsoft.com/download/dotnet-core/6.0
 2. Restore dotnet SDK tools: `dotnet tool restore`
-3. Inside the repo directory, run `dotnet fake build`
+3. Inside the repo directory, run `dotnet run`
 
 ## How to run the automated tests for this project
 
 Here we will present two ways of running the automated tests for this project. The first one is the preferred way since it is the same command used in the [CI build script](https://github.com/SaturnFramework/Saturn/blob/master/.github/workflows/build.yml#L23):
 
-* Inside the repo directory, run `dotnet fake build -t Test`.
+* Inside the repo directory, run `dotnet run -- Test`.
 
 Although, there is this second approach where you can specify a test scenario to run filtering by its statement:
 

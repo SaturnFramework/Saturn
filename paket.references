@@ -1,7 +1,6 @@
 group Build
 Fake.Core.Target
 Fake.IO.FileSystem
-Farmer
 FSharp.Core
 Fake.Core.Process
 Fake.BuildServer.TeamFoundation
@@ -15,7 +14,6 @@ Fake.IO.Zip
 Fake.Tools.Git
 Microsoft.Web.Administration
 Fake.DotNet.Testing.Expecto
-Fantomas
 Fake.Api.GitHub
 Fake.Core.UserInput
 Fake.Core.ReleaseNotes

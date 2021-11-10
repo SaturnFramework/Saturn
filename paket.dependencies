@@ -44,7 +44,6 @@ group Build
     framework:net6.0
     nuget Fake.Core.Target
     nuget Fake.IO.FileSystem
-    nuget Farmer
     nuget FSharp.Core
     nuget Fake.Core.ReleaseNotes
     nuget Fake.Core.Process
@@ -59,6 +58,5 @@ group Build
     nuget Fake.Tools.Git
     nuget Microsoft.Web.Administration
     nuget Fake.DotNet.Testing.Expecto
-    nuget Fantomas
     nuget Fake.Api.GitHub
     nuget Fake.Core.UserInput
