@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        dotnet: [5.0.102]
+        dotnet: [6.0.100]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -26,7 +26,7 @@ jobs:
       run: dotnet tool restore
 
     - name: Publish to NuGet
-      run: dotnet fake build -t Push
+      run: dotnet run -- Push
       env:
         nuget-key: ${{ secrets.NUGET_KEY }}
 
