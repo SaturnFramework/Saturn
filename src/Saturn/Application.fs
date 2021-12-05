@@ -217,12 +217,13 @@ module Application =
         host
       else
         host.ConfigureWebHostDefaults(fun wbhst ->
-          let wbhst = wbhst |> List.foldBack (fun e acc -> e acc ) state.WebHostConfigs
-          
+
           // allow access to WebHostEnvironment to other CEs (e.g. configure services)
           wbhst.ConfigureAppConfiguration(fun context config ->
                ApplicationBuilder.WebHostEnvironment <- context.HostingEnvironment 
                )
+
+          let wbhst = wbhst |> List.foldBack (fun e acc -> e acc ) state.WebHostConfigs
           
           let wbhst =
             if not (state.Urls |> List.isEmpty) then
