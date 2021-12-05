@@ -94,6 +94,9 @@ module Application =
       Task.Factory.StartNew(fun () -> tsk.Result)
 
 
+  /// IWebHostEnvironment is not accessible everywhere  
+  let private mutable env : IWebHostEnvironment = null
+    
   /// Computation expression used to configure Saturn application.
   /// Under the hood it's using ASP.NET application configurations interfaces such as `IWebHostBuilder`, `IServiceCollection`, `IApplicationBuilder` and others.
   /// It aims to hide cumbersome ASP.NET application configuration and enable high level, declarative application configuration using feature toggles.
@@ -117,6 +120,11 @@ module Application =
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
       {Router = None; EndpointRouter = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; WebHostConfigs = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false;  NoWebhost = false; Channels = [] }
 
+    static member WebHostEnvironment
+        with get() = env
+        and set(v) = env <- v
+           
+    
     member __.Run(state: ApplicationState) : IHostBuilder  =
       // to build the app we have to separate our configurations and our pipelines.
       // we can only call `Configure` once, so we have to apply our pipelines in the end
@@ -210,7 +218,12 @@ module Application =
       else
         host.ConfigureWebHostDefaults(fun wbhst ->
           let wbhst = wbhst |> List.foldBack (fun e acc -> e acc ) state.WebHostConfigs
-
+          
+          // allow access to WebHostEnvironment to other CEs (e.g. configure services)
+          wbhst.ConfigureAppConfiguration(fun context config ->
+               ApplicationBuilder.WebHostEnvironment <- context.HostingEnvironment 
+               )
+          
           let wbhst =
             if not (state.Urls |> List.isEmpty) then
               wbhst.UseUrls(state.Urls |> List.toArray)
