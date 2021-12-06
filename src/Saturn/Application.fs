@@ -145,6 +145,31 @@ module Application =
         Host.CreateDefaultBuilder(Option.toObj state.CliArguments)
         |> List.foldBack (fun e acc -> e acc ) state.HostConfigs
 
+      if state.NoWebhost then
+        host
+      else
+        host.ConfigureWebHostDefaults(fun wbhst ->
+        
+          // allow access to WebHostEnvironment to other CEs (e.g. configure services)
+          wbhst.ConfigureAppConfiguration(fun context config ->
+               ApplicationBuilder.WebHostEnvironment <- context.HostingEnvironment 
+          )
+
+          let wbhst = wbhst |> List.foldBack (fun e acc -> e acc ) state.WebHostConfigs
+          
+          let wbhst =
+            if not (state.Urls |> List.isEmpty) then
+              wbhst.UseUrls(state.Urls |> List.toArray)
+            else wbhst
+          let wbhst =
+            wbhst.Configure(fun ab ->
+              (ab, useParts)
+              ||> Seq.fold (fun ab part -> part ab)
+              |> ignore
+            )
+          ()
+        )
+
       host.ConfigureServices(fun svcs ->
         let services = svcs.AddGiraffe()
         let services =
@@ -213,30 +238,6 @@ module Application =
           |> ignore
         )
 
-      if state.NoWebhost then
-        host
-      else
-        host.ConfigureWebHostDefaults(fun wbhst ->
-
-          // allow access to WebHostEnvironment to other CEs (e.g. configure services)
-          wbhst.ConfigureAppConfiguration(fun context config ->
-               ApplicationBuilder.WebHostEnvironment <- context.HostingEnvironment 
-               )
-
-          let wbhst = wbhst |> List.foldBack (fun e acc -> e acc ) state.WebHostConfigs
-          
-          let wbhst =
-            if not (state.Urls |> List.isEmpty) then
-              wbhst.UseUrls(state.Urls |> List.toArray)
-            else wbhst
-          let wbhst =
-            wbhst.Configure(fun ab ->
-              (ab, useParts)
-              ||> Seq.fold (fun ab part -> part ab)
-              |> ignore
-            )
-          ()
-        )
 
     ///Defines top-level router used for the application
     [<CustomOperation("use_router")>]
