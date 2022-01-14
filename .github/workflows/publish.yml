@@ -15,7 +15,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v1
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -32,7 +33,7 @@ jobs:
 
     - name: Get Changelog Entry
       id: changelog_reader
-      uses: mindsers/changelog-reader-action@v1.1.0
+      uses: mindsers/changelog-reader-action@v2
       with:
         version: ${{ github.ref }}
         path: ./CHANGELOG.md
