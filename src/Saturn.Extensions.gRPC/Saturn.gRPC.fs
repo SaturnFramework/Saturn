@@ -21,6 +21,6 @@ type Saturn.Application.ApplicationBuilder with
             app.UseEndpoints (fun endpoints -> endpoints.MapGrpcService<'a>() |> ignore)
 
         { state with
-            AppConfigs = configureApp::configureGrpcEndpoint::state.AppConfigs
+            AppConfigs = configureApp::configureGrpcEndpoint::state.AppConfigs.[1.. state.AppConfigs.Length]
             ServicesConfig = configureServices::state.ServicesConfig
         }
