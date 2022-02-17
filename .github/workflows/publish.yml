@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        dotnet: [6.0.100]
+        dotnet: [6.0.200]
     runs-on: ${{ matrix.os }}
 
     steps:
