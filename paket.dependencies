@@ -22,7 +22,8 @@ nuget System.ServiceModel.Primitives
 nuget FSharp.Control.Websockets >= 0.2
 
 # as a library, saturn should have a lower min version of fsharp.core. users can float
-nuget FSharp.Core 6.0.0
+nuget FSharp.Core
+nuget Ply
 
 group Docs
   source https://api.nuget.org/v3/index.json
