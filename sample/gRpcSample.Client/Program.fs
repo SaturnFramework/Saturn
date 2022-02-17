@@ -2,7 +2,6 @@
 open Shared
 open System
 open System.Net.Http
-open FSharp.Control.Tasks
 
 [<EntryPoint>]
 let main _ =

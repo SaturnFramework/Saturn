@@ -8,7 +8,6 @@ open Microsoft.Extensions.Primitives
 ///Module with some helper functions used in Saturn, mostly for internal usage
 module Common =
   open Giraffe
-  open FSharp.Control.Tasks
 
   [<RequireQualifiedAccess>]
   type InclusiveOption<'T> =

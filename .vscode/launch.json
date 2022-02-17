@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build_tests",
-            "program": "${workspaceFolder}/tests/Saturn.UnitTests/bin/Debug/net5.0/Saturn.UnitTests.dll",
+            "program": "${workspaceFolder}/tests/Saturn.UnitTests/bin/Debug/net6.0/Saturn.UnitTests.dll",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false,

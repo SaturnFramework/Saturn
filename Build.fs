@@ -97,7 +97,7 @@ Target.create "Publish" (fun _ ->
             {c with
                 OutputPath = Some tempDir
                 Configuration = DotNet.BuildConfiguration.Release
-                Framework = Some "net5.0"
+                Framework = Some "net6.0"
             }
         ) n
     )

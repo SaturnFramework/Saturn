@@ -2,7 +2,6 @@ module Controller.Sample
 
 open Saturn
 open Giraffe.Core
-open FSharp.Control.Tasks
 open System
 
 let commentController userId = controller {

@@ -6,7 +6,6 @@ open System.Threading.Tasks
 open Giraffe.Core
 open Giraffe.Auth
 open Giraffe
-open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Authorization
 
 [<AutoOpen>]

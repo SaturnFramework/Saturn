@@ -19,7 +19,6 @@ open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.StaticFiles
 open Microsoft.Extensions.Configuration
 open Microsoft.AspNetCore.Authentication
-open FSharp.Control.Tasks
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Threading.Tasks
@@ -329,12 +328,12 @@ module Application =
       }
 
     ///Enables response caching to use with corresponding plugs in pipelines.
-    /// 
+    ///
     /// Giraffe has four HttpHandlers that can be used in plugs directly:
-    /// 
+    ///
     /// noResponseCaching, privateResponceCaching, publicResponseCaching and responseCaching
     /// (from https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md#response-caching)
-    /// 
+    ///
     /// **Example:** (setting "Cache-Control: public, max-age=600" in the response header)
     /// ```fsharp
     /// let withCaching = pipeline {
@@ -348,7 +347,7 @@ module Application =
 
       let middleware (app : IApplicationBuilder) =
         app.UseResponseCaching()
-        
+
       { state with
           AppConfigs = middleware::state.AppConfigs
           ServicesConfig = service::state.ServicesConfig
