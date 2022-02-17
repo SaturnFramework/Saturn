@@ -8,16 +8,22 @@
         "fake"
       ]
     },
-    "paket": {
-      "version": "5.257.0",
-      "commands": [
-        "paket"
-      ]
-    },
     "fornax": {
       "version": "0.13.1",
       "commands": [
         "fornax"
+      ]
+    },
+    "paket": {
+      "version": "7.0.0-alpha018",
+      "commands": [
+        "paket"
+      ]
+    },
+    "fantomas-tool": {
+      "version": "4.6.4",
+      "commands": [
+        "fantomas"
       ]
     }
   }

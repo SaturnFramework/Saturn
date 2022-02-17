@@ -8,7 +8,7 @@ menu_order: 7
 *)
 (*** hide ***)
 #I "../../../temp/"
-#I "../../../packages/docsasp/Microsoft.AspNetCore.app.ref/ref/net5.0"
+#I "../../../packages/docsasp/Microsoft.AspNetCore.app.ref/ref/net6.0"
 #r "Saturn.dll"
 #r "Giraffe.dll"
 #r "Microsoft.AspNetCore.Http.Abstractions.dll"

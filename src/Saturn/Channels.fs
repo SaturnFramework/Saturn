@@ -1,6 +1,5 @@
 namespace Saturn
 
-open FSharp.Control.Tasks
 open FSharp.Control.Websockets
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection

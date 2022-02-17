@@ -5,7 +5,6 @@ open Microsoft.AspNetCore.Http.Extensions
 open Giraffe.HttpStatusCodeHandlers
 open Giraffe.Core
 open Giraffe
-open FSharp.Control.Tasks
 open Microsoft.Net.Http.Headers
 open Microsoft.Extensions.Primitives
 

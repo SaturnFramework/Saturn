@@ -2,7 +2,6 @@ module ControllerTests
 
 open Expecto
 open Saturn
-open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Http
 open System
 
