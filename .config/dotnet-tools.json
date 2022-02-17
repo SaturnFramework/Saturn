@@ -15,7 +15,7 @@
             ]
         },
         "paket": {
-            "version": "7.0.0-alpha017",
+            "version": "7.0.0-alpha018",
             "commands": [
                 "paket"
             ]
