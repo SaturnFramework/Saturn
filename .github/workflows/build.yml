@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        dotnet: [5.0.102]
+        dotnet: [6.0.200]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -21,4 +21,4 @@ jobs:
     - name: Restore tools
       run: dotnet tool restore
     - name: Run Test
-      run: dotnet fake build -t Test
+      run: dotnet run -- Test

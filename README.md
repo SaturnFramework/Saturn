@@ -16,15 +16,15 @@ Saturn has nice [documentation](https://saturnframework.org/explanations/overvie
 
 ## How to build
 
-1. Install the .NET 5.0 SDK from https://dotnet.microsoft.com/download/dotnet-core/5.0
+1. Install the .NET 6.0 SDK from https://dotnet.microsoft.com/download/dotnet-core/6.0
 2. Restore dotnet SDK tools: `dotnet tool restore`
-3. Inside the repo directory, run `dotnet fake build`
+3. Inside the repo directory, run `dotnet run`
 
 ## How to run the automated tests for this project
 
 Here we will present two ways of running the automated tests for this project. The first one is the preferred way since it is the same command used in the [CI build script](https://github.com/SaturnFramework/Saturn/blob/master/.github/workflows/build.yml#L23):
 
-* Inside the repo directory, run `dotnet fake build -t Test`.
+* Inside the repo directory, run `dotnet run -- Test`.
 
 Although, there is this second approach where you can specify a test scenario to run filtering by its statement:
 
@@ -40,7 +40,7 @@ There might be a little voice inside that tells you you're not ready; that you n
 
 I assure you, that's not the case.
 
-This project has some clear Contribution Guidelines and expectations that you can [read here](https://github.com/Krzysztof-Cieslak/Saturn/blob/master/CONTRIBUTING.md).
+This project has some clear Contribution Guidelines and expectations that you can [read here](https://github.com/SaturnFramework/Saturn/blob/master/CONTRIBUTING.md).
 
 The contribution guidelines outline the process that you'll need to follow to get a patch merged. By making expectations and process explicit, I hope it will make it easier for you to contribute.
 
@@ -48,12 +48,11 @@ And you don't just have to write code. You can help out by writing documentation
 
 Thank you for contributing!
 
-
 ## Contributing and copyright
 
-The project is hosted on [GitHub](https://github.com/Krzysztof-Cieslak/Saturn) where you can [report issues](https://github.com/Krzysztof-Cieslak/Saturn/issues), fork
+The project is hosted on [GitHub](https://github.com/SaturnFramework/Saturn) where you can [report issues](https://github.com/SaturnFramework/Saturn/issues), fork
 the project and submit pull requests.
 
-The library is available under [MIT license](https://github.com/Krzysztof-Cieslak/Saturn/blob/master/LICENSE.md), which allows modification and redistribution for both commercial and non-commercial purposes.
+The library is available under [MIT license](https://github.com/SaturnFramework/Saturn/blob/master/LICENSE.md), which allows modification and redistribution for both commercial and non-commercial purposes.
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.

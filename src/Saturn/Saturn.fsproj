@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>Saturn</AssemblyName>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>

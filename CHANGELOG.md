@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.0] - 17.02.2022
+
+### Changed
+
+* Updated to Giraffe 6.0 prerelease
+* Updated to net6.0 and ASP.NET Core 6
+* Removed Ply and used new FSharp task{} CE
+
 ## [0.15.0] - 09.06.2021
 
 ### Added
@@ -32,7 +40,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated to Giraffe 5.0
 * Updated to net5.0 and ASP.NET Core 5
 * Moved to `Giraffe.ViewEngine` package for view rendering support
-
 
 ## [0.14.1] - 18.06.2020
 

@@ -1,0 +1,19 @@
+group Build
+Fake.Core.Target
+Fake.IO.FileSystem
+FSharp.Core
+Fake.Core.Process
+Fake.BuildServer.TeamFoundation
+Fake.DotNet.Cli
+Fake.Core.Environment
+Fake.Installer.Wix
+Newtonsoft.Json
+System.ServiceProcess.ServiceController
+Fake.Core.Trace
+Fake.IO.Zip
+Fake.Tools.Git
+Microsoft.Web.Administration
+Fake.DotNet.Testing.Expecto
+Fake.Api.GitHub
+Fake.Core.UserInput
+Fake.Core.ReleaseNotes

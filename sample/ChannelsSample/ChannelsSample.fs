@@ -3,7 +3,6 @@ module ChannelsSample
 open Saturn
 open Giraffe
 open Giraffe.Core
-open FSharp.Control.Tasks
 open Saturn.Channels
 open Microsoft.Extensions.Logging
 open Giraffe.HttpStatusCodeHandlers

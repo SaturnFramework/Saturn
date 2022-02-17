@@ -3,8 +3,6 @@ module SimpleTets
 open Expecto
 open Saturn
 open Giraffe
-open FSharp.Control.Tasks
-
 
 //---------------------------`Response.accepted` tests----------------------------------------
 

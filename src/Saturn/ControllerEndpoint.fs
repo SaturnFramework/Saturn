@@ -12,7 +12,6 @@ module Controller =
 
   open Giraffe.Core
   open Giraffe.EndpointRouting
-  open FSharp.Control.Tasks
   open System.Threading.Tasks
 
   ///Using `x-controller-version` for endpoint routing
