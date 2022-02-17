@@ -2,8 +2,8 @@ module Helpers
 
 open Fake.Core
 
-let initializeContext () =
-    let execContext = Context.FakeExecutionContext.Create false "build.fsx" [ ]
+let initializeContext args =
+    let execContext = Context.FakeExecutionContext.Create false "build.fsx" args
     Context.setExecutionContext (Context.RuntimeContext.Fake execContext)
 
 module Proc =

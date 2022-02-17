@@ -1,24 +1,30 @@
 {
-    "version": 1,
-    "isRoot": true,
-    "tools": {
-        "fake-cli": {
-            "version": "5.20.4-alpha.1642",
-            "commands": [
-                "fake"
-            ]
-        },
-        "fornax": {
-            "version": "0.13.1",
-            "commands": [
-                "fornax"
-            ]
-        },
-        "paket": {
-            "version": "7.0.0-alpha018",
-            "commands": [
-                "paket"
-            ]
-        }
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "fake-cli": {
+      "version": "5.20.4-alpha.1642",
+      "commands": [
+        "fake"
+      ]
+    },
+    "fornax": {
+      "version": "0.13.1",
+      "commands": [
+        "fornax"
+      ]
+    },
+    "paket": {
+      "version": "7.0.0-alpha018",
+      "commands": [
+        "paket"
+      ]
+    },
+    "fantomas-tool": {
+      "version": "4.6.4",
+      "commands": [
+        "fantomas"
+      ]
     }
+  }
 }
