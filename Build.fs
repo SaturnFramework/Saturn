@@ -155,7 +155,7 @@ let init args =
 
         let key =
             //Environment.environVarOrFail "nugetKey"
-            match getBuildParam "nugetkey" with
+            match getBuildParam "nuget-key" with
             | s when not (isNullOrWhiteSpace s) -> s
             | _ -> UserInput.getUserPassword "NuGet Key: "
 
