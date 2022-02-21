@@ -31,29 +31,13 @@ jobs:
       env:
         nuget-key: ${{ secrets.NUGET_KEY }}
 
-    - name: Get Changelog Entry
-      id: changelog_reader
-      uses: mindsers/changelog-reader-action@v2
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.3.1
       with:
-        version: ${{ github.ref }}
-        path: ./CHANGELOG.md
-
+        path: build
     - name: Create Release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        body: ${{ steps.changelog_reader.outputs.log_entry }}
-        draft: false
-        prerelease: false
-
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v1-release
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: build/*.nupkg
-        tag: ${{ github.ref }}
-        overwrite: true
-        file_glob: true
+        artifacts: build/*.nupkg
+        token: ${{ secrets.GITHUB_TOKEN }}
+        generateReleaseNotes: true
