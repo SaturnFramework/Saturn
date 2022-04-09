@@ -4,13 +4,11 @@ storage: none
 framework: net6.0
 
 nuget Expecto
-nuget Newtonsoft.Json
 nuget NSubstitute
 nuget BenchmarkDotNet
 nuget Microsoft.AspNetCore.TestHost
 
 nuget Giraffe prerelease
-nuget Giraffe.ViewEngine
 
 nuget Microsoft.AspNetCore.Authentication.JwtBearer
 nuget Microsoft.AspNetCore.Authentication.Google
@@ -22,7 +20,6 @@ nuget System.ServiceModel.Primitives
 nuget FSharp.Control.Websockets >= 0.2
 
 # as a library, saturn should have a lower min version of fsharp.core. users can float
-nuget FSharp.Core
 
 group Docs
   source https://api.nuget.org/v3/index.json
@@ -43,17 +40,10 @@ group Build
     source https://api.nuget.org/v3/index.json
     framework:net6.0
     nuget Fake.Core.Target
-    nuget Fake.IO.FileSystem
-    nuget FSharp.Core
     nuget Fake.Core.ReleaseNotes
-    nuget Fake.Core.Process
     nuget Fake.BuildServer.TeamFoundation
     nuget Fake.DotNet.Cli
-    nuget Fake.Core.Environment
     nuget Fake.Installer.Wix
-    nuget Newtonsoft.Json
-    nuget System.ServiceProcess.ServiceController
-    nuget Fake.Core.Trace
     nuget Fake.IO.Zip
     nuget Fake.Tools.Git
     nuget Microsoft.Web.Administration
