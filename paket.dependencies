@@ -8,7 +8,7 @@ nuget NSubstitute
 nuget BenchmarkDotNet
 nuget Microsoft.AspNetCore.TestHost
 
-nuget Giraffe prerelease
+nuget Giraffe
 
 nuget Microsoft.AspNetCore.Authentication.JwtBearer
 nuget Microsoft.AspNetCore.Authentication.Google
