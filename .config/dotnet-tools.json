@@ -3,25 +3,25 @@
   "isRoot": true,
   "tools": {
     "fake-cli": {
-      "version": "5.20.4-alpha.1642",
+      "version": "5.22.0",
       "commands": [
         "fake"
       ]
     },
     "fornax": {
-      "version": "0.13.1",
+      "version": "0.14.0",
       "commands": [
         "fornax"
       ]
     },
     "paket": {
-      "version": "7.0.0-alpha018",
+      "version": "7.1.3",
       "commands": [
         "paket"
       ]
     },
     "fantomas-tool": {
-      "version": "4.6.4",
+      "version": "4.7.6",
       "commands": [
         "fantomas"
       ]
