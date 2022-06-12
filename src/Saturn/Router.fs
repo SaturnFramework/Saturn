@@ -232,8 +232,8 @@ module Router =
           for e in deletesf do
             yield DELETE >=> e
 
-          yield! forwards
           yield! forwardsf
+          yield! forwards
           if state.NotFoundHandler.IsSome then
             siteMap.NotFound ()
             yield state.NotFoundHandler.Value
