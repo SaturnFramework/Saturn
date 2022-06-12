@@ -112,7 +112,7 @@ let caseInsensitiveTest =
 
   ]
 
-let wsId = System.Guid.NewGuid()
+let rootId = System.Guid.NewGuid()
 let root = "roots"
 
 let testForwardingRouter =
@@ -128,7 +128,7 @@ let testForwardingRouter =
 [<Tests>]
 let forwardingTests =
     testList "Common root forwarding tests" [
-        testCase "FORWARD to `/WORKSPACES` returns `workspaces`" <| fun _ ->
+        testCase "FORWARD to `/ROOTS` returns `roots`" <| fun _ ->
             let ctx = getEmptyContext "FORWARD" $"/{root}"
             let expected = root
             let result = testForwardingRouter next ctx |> runTask
@@ -138,9 +138,9 @@ let forwardingTests =
                 let body = (getBody ctx)
                 Expect.equal body expected "Result should be equal"
 
-        testCase $"FORWARD to `/WORKSPACES/{wsId}` returns `workspaces`" <| fun _ ->
-            let ctx = getEmptyContext "FORWARD" $"/{root}/{wsId}"
-            let expected = $"{root}/{wsId}"
+        testCase $"FORWARD to `/ROOTS/{rootId}` returns `roots/{rootId}`" <| fun _ ->
+            let ctx = getEmptyContext "FORWARD" $"/{root}/{rootId}"
+            let expected = $"{root}/{rootId}"
             let result = testForwardingRouter next ctx |> runTask
             match result with
             | None -> failtestf "Result was expected to be %s" expected
