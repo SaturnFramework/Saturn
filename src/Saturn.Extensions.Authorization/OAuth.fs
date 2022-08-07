@@ -16,6 +16,62 @@ open Saturn
 let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAlreadyAdded then c.AddCookie() |> ignore
 
 type Saturn.Application.ApplicationBuilder with
+    /// Enables default Twitch OAuth authentication.
+    /// `jsonToClaimMap` should contain sequence of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
+    /// For example: `["email", "preferred_username"]` where `email` and `preferred_username` are names of fields in Twitch JSON response (https://dev.twitch.tv/docs/authentication/getting-tokens-oidc#requesting-claims).
+    [<CustomOperation("use_twitch_oauth")>]
+    member __.UseTwitchOAuth(state : ApplicationState, clientId : string, clientSecret : string, callbackPath : string, jsonToClaimMap : (string * string) seq) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let c = s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- "Twitch")
+        addCookie state c
+        c.AddOAuth("Twitch", fun (opt : Authentication.OAuth.OAuthOptions) ->
+          opt.ClientId <- clientId
+          opt.ClientSecret <- clientSecret
+          opt.CallbackPath <- PathString(callbackPath)
+          opt.AuthorizationEndpoint <-  "https://id.twitch.tv/oauth2/authorize"
+          opt.TokenEndpoint <- "https://id.twitch.tv/oauth2/token"
+          opt.UserInformationEndpoint <- "https://id.twitch.tv/oauth2/userinfo"
+          jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(v,k) )
+          let ev = opt.Events
+
+          ev.OnCreatingTicket <- Func<_,_> Saturn.Application.parseAndValidateOauthTicket
+
+         ) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = true
+      }
+
+    /// Enables Twitch OAuth authentication with custom configuration
+    [<CustomOperation("use_twitch_oauth_with_config")>]
+    member __.UseTwitchAuthWithConfig(state: ApplicationState, (config : Authentication.OAuth.OAuthOptions -> unit) ) =
+      let middleware (app : IApplicationBuilder) =
+        app.UseAuthentication()
+
+      let service (s : IServiceCollection) =
+        let c = s.AddAuthentication(fun cfg ->
+          cfg.DefaultScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultSignInScheme <- CookieAuthenticationDefaults.AuthenticationScheme
+          cfg.DefaultChallengeScheme <- "Twitch")
+        addCookie state c
+        c.AddOAuth("Twitch",config) |> ignore
+        s
+
+      { state with
+          ServicesConfig = service::state.ServicesConfig
+          AppConfigs = middleware::state.AppConfigs
+          CookiesAlreadyAdded = true
+      }
+
     /// Enables default Google OAuth authentication.
     /// `jsonToClaimMap` should contain sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
     /// For example: `["id", ClaimTypes.NameIdentifier; "displayName", ClaimTypes.Name]` where `id` and `displayName` are names of fields in the Google JSON response (https://developers.google.com/+/web/api/rest/latest/people#resource).
