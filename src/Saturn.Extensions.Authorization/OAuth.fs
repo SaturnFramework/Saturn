@@ -17,10 +17,11 @@ let private addCookie state (c : AuthenticationBuilder) = if not state.CookiesAl
 
 type Saturn.Application.ApplicationBuilder with
     /// Enables default Twitch OAuth authentication.
+    /// `scopes` must be at least one of the scopes defined in https://dev.twitch.tv/docs/authentication/scopes, for instance "channel:read:goals".
     /// `jsonToClaimMap` should contain a sequence of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
     /// For example: `["email", "preferred_username"]` where `email` and `preferred_username` are names of fields in Twitch JSON response (https://dev.twitch.tv/docs/authentication/getting-tokens-oidc#requesting-claims).
     [<CustomOperation("use_twitch_oauth")>]
-    member __.UseTwitchOAuth(state : ApplicationState, clientId : string, clientSecret : string, callbackPath : string, jsonToClaimMap : (string * string) seq) =
+    member __.UseTwitchOAuth(state : ApplicationState, clientId : string, clientSecret : string, callbackPath : string, scopes : string seq, jsonToClaimMap : (string * string) seq) =
       let middleware (app : IApplicationBuilder) =
         app.UseAuthentication()
 
@@ -38,6 +39,7 @@ type Saturn.Application.ApplicationBuilder with
           opt.TokenEndpoint <- "https://id.twitch.tv/oauth2/token"
           opt.UserInformationEndpoint <- "https://id.twitch.tv/oauth2/userinfo"
           jsonToClaimMap |> Seq.iter (fun (k,v) -> opt.ClaimActions.MapJsonKey(v,k) )
+          scopes |> Seq.iter opt.Scope.Add
           let ev = opt.Events
 
           ev.OnCreatingTicket <- Func<_,_> Saturn.Application.parseAndValidateOauthTicket
