@@ -1,4 +1,4 @@
-module SimpleTets
+module SimpleTests
 
 open Expecto
 open Saturn
@@ -12,20 +12,19 @@ let somePost : HttpHandler =
   fun _ ctx ->
     task {
       let id = "myId"
-      let mkLinks x = [
+      let mkLinks () = [
         "myLink1"
         "myLink2"
       ]
 
-
       return!
         { id = id
-          links = mkLinks id }
+          links = mkLinks () }
         |> Response.accepted ctx
     }
 
 let router = router {
-    post "/" somePost
+  post "/" somePost
 }
 
 [<Tests>]
