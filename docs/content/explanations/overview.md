@@ -49,7 +49,7 @@ Saturn itself is the top layer of a multi-layer system designed to create a flex
 
 #### Kestrel and ASP.NET Core
 
-ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected applications. Kestrel is a cross-platform web server for ASP.NET Core based on `libuv`, a cross-platform asynchronous I/O library. ASP.NET Core documentation can be found [here](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-3.1)
+ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected applications. Kestrel is a cross-platform web server for ASP.NET Core based on `libuv`, a cross-platform asynchronous I/O library. ASP.NET Core documentation can be found [here](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
 
 #### [Giraffe](https://github.com/giraffe-fsharp/Giraffe)
 
@@ -61,7 +61,7 @@ Saturn is not only a library building on top of Giraffe, but also a set of opini
 
 #### [Dapper](https://github.com/StackExchange/Dapper)
 
-A simple, focused on performance object mapper for .Net that you can add in to your project and will extend your `IDbConnection` interface.
+A simple, focused on performance, object mapper for .Net that you can add to your project and will extend your `IDbConnection` interface.
 
 #### [Simple.Migrations](https://github.com/canton7/Simple.Migrations)
 

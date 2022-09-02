@@ -8,9 +8,9 @@ menu_order: 6
 
 > This post has been originally part of the [Giraffe documentation](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md#giraffe-view-engine)
 
-Saturn is built on top of Giraffe and can use any helpers it provides. This is a case for suggested view engine that you can use in Saturn - Giraffe has its own functional view engine which can be used to build rich UIs for web applications. The single biggest and best contrast to other view engines (e.g. Razor, Liquid, etc.) is that the Giraffe View Engine is entirely functional written in normal (and compiled) F# code.
+Saturn is built on top of Giraffe and can use any helpers it provides. This is a case for suggested view engine that you can use in Saturn - Giraffe has its own functional view engine, which can be used to build rich UIs for web applications. The single biggest and best contrast to other view engines (e.g. Razor, Liquid, etc.) is that the Giraffe View Engine is entirely functional, written in normal (and compiled) F# code.
 
-This means that the Giraffe View Engine is by definition one of the most feature rich view engines available, requires no disk IO to load a view and views are automatically compiled at build time.
+This means that the Giraffe View Engine is, by definition, one of the most feature rich view engines available, requires no disk IO to load a view and views are automatically compiled at build time.
 
 The Giraffe View Engine uses traditional functions and F# record types to generate rich HTML/XML views.
 

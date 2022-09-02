@@ -16,9 +16,9 @@ menu_order: 4
 (**
 # Pipelines
 
-Pipeline is a computation expression used to combine `HttpHandlers` in a declarative manner.
+Pipeline is a [computation expression](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/computation-expressions) used to combine `HttpHandlers` in a declarative manner.
 
-The result of the computation expression is a standard Giraffe `HttpHandler` which means that it's easily composable with other parts of the Giraffe ecosystem.
+The result of the computation expression is a standard Giraffe `HttpHandler` ([docs](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md#httphandler)), which means that it's easily composable with other parts of the Giraffe ecosystem.
 
 **Example:**
 
@@ -41,9 +41,9 @@ let endpointPipe = pipeline {
 (**
 ## API Reference
 
-Full API reference for `pipeline` CE can be found [here](../reference/Saturn/saturn-pipeline-pipelinebuilder.html)
+Full API reference for `pipeline` CE can be found [here](../reference/Saturn/saturn-pipeline-pipelinebuilder.html).
 
-Full API reference for `PipelineHelpers` module containing useful helpers can be found [here](../reference/Saturn/saturn-pipelinehelpers.html)
+Full API reference for `PipelineHelpers` module containing useful helpers can be found [here](../reference/Saturn/saturn-pipelinehelpers.html).
 
-You can also use in pipelines (using `plug`) any `HttpHandler` defined in Giraffe - documentation can be found [here](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md)
+You can also use any `HttpHandler` defined in Giraffe in pipelines (using `plug`) - documentation can be found [here](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md).
 *)
