@@ -26,9 +26,11 @@ let someScopeOrController = Giraffe.ResponseWriters.text ""
 (**
 # Routing
 
-Routes are how Saturn connects all the HTTP requests to the different actions. Think of a route as the URL of the application. The site is yoursite.com but you may have a route for your about page such as yoursite.com/about.
+Routes are how Saturn connects all the HTTP requests to the different actions. Think of a route as the URL of the application. The site is *yoursite.com* but you may have a route for your about page such as *yoursite.com/about*.
 
-In Saturn, `Routers` contain all the routes of your application. A router is a list of routes. A website can have a router that handles the different routes to your page like so:
+In Saturn, `Routers` contain all the routes of your application.
+
+A router is a list of routes and a website can have a router that handles the different routes to your page like so:
 
 ```bash
 yoursite.com
@@ -117,7 +119,13 @@ let appRouter' = router {
 
 (**
 
-The `appRouter` value is a `router`. Inside is the `forward "" browserRouter` line. The `forward` function needs a path and a router. In this case, the path is an empty string and the router is `browserRouter`. That means that the `browserRouter` router will handle the routes at the current location. Since `appRouter` is the first router called, the current location is the root of the application.
+The `appRouter` value is a `router`. Inside it is the `forward "" browserRouter` line.
+
+The `forward` function needs a path and a router. In this case, the path is an empty string and the router is `browserRouter`.
+
+That means that the `browserRouter` router will handle the routes at the current location.
+
+Since `appRouter` is the first router called, the current location is the root of the application.
 
 Now let's look at `browserRouter`:
 
@@ -132,7 +140,13 @@ let browserRouter' = router {
 
 (**
 
-There are three lines. The first line, `not_found_handler (htmlView NotFound.layout)` tells `browserRouter` to display a not found page if the user enters a route that the application does not handle. The second line tells the application to use the `browser` pipeline defined above. The pipeline is a list of settings on how the website will deliver the pages. Lastly, `forward "" defaultView` is like `forward "" browserRouter` from the `appRouter`. Again, `browserRouter` does not contain any routes but it tells the `defaultView` router to handle them. Finally, we get to the part where the application is told how to handle the routes. Inside `defaultView`, we created 3 routes:
+There are three lines. The first line, `not_found_handler (htmlView NotFound.layout)` tells `browserRouter` to display a not found page if the user enters a route that the application does not handle.
+
+The second line tells the application to use the `browser` pipeline defined above. The pipeline is a list of settings on how the website will deliver the pages.
+
+Lastly, `forward "" defaultView` is like `forward "" browserRouter` from the `appRouter`. Again, `browserRouter` does not contain any routes but it tells the `defaultView` router to handle them.
+
+Finally, we get to the part where the application is told how to handle the routes. Inside `defaultView`, we created 3 routes:
 
 *)
 
@@ -144,7 +158,9 @@ let defaultView' = router {
 
 (**
 
-Here, we see that `get` is used to define the routes. There are 3 routes here but 2 of them redirect to the first route. To illustrate, the routes are:
+Here, we see that `get` is used to define the routes. There are 3 routes here but 2 of them redirect to the first route.
+
+To illustrate, the routes are:
 
 ```bash
 yoursite.com
@@ -156,11 +172,13 @@ yoursite.com
             └── "/default.html"     -redirect to yoursite.com/
 ```
 
-Looking at the first line inside `defaultView`, `get "/" (htmlView Index.layout)` tells the application to display `Index.layout` at the root of the application. The `get` corresponds to the HTTP verb GET so when you type in a link, the browser tries to GET the page. The first parameter of `get` is "/", so basically when getting the root, the `get` function will return something. The second parameter is `(htmlView Index.layout)` so the `get` function returns an HTML page specified by Index.layout. The second and third line have `(redirectTo false "/")`, telling the application to go to "yoursite.com/" when going to "yoursite.com/index" or "yoursite.com/default"
+Looking at the first line inside `defaultView`, `get "/" (htmlView Index.layout)` tells the application to display `Index.layout` at the root of the application. The `get` corresponds to the HTTP verb GET so when you type in a link, the browser tries to GET the page. The first parameter of `get` is "/", so basically when getting the root, the `get` function will return something.
+
+The second parameter is `(htmlView Index.layout)` so the `get` function returns an HTML page specified by Index.layout. The second and third line have `(redirectTo false "/")`, telling the application to go to "yoursite.com/" when going to "yoursite.com/index" or "yoursite.com/default"
 
 ## Best Practices
 
-You can combine all 3 routers into one router like so:
+You can combine all 3 routers into one router like:
 
 *)
 
@@ -196,11 +214,11 @@ let apiRouter = router {
 
 (**
 
-Here we have the `apiRouter` router which does not return a 404 page but a 404 text instead which is appropriate for an API. The router also uses a pipeline that is more appropriate for an API such as accepting JSON inputs instead of HTML as in the `browser` pipeline.
+Here we have the `apiRouter` router which does not return a 404 page but a 404 text instead, which is appropriate for an API. The router also uses a pipeline that is more appropriate for an API such as accepting JSON inputs instead of HTML as in the `browser` pipeline.
 
 ## Format Strings
 
-You might be wondering how to make routes that accept a numerical ID. You can make multiple routes for each ID like so
+You might be wondering how to make routes that accept a numerical ID. You can make multiple routes for each ID like:
 
 ```fsharp
 get "/1" (getApplication 1)
@@ -209,7 +227,9 @@ get "/3" (getApplication 3)
 ...
 ```
 
-But this is impracticle because there can be a large number of items or new items are constantly being created with new IDs. Instead the solution is to use format strings. Remember that in the [Adding Pages Guide](../tutorials/adding-pages.html), we used `getf "/%s" index2Action` to pass a string to page.
+But this is impracticle because there can be a large number of items or new items are constantly being created with new IDs.
+
+Instead, the solution is to use format strings. Remember that in the [Adding Pages Guide](../tutorials/adding-pages.html), we used `getf "/%s" index2Action` to pass a string to page.
 
 | Format Char | Type |
 | ----------- | ---- |
@@ -221,7 +241,7 @@ But this is impracticle because there can be a large number of items or new item
 | `%f` | `float`/`double` |
 | `%O` | `Guid` |
 
-For a numerical ID, we want to pass an int which is `%i` in the list above, so you can replace the lines above with
+For a numerical ID, we want to pass an int which is `%i` in the list above, so you can replace the lines above with:
 
 ```fsharp
 getf "/%i" getApplication
@@ -233,6 +253,6 @@ Notice that `getf` is used instead of get. This is a separate version of get tha
 
 ## API Reference
 
-Full API reference for `router` CE can be found [here](../reference/Saturn/saturn-router-routerbuilder.html)
+Full API reference for `router` CE can be found [here](../reference/Saturn/saturn-router-routerbuilder.html).
 
 *)

@@ -16,7 +16,9 @@ menu_order: 7
 (**
 # Controller
 
-In Saturn, a **controller** is a list of routes that is focused on a **model** (an object that contains your data). So if you have a user model, some common operations are to display the list of users, show details of a user, add a user, update or user, or remove a user. A controller is a great way to organize all of these actions.
+In Saturn, a **controller** is a list of routes that is focused on a **model** (an object that contains your data). So if you have a user model, some common operations are to display the list of users, show details of a user, add a user, update a user, or remove a user.
+
+A controller is a great way to organize all of these actions.
 
 Each of the operations is a separate route and a controller is an easy way to group these routes together.
 
@@ -35,11 +37,11 @@ let userController = controller {
 }
 
 (**
-Here we can see the `index`, `add`, `create`, `show`, `edit`, and `update` operations but there are more operations that are not shown here like `patch` and `delete`. You can see all the operations int the [API Reference](../reference/Saturn/saturn-controller-controllerbuilder-10.html). You do not have to handle all of the operations.
+Here we can see the `index`, `add`, `create`, `show`, `edit`, and `update` operations, but there are more operations that are not shown here like `patch` and `delete`. You can see all the operations int the [API Reference](../reference/Saturn/saturn-controller-controllerbuilder-10.html). You do not have to handle all of the operations.
 
-You might be wondering what the difference is between `add` and `create` or `edit` and `update`. The `add` operation tells the application to return the form so that the user can enter the data for the user to be added. The `create` operation will commit the data to the database of the application. It is the same with `edit` for displaying the form and `update` for committing the change.
+You might be wondering what is the difference between `add` and `create` or `edit` and `update`. The `add` operation tells the application to return the form so that the user can enter the data for the user to be added. The `create` operation will commit the data to the database of the application. It is the same with `edit` for displaying the form and `update` for committing the change.
 
-To add the controller for the routes, you can add it to the `defaultView` router like so:
+To add the controller for the routes, you can add it to the `defaultView` router like:
 
 *)
 
@@ -123,8 +125,8 @@ To create a subcontroller, start with creating a controller for your model. Afte
 
 ## API Reference
 
-Full API reference for `controller` CE can be found [here](../reference/Saturn/saturn-controller-controllerbuilder-10.html)
+Full API reference for `controller` CE can be found [here](../reference/Saturn/saturn-controller-controllerbuilder-10.html).
 
-Full API reference for `Controller` module containing useful helpers can be found [here](../reference/Saturn/saturn-controllerhelpers-controller.html)
+Full API reference for `Controller` module containing useful helpers can be found [here](../reference/Saturn/saturn-controllerhelpers-controller.html).
 
 *)

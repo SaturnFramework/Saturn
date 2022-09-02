@@ -74,10 +74,10 @@ Your static files like css, js, and images should be inside the `static` folder.
 
 If you did not run `dotnet saturn migration` as in the [how to start guide](../tutorials/how-to-start.html), you might not see `database.sqlite`, but that is the database file that your Saturn project is using to store data.
 
-`paket.references` shows the packages that your project is using.
+`paket.references` shows the packages that your project is using. You can find more information about it in the [official documentation](https://fsprojects.github.io/Paket/references-files.html).
 
 `Program.fs` handles intializing the program and loading up various settings.
 
-`Router.fs` is where you will set the route of the site and what page to load.
+`Router.fs` is where you will set the routes of the application, specifying what page to load for example.
 
-Lastly, `SaturnSample.fsproj` is the project file itself.
+Lastly, `SaturnSample.fsproj` is the project file itself. This file extension is related to the project file of MSBuild ([Microsoft documentation](https://docs.microsoft.com/en-us/aspnet/web-forms/overview/deployment/web-deployment-in-the-enterprise/understanding-the-project-file)).

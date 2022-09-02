@@ -8,9 +8,9 @@ menu_order: 3
 
 Saturn provides a command line scaffolding tool to generate a model, database migration, controller, and associated views.
 
-To use the generator, run the `dotnet saturn` command from the root of your application application.  If you have used the template to generate your project, this is the directory with `build.fsx` or `paket.dependencies` file.
+To use the generator, run the `dotnet saturn` command from the root of your application.  If you have used the template to generate your project, this is the directory with `build.fsx` or `paket.dependencies` file.
 
-There are three flavors of generators that provide flexibility about what types of code is generated to support your model.
+There are three flavors of generators that provide flexibility about the code output to support your model.
 
 | Command      |  Generates                                                                     |
 |--------------|--------------------------------------------------------------------------------|
