@@ -14,10 +14,10 @@ let createAction id ctx =
   |> Controller.text ctx
 
 let updateAction id ctx subId =
-    match id with
-    | Some id -> sprintf "Update %i %i" id subId
-    | None -> sprintf "Update %i" subId
-    |> Controller.text ctx
+  match id with
+  | Some id -> sprintf "Update %i %i" id subId
+  | None -> sprintf "Update %i" subId
+  |> Controller.text ctx
 
 let showAction ctx id =
   sprintf "Create %i" id
