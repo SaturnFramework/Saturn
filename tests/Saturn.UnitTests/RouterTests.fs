@@ -7,8 +7,12 @@ open Giraffe
 let testRouter = router {
   get "/1" (text "HelloWorld")
   get "/post/1" (text "Foo")
+  getf "/user/%i" (fun (userId: int32) -> (sprintf "User Id: %i" userId) |> text)
+  getf "/isbn/%d" (fun (bookRef: int64) -> (sprintf "Book ISBN: %d" bookRef) |> text)
   post "/post/1" (text "1")
   post "/post/2" (text "2")
+  put "/user/123" (text "User updated!")
+  delete "/user/123" (text "User deleted!")
 }
 
 [<Tests>]
@@ -54,7 +58,45 @@ let tests =
       | Some ctx ->
         Expect.equal (getBody ctx) expected "Result should be equal"
 
+    testCase "GET to `/user/18` returns `User Id: 18`" <| fun _ ->
+      let ctx = getEmptyContext "GET" "/user/18"
 
+      let expected = "User Id: 18"
+      let result = testRouter next ctx |> runTask
+      match result with
+      | None -> failtestf "Result was expected to be %s" expected
+      | Some ctx ->
+        Expect.equal (getBody ctx) expected "Result should be equal"
+
+    testCase "GET to `/isbn/9781491951170` returns `Book ISNB: 9781491951170`" <| fun _ ->
+      let ctx = getEmptyContext "GET" "/isbn/9781491951170"
+  
+      let expected = "Book ISBN: 9781491951170"
+      let result = testRouter next ctx |> runTask
+      match result with
+      | None -> failtestf "Result was expected to be %s" expected
+      | Some ctx ->
+        Expect.equal (getBody ctx) expected "Result should be equal"
+
+    testCase "PUT to `/user/123` returns `User updated!`" <| fun _ ->
+      let ctx = getEmptyContext "PUT" "/user/123"
+  
+      let expected = "User updated!"
+      let result = testRouter next ctx |> runTask
+      match result with
+      | None -> failtestf "Result was expected to be %s" expected
+      | Some ctx ->
+        Expect.equal (getBody ctx) expected "Result should be equal"
+
+    testCase "DELETE to `/user/123` returns `User deleted!`" <| fun _ ->
+      let ctx = getEmptyContext "DELETE" "/user/123"
+  
+      let expected = "User deleted!"
+      let result = testRouter next ctx |> runTask
+      match result with
+      | None -> failtestf "Result was expected to be %s" expected
+      | Some ctx ->
+        Expect.equal (getBody ctx) expected "Result should be equal"
   ]
 
 let testCiRouter = router {
