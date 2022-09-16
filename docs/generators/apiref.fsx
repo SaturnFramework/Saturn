@@ -14,6 +14,7 @@
 #load "partials/layout.fsx"
 
 open System
+open System.IO
 open Html
 open Apirefloader
 open FSharp.Formatting
@@ -56,7 +57,8 @@ let getComment (c: Comment) : string =
     |> List.map (fun n -> n.Value)
     |> String.concat "\n\n"
   let doc = Literate.ParseMarkdownString t
-  Literate.WriteHtml(doc, lineNumbers = false, tokenKindToCss = tokenToCss)
+  Literate.WriteHtml(doc, writer = TextWriter.Null, lineNumbers = false, tokenKindToCss = tokenToCss)
+          .toString()
           .Replace("lang=\"fsharp", "class=\"language-fsharp")
 
 

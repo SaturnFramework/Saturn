@@ -1,8 +1,11 @@
 open System
 #r "../_lib/Fornax.Core.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.ApiDocs.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.CodeFormat.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Markdown.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Common.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Literate.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Markdown.dll"
 
 #if !FORNAX
 #load "./contentloader.fsx"
@@ -12,7 +15,6 @@ open Contentloader
 open System.IO
 open FSharp.Formatting
 open FSharp.Formatting.Literate
-open FSharp.Formatting.Literate.Evaluation
 open FSharp.Formatting.CodeFormat
 
 let tokenToCss (x: TokenKind) =
@@ -68,12 +70,13 @@ let getContent' (fileContent : string) (fn: string) =
     let _, content = fileContent |> Array.splitAt indexOfSeperator
 
     let content = content |> Array.skip 1 |> String.concat "\n"
-    let doc = Literate.ParseScriptFile fn
+    let doc = Literate.ParseScriptString fn
     let ps =
          doc.Paragraphs
         |> List.skip 3 //Skip opening ---, config content, and closing ---
     let doc = doc.With(paragraphs = ps)
-    let html = Literate.WriteHtml(doc, lineNumbers = false, tokenKindToCss = tokenToCss)
+    let html = Literate.WriteHtml(doc, writer = TextWriter.Null, lineNumbers = false, tokenKindToCss = tokenToCss)
+                       .ToString()
                        .Replace("lang=\"fsharp", "class=\"language-fsharp")
     content, html
 

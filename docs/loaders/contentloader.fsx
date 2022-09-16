@@ -1,13 +1,15 @@
 open System
 #r "../_lib/Fornax.Core.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.ApiDocs.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.CodeFormat.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Markdown.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Common.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Literate.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Markdown.dll"
 
 open System.IO
 open FSharp.Formatting
 open FSharp.Formatting.Literate
-open FSharp.Formatting.Literate.Evaluation
 open FSharp.Formatting.CodeFormat
 
 type PostConfig = {
@@ -100,7 +102,8 @@ let getContent (fileContent : string) (fn: string) =
          doc.Paragraphs
         |> List.skip 3 //Skip opening ---, config content, and closing ---
     let doc = doc.With(paragraphs = ps)
-    let html = Literate.WriteHtml(doc, lineNumbers = false, tokenKindToCss = tokenToCss)
+    let html = Literate.WriteHtml(doc, writer = TextWriter.Null, lineNumbers = false, tokenKindToCss = tokenToCss)
+                       .ToString()
                        .Replace("lang=\"fsharp", "class=\"language-fsharp")
     content, html
 
