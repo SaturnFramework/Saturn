@@ -1,8 +1,8 @@
 open System
 #r "../_lib/Fornax.Core.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.CodeFormat.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Markdown.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Literate.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.CodeFormat.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Markdown.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Literate.dll"
 
 #if !FORNAX
 #load "./contentloader.fsx"
@@ -10,8 +10,12 @@ open Contentloader
 #endif
 
 open System.IO
-open FSharp.Literate
-open FSharp.CodeFormat
+// open FSharp.Literate
+open FSharp.Formatting
+open FSharp.Formatting.Literate
+open FSharp.Formatting.Literate.Evaluation
+// open FSharp.CodeFormat
+open FSharp.Formatting.CodeFormat
 
 let tokenToCss (x: TokenKind) =
     match x with

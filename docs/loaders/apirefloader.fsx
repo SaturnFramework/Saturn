@@ -1,9 +1,9 @@
 #r "../_lib/Fornax.Core.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.MetadataFormat.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.ApiDocs.dll"
 
 open System
 open System.IO
-open FSharp.MetadataFormat
+open FSharp.Formatting.ApiDocs
 
 type ApiPageInfo<'a> = {
     ParentName: string
@@ -15,12 +15,12 @@ type ApiPageInfo<'a> = {
 
 type AssemblyEntities = {
   Label: string
-  Modules: ApiPageInfo<Module> list
-  Types: ApiPageInfo<Type> list
-  GeneratorOutput: GeneratorOutput
+  Modules: ApiPageInfo<ApiDocEntity> list
+  Types: ApiPageInfo<ApiDocEntity> list
+  GeneratorOutput: GenerationPhase
 }
 
-let rec collectModules pn pu nn nu (m: Module) =
+let rec collectModules pn pu nn nu (m: ApiDocEntity) =
     [
         yield { ParentName = pn; ParentUrlName = pu; NamespaceName = nn; NamespaceUrlName = nu; Info =  m}
         yield! m.NestedModules |> List.collect (collectModules m.Name m.UrlName nn nu )

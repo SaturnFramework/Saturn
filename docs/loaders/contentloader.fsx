@@ -1,12 +1,16 @@
 open System
 #r "../_lib/Fornax.Core.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.CodeFormat.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Markdown.dll"
-#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.0/FSharp.Literate.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.CodeFormat.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Markdown.dll"
+#r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Literate.dll"
 
-open FSharp.Literate
+// open FSharp.Literate
+open FSharp.Formatting
+open FSharp.Formatting.Literate
+open FSharp.Formatting.Literate.Evaluation
 open System.IO
-open FSharp.CodeFormat
+// open FSharp.CodeFormat
+open FSharp.Formatting.CodeFormat
 
 type PostConfig = {
     disableLiveRefresh: bool
