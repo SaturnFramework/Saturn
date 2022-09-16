@@ -12,11 +12,16 @@
 #load "partials/layout.fsx"
 
 open System
-open FSharp.MetadataFormat
+// open FSharp.MetadataFormat
+open FSharp.Formatting.ApiDocs
 open Html
 open Apirefloader
-open FSharp.Literate
-open FSharp.CodeFormat
+// open FSharp.Literate
+open FSharp.Formatting
+// open FSharp.Formatting.Literate
+// open FSharp.Formatting.Literate.Evaluation
+// open FSharp.CodeFormat
+open FSharp.Formatting.CodeFormat
 
 let tokenToCss (x: TokenKind) =
     match x with

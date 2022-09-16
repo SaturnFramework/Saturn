@@ -9,7 +9,8 @@
 #endif
 
 open Apirefloader
-open FSharp.MetadataFormat
+// open FSharp.MetadataFormat
+open FSharp.Formatting.ApiDocs
 
 
 type Entry = {

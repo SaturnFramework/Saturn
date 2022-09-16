@@ -6,8 +6,8 @@ open System
 
 // open FSharp.Literate
 open FSharp.Formatting
-open FSharp.Formatting.Literate
-open FSharp.Formatting.Literate.Evaluation
+// open FSharp.Formatting.Literate
+// open FSharp.Formatting.Literate.Evaluation
 open System.IO
 // open FSharp.CodeFormat
 open FSharp.Formatting.CodeFormat
