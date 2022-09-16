@@ -4,12 +4,10 @@ open System
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Markdown.dll"
 #r "../../packages/docs/FSharp.Formatting/lib/netstandard2.1/FSharp.Formatting.Literate.dll"
 
-// open FSharp.Literate
-open FSharp.Formatting
-// open FSharp.Formatting.Literate
-// open FSharp.Formatting.Literate.Evaluation
 open System.IO
-// open FSharp.CodeFormat
+open FSharp.Formatting
+open FSharp.Formatting.Literate
+open FSharp.Formatting.Literate.Evaluation
 open FSharp.Formatting.CodeFormat
 
 type PostConfig = {

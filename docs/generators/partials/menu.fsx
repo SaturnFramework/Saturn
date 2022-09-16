@@ -1,10 +1,10 @@
 #r "../../_lib/Fornax.Core.dll"
-#if !FORNAX
+// #if !FORNAX
 #load "../../loaders/apirefloader.fsx"
 #load "../../loaders/contentloader.fsx"
 #load "../../loaders/pageloader.fsx"
 #load "../../loaders/globalloader.fsx"
-#endif
+// #endif
 
 open Html
 
