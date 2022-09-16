@@ -1186,7 +1186,7 @@ GROUP Docs
 RESTRICTION: == netstandard2.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    FSharp.Formatting (15.0)
+    FSharp.Formatting (16.1.1)
     Newtonsoft.Json (13.0.1)
 
 GROUP DocsAsp
