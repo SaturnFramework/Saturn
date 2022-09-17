@@ -9,29 +9,32 @@
 
 open System
 open System.IO
+open FSharp.Formatting
 open FSharp.Formatting.ApiDocs
+open FSharp.Formatting.Literate
+open FSharp.Formatting.CodeFormat
+open FSharp.Formatting.Markdown.Dsl
 
 type ApiPageInfo<'a> = {
-    ParentName: string
-    ParentUrlName: string
-    NamespaceName: string
-    NamespaceUrlName: string
-    Info: 'a
+  ParentName: string
+  ParentUrlName: string
+  NamespaceName: string
+  NamespaceUrlName: string
+  Info: 'a
 }
 
 type AssemblyEntities = {
   Label: string
-  Modules: ApiPageInfo<ApiDocEntity> list
-  Types: ApiPageInfo<ApiDocEntity> list
-  GeneratorOutput: GenerationPhase
+  Modules: ApiPageInfo<Module> list
+  Types: ApiPageInfo<Type> list
+  GeneratorOutput: GeneratorOutput
 }
 
-let rec collectModules pn pu nn nu (m: ApiDocEntity) =
+let rec collectModules pn pu nn nu (m: Module) =
     [
-        yield { ParentName = pn; ParentUrlName = pu; NamespaceName = nn; NamespaceUrlName = nu; Info =  m}
+        yield { ParentName = pn; ParentUrlName = pu; NamespaceName = nn; NamespaceUrlName = nu; Info =  m }
         yield! m.NestedModules |> List.collect (collectModules m.Name m.UrlName nn nu )
     ]
-
 
 let loader (projectRoot: string) (siteContet: SiteContents) =
     try

@@ -5,18 +5,17 @@
 #load "../loaders/contentloader.fsx"
 #load "../loaders/apirefloader.fsx"
 #load "../loaders/globalloader.fsx"
-
 #endif
 
 open Apirefloader
 open FSharp.Formatting.ApiDocs
-
 
 type Entry = {
     uri: string
     title: string
     content: string
 }
+
 let generate (ctx : SiteContents) (projectRoot: string) (page: string) =
     let siteInfo = ctx.TryGetValue<Globalloader.SiteInfo>().Value
     let rootUrl = siteInfo.root_url
