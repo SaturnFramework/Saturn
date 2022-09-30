@@ -18,10 +18,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '5.0.408'
-    - name: Restore tools
-      run: dotnet tool restore
-    - name: Run Fornax
-      run: dotnet run -- Docs
+      run: |
+        dotnet tool restore
+        dotnet run -- Docs
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
