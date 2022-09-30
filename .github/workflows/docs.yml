@@ -2,9 +2,9 @@ name: Release docs
 
 on:
   pull_request:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
 
 jobs:
   build:
