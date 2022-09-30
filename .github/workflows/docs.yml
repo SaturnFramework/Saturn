@@ -1,6 +1,7 @@
 name: Release docs
 
 on:
+  pull_request:
   push:
     branches:
     - main
@@ -12,11 +13,11 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: [6.0.200]
+        dotnet-version: '5.0.408'
     - name: Restore tools
       run: dotnet tool restore
     - name: Run Fornax
