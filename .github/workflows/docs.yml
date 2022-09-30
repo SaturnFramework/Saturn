@@ -1,7 +1,7 @@
 name: Release docs
 
 on:
-  pull_request:
+  push:
   workflow_dispatch:
   # push:
   #   branches:
