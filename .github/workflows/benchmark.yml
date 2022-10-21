@@ -7,17 +7,23 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest]
+        os: [macos-12]
         dotnet: [6.0.200]
     runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ matrix.dotnet }}
+    - name: MacOS workaround
+      if: runner.os == 'macOS'
+      run: |
+          # https://github.com/actions/runner-images/issues/5768#issuecomment-1162684820
+          rm -rf ~/.config/NuGet/nuGet.config
+          dotnet nuget list source
     - name: Install wrk
       run: brew install wrk
     - name: Restore tools

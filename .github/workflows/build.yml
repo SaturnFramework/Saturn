@@ -7,17 +7,23 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-2022, macos-12, ubuntu-22.04]
         dotnet: [6.0.200]
     runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ matrix.dotnet }}
+    - name: MacOS workaround
+      if: runner.os == 'macOS'
+      run: |
+          # https://github.com/actions/runner-images/issues/5768#issuecomment-1162684820
+          rm -rf ~/.config/NuGet/nuGet.config
+          dotnet nuget list source
     - name: Restore tools
       run: dotnet tool restore
     - name: Run Test
