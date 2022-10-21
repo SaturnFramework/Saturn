@@ -8,15 +8,15 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: [6.0.200]
+        dotnet-version: 6.0.200
     - name: Restore tools
       run: dotnet tool restore
     - name: Run Fornax
