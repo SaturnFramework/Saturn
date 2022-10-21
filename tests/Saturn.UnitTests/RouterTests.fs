@@ -13,6 +13,7 @@ let testRouter = router {
   post "/post/2" (text "2")
   put "/user/123" (text "User updated!")
   delete "/user/123" (text "User deleted!")
+  deletef "/user/%f" (fun (userId : float) -> (sprintf "The user deleted is: %0.2f" userId) |> text)
 }
 
 [<Tests>]
@@ -92,6 +93,16 @@ let tests =
       let ctx = getEmptyContext "DELETE" "/user/123"
   
       let expected = "User deleted!"
+      let result = testRouter next ctx |> runTask
+      match result with
+      | None -> failtestf "Result was expected to be %s" expected
+      | Some ctx ->
+        Expect.equal (getBody ctx) expected "Result should be equal"
+
+    testCase "DELETEF to `/user/1.0` returns `The user deleted is: 1.0`" <| fun _ ->
+      let ctx = getEmptyContext "DELETE" "/user/1.0"
+  
+      let expected = "The user deleted is: 1.0"
       let result = testRouter next ctx |> runTask
       match result with
       | None -> failtestf "Result was expected to be %s" expected
