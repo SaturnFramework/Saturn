@@ -13,7 +13,7 @@ let testRouter = router {
   post "/post/2" (text "2")
   put "/user/123" (text "User updated!")
   delete "/user/123" (text "User deleted!")
-  deletef "/user/%f" (fun (userId : float) -> (sprintf "The user deleted is: %0.2f" userId) |> text)
+  deletef "/user/%f" (fun (userId : float) -> (sprintf "The user deleted is: %.1f" userId) |> text)
 }
 
 [<Tests>]
