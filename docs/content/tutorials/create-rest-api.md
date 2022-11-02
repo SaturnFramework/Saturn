@@ -35,9 +35,9 @@ With the setup done earlier, this will set the base of our Books API endpoints a
 
 We have not create the action functions yet. This router will automatically pass `HttpFunc` and `HttpContext` to our functions. All our action functions will have those as our parameter.
 
-For GET, we need no id to get all book so the route will just the current location "/". Because of `forward "/books" Books.Controller.apiRouter` inside our Router.fs file. The path for our GET request is `"http://localhost:8085/api/books/"`
+For GET, we need no id to get all book so the route will just the current location. Because of `forward "/books" Books.Controller.apiRouter` inside our Router.fs file. The path for our GET request is `"http://localhost:8085/api/books/"`
 
-To get a specific book by id, we will need to get our id from the URL. For that, we will use `getf` and the format string `"/%s"` to read the string from the URL and pass it on to our function. You can also write this as `getf "/%s" getByIdAction`. Refer to the table below if you need to modify the format string to your need (e.g. use `"/%i"` if your id is an int). So to get the book with the id of 2, create a GET request to `"http://localhost:8085/api/books/2"`
+To get a specific book by id, we will need to get our id from the URL. For that, we will use `getf` and the format string `"/%s"` to read the string from the URL and pass it on to our function. You can also write this as `getf "/%s" getByIdAction`. Refer to the table below to modify the format string to your need (e.g. use `"/%i"` if your id is an int). So to get the book with the id of 2, create a GET request to `"http://localhost:8085/api/books/2"`
 
 | Format String | Type |
 | ----------- | ---- |
@@ -53,11 +53,11 @@ For POST, we need to parse the object passed in with the request. Generally, thi
 
 For PUT, we need both the id and the object so we will have both `putf` and `bindJson` to get the values to pass to `putAction`.
 
-Only the id is need for DELETE so we use `deletef`.
+The id is needed for DELETE so we use `deletef`.
 
 ## GET
 
-First is a function to handle GET HTTP request, create the `getAction` function below at the bottom of the BooksController.fs file. We will use the existing database functions to retrieve data.
+Now we create functions to handle our API request. These functions go before the `apiRouter` function. First is a function to handle GET HTTP request, create the `getAction` function below at the bottom of the BooksController.fs file. We will use the existing database functions to retrieve data.
 
 ```fsharp
 let getAction (next: HttpFunc) (ctx: HttpContext) =
@@ -147,7 +147,7 @@ let putAction id (book: Book) (next: HttpFunc) (ctx: HttpContext) =
 
 ## DELETE
 
-Deletion only required the id of the object to be deleted. We will put in a check to see that the book with the id exist.
+Deletion required the id of the object to be deleted. We need a check to see that the book with the id exist.
 
 ```fsharp
 let deleteApiAction id (next: HttpFunc) (ctx: HttpContext) =
@@ -199,13 +199,13 @@ let indexAction (ctx: HttpContext) =
     }
 ```
 
-`showAction` will be similar but the GET Request will also pass an id. The API expects the id from the URL so we just need to pass the id in our `GetAsync`. This is send a GET request to `"http://localhost:8085/api/books/{id}"` for the specified .
+`showAction` will be similar but the API expects the id from the URL. Inside the `GetAsync` function, pass in the id. This send a GET request to `"http://localhost:8085/api/books/{id}"` for the specified id.
 
 ```fsharp
 let showAction (ctx: HttpContext) (id: string) =
     task {
         use client = new HttpClient(BaseAddress=Uri("http://localhost:8085/api/books/"))
-        let! responseTask = client.GetAsync(id) // id is added to GET Request address.
+        let! responseTask = client.GetAsync(id) // Add id to GET request address.
         match responseTask.StatusCode with
         | HttpStatusCode.OK ->
             let! book = responseTask.Content.ReadFromJsonAsync<Book>()
@@ -238,11 +238,11 @@ To create a new Book, we need to send the Book object from our model as a JSON o
 ```fsharp
 let createAction (ctx: HttpContext) =
     task {
-        let! input = Controller.getModel<Book> ctx
+        let! input = Controller.getModel<Book> ctx // Grab object from the Model
         let validateResult = Validation.validate input
         if validateResult.IsEmpty then
             let json = JsonSerializer.Serialize(input)
-            let content = new StringContent(json, Encoding.UTF8, "application/json")            
+            let content = new StringContent(json, Encoding.UTF8, "application/json") // Convert object into json
             use client = new HttpClient(BaseAddress=Uri("http://localhost:8085/api/books/"))
             let! responseTask = client.PostAsync("", content) // Include json object inside request
             match responseTask.StatusCode with
@@ -281,7 +281,7 @@ let updateAction (ctx: HttpContext) (id: string) =
 
 ## DELETE
 
-Finally, for the delete. We just need the id so no validation is needed.
+For the delete. Send a DELETE request with the id in the URL address.
 
 ```fsharp
 let deleteAction (ctx: HttpContext) (id: string) =
