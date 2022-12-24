@@ -78,7 +78,7 @@ The second category of attributes are `Boolean` flags. There are not many but so
 script [ _src "some.js"; _async ] []
 ```
 
-There's also a wealth of [accessibility attributes](https://www.w3.org/TR/html-aria/) available under the `Giraffe.GiraffeViewEngine.Accessibility` module (needs to be explicitly opened).
+There's also a wealth of [accessibility attributes](https://www.w3.org/TR/html-aria/) available under the `Giraffe.ViewEngine.Accessibility` module (needs to be explicitly opened).
 
 ### Text Content
 
@@ -188,7 +188,7 @@ If a HTML attribute has a hyphen in the name (e.g. `accept-charset`) then the eq
 
 ### View Engine Best Practices
 
-Due to the huge amount of available HTML tags and their fairly generic (and short) names (e.g. `<form>`, `<option>`, `<select>`, etc.) there is a significant danger of accidentally overriding a function of the same name in an application's codebase. For that reason the Giraffe View Engine becomes only available after opening the `GiraffeViewEngine` module.
+Due to the huge amount of available HTML tags and their fairly generic (and short) names (e.g. `<form>`, `<option>`, `<select>`, etc.) there is a significant danger of accidentally overriding a function of the same name in an application's codebase. For that reason the Giraffe View Engine becomes only available after opening the `Giraffe.ViewEngine` module.
 
 As a measure of good practice it is recommended to create all views in a separate module:
 
@@ -196,7 +196,7 @@ As a measure of good practice it is recommended to create all views in a separat
 module MyWebApplication
 
 module Views =
-    open Giraffe.GiraffeViewEngine
+    open Giraffe.ViewEngine
 
     let index =
         html [] [
@@ -214,14 +214,14 @@ module Views =
     let other = //...
 ```
 
-This ensures that the opening of the `GiraffeViewEngine` is only contained in a small context of an application's codebase and therefore less of a threat to accidental overrides. In the above example views can always be accessed through the `Views` sub module (e.g. `Views.index`).
+This ensures that the opening of the `Giraffe.ViewEngine` is only contained in a small context of an application's codebase and therefore less of a threat to accidental overrides. In the above example views can always be accessed through the `Views` sub module (e.g. `Views.index`).
 
 ### Custom Elements and Attributes
 
 Adding new elements or attributes is normally as simple as a single line of code:
 
 ```fsharp
-open Giraffe.GiraffeViewEngine
+open Giraffe.ViewEngine
 
 // If there was a new <foo></foo> HTML element:
 let foo = tag "foo"
@@ -276,9 +276,9 @@ let output1 = renderHtmlNode someContent
 let output2 = renderXmlNode someContent
 ```
 
-All `GiraffeViewEngine` http handlers are using a thread static `StringBuilderPool` to avoid the creation of large `StringBuilder` objects for each render call and dynamically grow/shrink that pool based on the application's needs. However if the application is running into any memory issues then this performance feature can be disabled by setting `StringBuilderPool.IsEnabled <- false`.
+All `Giraffe.ViewEngine` http handlers are using a thread static `StringBuilderPool` to avoid the creation of large `StringBuilder` objects for each render call and dynamically grow/shrink that pool based on the application's needs. However if the application is running into any memory issues then this performance feature can be disabled by setting `StringBuilderPool.IsEnabled <- false`.
 
-Additionally with Giraffe 3.0.0 or higher there is a new module called `ViewBuilder` under the `Giraffe.GiraffeViewEngine` namespace. This module exposes additional view rendering functions which compile a view into a `StringBuilder` object instead of returning a single `string`:
+Additionally with Giraffe 3.0.0 or higher there is a new module called `ViewBuilder` under the `Giraffe.ViewEngine` namespace. This module exposes additional view rendering functions which compile a view into a `StringBuilder` object instead of returning a single `string`:
 
 - `ViewBuilder.buildHtmlDocument`
 - `ViewBuilder.buildHtmlNodes`
@@ -286,13 +286,13 @@ Additionally with Giraffe 3.0.0 or higher there is a new module called `ViewBuil
 - `ViewBuilder.buildXmlNodes`
 - `ViewBuilder.buildXmlNode`
 
-The `ViewBuilder.build[...]` functions can be useful if there is additional string processing required before/after composing a view by the `GiraffeViewEngine` (e.g. embedding HTML snippets in an email template, etc.). These functions also serve as the lower level building blocks of the equivalent `render[...]` functions.
+The `ViewBuilder.build[...]` functions can be useful if there is additional string processing required before/after composing a view by the `ViewEngine` (e.g. embedding HTML snippets in an email template, etc.). These functions also serve as the lower level building blocks of the equivalent `render[...]` functions.
 
 Example usage:
 
 ```fsharp
 open System.Text
-open Giraffe.GiraffeViewEngine
+open Giraffe.ViewEngine
 
 let someHtml =
     div [] [
@@ -326,7 +326,7 @@ Creating a master page is a simple matter of piping two functions together:
 
 ```fsharp
 module Views =
-    open Giraffe.GiraffeViewEngine
+    open Giraffe.ViewEngine
 
     let master (pageTitle : string) (content: XmlNode list) =
         html [] [
@@ -348,7 +348,7 @@ module Views =
 
 ```fsharp
 module Views =
-    open Giraffe.GiraffeViewEngine
+    open Giraffe.ViewEngine
 
     let master1 (pageTitle : string) (content: XmlNode list) =
         html [] [
@@ -382,7 +382,7 @@ A partial view is nothing more than one function or object being called from wit
 
 ```fsharp
 module Views =
-    open Giraffe.GiraffeViewEngine
+    open Giraffe.ViewEngine
 
     let partial =
         footer [] [
@@ -414,7 +414,7 @@ A view which accepts a model is basically a function with an additional paramete
 
 ```fsharp
 module Views =
-    open Giraffe.GiraffeViewEngine
+    open Giraffe.ViewEngine
 
     let partial =
         footer [] [
