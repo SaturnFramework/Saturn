@@ -14,11 +14,11 @@ menu_order: 5
 #r "Microsoft.AspNetCore.Http.Abstractions.dll"
 
 module Index =
-  open Giraffe.GiraffeViewEngine
+  open Giraffe.ViewEngine
   let layout = div [] []
 
 module NotFound =
-  open Giraffe.GiraffeViewEngine
+  open Giraffe.ViewEngine
   let layout = div [] []
 
 let someScopeOrController = Giraffe.ResponseWriters.text ""

@@ -19,7 +19,7 @@ Insert the following into the file:
 ```fsharp
 namespace Hello
 
-open Giraffe.GiraffeViewEngine
+open Giraffe.ViewEngine
 open Saturn
 
 module Views =
