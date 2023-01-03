@@ -32,7 +32,7 @@ module OAuth =
     ///OAuth User Information endpoint
     ///For example: https://api.github.com/user
     UserInformationEndpoint: string
-    ///Sequance of tuples where first element is a name of the of the key in JSON object and second element is a name of the claim.
+    ///Sequence of tuples where the first element is the name of the key in the JSON object and the second element is the name of the claim.
     ///For example: `["login", "githubUsername"; "name", "fullName"]` where `login` and `name` are names of fields in GitHub JSON response (https://developer.github.com/v3/users/#get-the-authenticated-user).
     Claims : (string * string) seq
   }
