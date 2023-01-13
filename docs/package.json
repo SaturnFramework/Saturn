@@ -20,6 +20,7 @@
         "nacara": "^1.8.0",
         "nacara-layout-standard": "^1.8.0",
         "unified": "^10.1.2",
-        "vscode-theme-onelight": "github:akamud/vscode-theme-onelight"
+        "vscode-theme-onelight": "github:akamud/vscode-theme-onelight",
+        "remark-gfm": "^3.0.1"
     }
 }

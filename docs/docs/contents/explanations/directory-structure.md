@@ -28,7 +28,7 @@ At this level most of it is basic configuration files to help with running Satur
 
 Saturn also uses [FAKE](https://fake.build/) to build the project. You can see how it is set up by looking at the `.fake` folder and `build.fsx` file.
 
-Saturn also provides a `.gitignore` file that prevents some folders from being tracked by git when they don't need to.
+Other than this, Saturn provides a `.gitignore` file that prevents some folders from being tracked by git when they don't need to.
 
 Lastly, there is the `SaturnSample.sln` solution file so you can open the project in an IDE like Visual Sudio and a `global.json` file to configure the solution file.
 

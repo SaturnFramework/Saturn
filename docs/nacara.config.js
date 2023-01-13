@@ -109,6 +109,9 @@ export default {
                     "vscode-theme-onelight"
                 ]
             }
+        },
+        {
+            "resolve": "remark-gfm"
         }
     ],
     "layouts": [

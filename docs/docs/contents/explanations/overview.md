@@ -48,11 +48,17 @@ Saturn itself is the top layer of a multi-layer system designed to create a flex
 
 #### Kestrel and ASP.NET Core
 
-ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected applications. Kestrel is a cross-platform web server for ASP.NET Core based on `libuv`, a cross-platform asynchronous I/O library. ASP.NET Core documentation can be found [here](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
+ASP.NET Core is a cross-platform, high-performance, open-source framework for building modern, cloud-based, Internet-connected applications. 
+
+Kestrel is a cross-platform web server for ASP.NET Core based on `libuv`, a cross-platform asynchronous I/O library. ASP.NET Core documentation can be found [here](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
 
 #### [Giraffe](https://github.com/giraffe-fsharp/Giraffe)
 
-Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to [Suave](https://suave.io), but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. Giraffe applications are composed of so-called HttpHandler functions which can be thought of as a mixture of Suave's WebParts and ASP.NET Core's middleware. As Saturn shares many basic helper functions with Giraffe it's highly recommended to also check out [Giraffe documentation](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md)
+Giraffe is an F# micro web framework for building rich web applications. It has been heavily inspired and is similar to [Suave](https://suave.io), but has been specifically designed with ASP.NET Core in mind and can be plugged into the ASP.NET Core pipeline via middleware. 
+
+Giraffe applications are composed of so-called HttpHandler functions which can be thought of as a mixture of Suave's WebParts and ASP.NET Core's middleware. 
+
+As Saturn shares many basic helper functions with Giraffe it's highly recommended to also check out [Giraffe documentation](https://github.com/giraffe-fsharp/Giraffe/blob/master/DOCUMENTATION.md)
 
 ### Saturn moons
 
