@@ -1,0 +1,1050 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | PipelineBuilder
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <div class="api-page">
+            <h2>
+              PipelineBuilder
+            </h2>
+            <b>
+              Namespace: 
+            </b>
+            <a href="Saturn.html">
+              Saturn
+            </a>
+            <br/>
+            <b>
+              Parent: 
+            </b>
+            <a href="saturn-pipeline.html">
+              Pipeline
+            </a>
+            <span>
+              <p>Computation expression used to combine <code>HttpHandlers</code> in a declarative manner.</p>
+<p>The result of the computation expression is a standard Giraffe <code>HttpHandler</code> which means that it's easily composable with other parts of the Giraffe ecosystem.</p>
+<p><strong>Example:</strong></p>
+<pre class="fssnip highlighted"><code class="language-fsharp"><span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="hljs-function">headerPipe</span> <span class="hljs-keyword">=</span> <span class="hljs-function">pipeline</span> <span class="hljs-keyword">{</span>
+    <span class="hljs-function">set_header</span> <span class="hljs-string">&quot;myCustomHeader&quot;</span> <span class="hljs-string">&quot;abcd&quot;</span>
+    <span class="hljs-function">set_header</span> <span class="hljs-string">&quot;myCustomHeader2&quot;</span> <span class="hljs-string">&quot;zxcv&quot;</span>
+<span class="hljs-keyword">}</span>
+
+<span class="hljs-keyword">let</span> <span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="hljs-function">endpointPipe</span> <span class="hljs-keyword">=</span> <span class="hljs-function">pipeline</span> <span class="hljs-keyword">{</span>
+    <span class="hljs-function">plug</span> <span class="hljs-function">fetchSession</span>
+    <span class="hljs-function">plug</span> <span class="hljs-function">head</span>
+    <span class="hljs-function">plug</span> <span class="hljs-function">requestId</span>
+<span class="hljs-keyword">}</span>
+</code></pre>
+<div class="tip" id="fs1">val headerPipe : obj</div>
+<div class="tip" id="fs2">val endpointPipe : obj</div>
+
+
+            </span>
+            <br/>
+            <table>
+              <tr>
+                <th width="35%">
+                  Name
+                </th>
+                <th width="65%">
+                  Description
+                </th>
+              </tr>
+              <tr>
+                <td colSpan="3">
+                  <b>
+                    Instance Members
+                  </b>
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Challenge', 1)" onmouseover="showTip(event, 'Challenge', 1)">
+                    x.Challenge(state, scheme)
+                  </code>
+                  <div class="tip" id="Challenge">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * scheme:string) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L51-51">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    challenge
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>challenge</code> challenges an authentication with a specified authentication scheme</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'ClearResponse', 1)" onmouseover="showTip(event, 'ClearResponse', 1)">
+                    x.ClearResponse(state)
+                  </code>
+                  <div class="tip" id="ClearResponse">
+                    <b>
+                      Signature:
+                    </b>
+                    state:HttpHandler -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L91-91">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    clear_response
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>clear_response</code> tries to clear the current response. This can be useful inside an error handler to reset the response before writing an error message to the body of the HTTP response object.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Html', 1)" onmouseover="showTip(event, 'Html', 1)">
+                    x.Html(state, cnt)
+                  </code>
+                  <div class="tip" id="Html">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * cnt:string) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L131-131">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    html
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>html</code> sets or modifies the body of the <code>HttpResponse</code> with the contents of a single string variable. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'HtmlFile', 1)" onmouseover="showTip(event, 'HtmlFile', 1)">
+                    x.HtmlFile(state, fileName)
+                  </code>
+                  <div class="tip" id="HtmlFile">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * fileName:string) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L135-135">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    html_file
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>html_file</code> sets or modifies the body of the <code>HttpResponse</code> with the contents of a physical html file. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. This http handler takes a rooted path of a html file or a path which is relative to the ContentRootPath as the input parameter and sets the HTTP header <code>Content-Type</code> to <code>text/html</code>.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Json', 1)" onmouseover="showTip(event, 'Json', 1)">
+                    x.Json(state, cnt)
+                  </code>
+                  <div class="tip" id="Json">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * cnt:'?42672) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L115-115">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    json
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>json</code> sets or modifies the body of the <code>HttpResponse</code> by sending a JSON serialized object to the client. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. It also sets the <code>Content-Type</code> HTTP header to <code>application/json</code>.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'MustAccept', 1)" onmouseover="showTip(event, 'MustAccept', 1)">
+                    x.MustAccept(state, accepts)
+                  </code>
+                  <div class="tip" id="MustAccept">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * accepts:string list) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L47-47">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    must_accept
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>must_accept</code> filters a request by the <code>Accept</code> HTTP header. You can use it to check if a client accepts a certain mime type before returning a response.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Negotiate', 1)" onmouseover="showTip(event, 'Negotiate', 1)">
+                    x.Negotiate(state, cnt)
+                  </code>
+                  <div class="tip" id="Negotiate">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * cnt:'?42676) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L123-123">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    negotiate
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>negotiate</code> sets or modifies the body of the <code>HttpResponse</code> by inspecting the <code>Accept</code> header of the HTTP request and deciding if the response should be sent in JSON or XML or plain text. If the client is indifferent then the default response will be sent in JSON. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'NegotiateWith', 1)" onmouseover="showTip(event, 'NegotiateWith', 1)">
+                    x.NegotiateWith(state, rules, unaccepted, cnt)
+                  </code>
+                  <div class="tip" id="NegotiateWith">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * rules:IDictionary<string,(obj -> HttpHandler)> * unaccepted:HttpHandler * cnt:'?42678) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L127-127">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    negotiate_with
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>negotiateWith</code> sets or modifies the body of the <code>HttpResponse</code> by inspecting the <code>Accept</code> header of the HTTP request and deciding in what mimeType the response should be sent. A dictionary of type <code>IDictionary&lt;string, obj -&gt; HttpHandler&gt;</code> is used to determine which <code>obj -&gt; HttpHandler</code> function should be used to convert an object into a <code>HttpHandler</code> for a given mime type. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Plug', 1)" onmouseover="showTip(event, 'Plug', 1)">
+                    x.Plug(state, plug)
+                  </code>
+                  <div class="tip" id="Plug">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * plug:HttpHandler) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L43-43">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    plug
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>plug</code> enables adding any additional <code>HttpHandler</code> to the pipeline</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RedirectTo', 1)" onmouseover="showTip(event, 'RedirectTo', 1)">
+                    x.RedirectTo(state, pernament, location)
+                  </code>
+                  <div class="tip" id="RedirectTo">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * pernament:bool * location:string) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L143-143">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    redirect_to
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>redirect_to</code> uses a 302 or 301 (when permanent) HTTP response code to redirect the client to the specified location. It takes in two parameters, a boolean flag denoting whether the redirect should be permanent or not and the location to redirect to.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RenderHtml', 1)" onmouseover="showTip(event, 'RenderHtml', 1)">
+                    x.RenderHtml(state, cnt)
+                  </code>
+                  <div class="tip" id="RenderHtml">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * cnt:XmlNode) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L139-139">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    render_html
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>render_html</code> is a more functional way of generating HTML by composing HTML elements in F# to generate a rich Model-View output.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RequiresAuthPolicy', 1)" onmouseover="showTip(event, 'RequiresAuthPolicy', 1)">
+                    x.RequiresAuthPolicy(state, check, authFailedHandler)
+                  </code>
+                  <div class="tip" id="RequiresAuthPolicy">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * check:(ClaimsPrincipal -> bool) * authFailedHandler:HttpHandler) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L59-59">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    requires_auth_policy
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>requires_auth_policy</code> validates if a user satisfies policy requirement, if not then the handler will execute the <code>authFailedHandler</code> function.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RequiresAuthentication', 1)" onmouseover="showTip(event, 'RequiresAuthentication', 1)">
+                    x.RequiresAuthentication(state, authFailedHandler)
+                  </code>
+                  <div class="tip" id="RequiresAuthentication">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * authFailedHandler:HttpHandler) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L79-79">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    requires_authentication
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>requires_authentication</code> validates if a user is authenticated/logged in. If the user is not authenticated then the handler will execute the <code>authFailedHandler</code> function.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RequiresPolicy', 1)" onmouseover="showTip(event, 'RequiresPolicy', 1)">
+                    x.RequiresPolicy(state, policy, authFailedHandler)
+                  </code>
+                  <div class="tip" id="RequiresPolicy">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * policy:string * authFailedHandler:(('?42660 -> Task<'?42660 option>) -> HttpContext -> HttpFuncResult)) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L63-63">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    requires_policy
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>requires_policy</code> validates if a user satisfies a defined policy requirement, if not then the handler will execute the <code>authFailedHandler</code> function.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RequiresRole', 1)" onmouseover="showTip(event, 'RequiresRole', 1)">
+                    x.RequiresRole(state, role, authFailedHandler)
+                  </code>
+                  <div class="tip" id="RequiresRole">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * role:string * authFailedHandler:HttpHandler) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L83-83">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    requires_role
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>requires_role</code> validates if an authenticated user is in a specified role. If the user fails to be in the required role then the handler will execute the <code>authFailedHandler</code> function.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RequiresRoleOf', 1)" onmouseover="showTip(event, 'RequiresRoleOf', 1)">
+                    x.RequiresRoleOf(state, roles, authFailedHandler)
+                  </code>
+                  <div class="tip" id="RequiresRoleOf">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * roles:string list * authFailedHandler:HttpHandler) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L87-87">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    requires_role_of
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>requires_role_of</code> validates if an authenticated user is in one of the supplied roles. If the user fails to be in one of the required roles then the handler will execute the <code>authFailedHandler</code> function.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'RoutePorts', 1)" onmouseover="showTip(event, 'RoutePorts', 1)">
+                    x.RoutePorts(state, handlersByPorts)
+                  </code>
+                  <div class="tip" id="RoutePorts">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * handlersByPorts:(int * HttpHandler) list) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L147-147">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    route_ports
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>If your web server is listening to multiple ports then you can use the <code>routePorts</code> HttpHandler to easily filter incoming requests based on their port by providing a list of port number and HttpHandler (<code>(int * HttpHandler) list</code>).</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'SetBody', 1)" onmouseover="showTip(event, 'SetBody', 1)">
+                    x.SetBody(state, value)
+                  </code>
+                  <div class="tip" id="SetBody">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * value:byte array) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L103-103">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    set_body
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>set_body</code> sets or modifies the body of the <code>HttpResponse</code>. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'SetBodyFromString', 1)" onmouseover="showTip(event, 'SetBodyFromString', 1)">
+                    x.SetBodyFromString(state, value)
+                  </code>
+                  <div class="tip" id="SetBodyFromString">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * value:string) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L107-107">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    set_body_from_string
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>set_body_from_string</code> sets or modifies the body of the <code>HttpResponse</code>. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'SetHeader', 1)" onmouseover="showTip(event, 'SetHeader', 1)">
+                    x.SetHeader(state, key, value)
+                  </code>
+                  <div class="tip" id="SetHeader">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * key:string * value:'?42667) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L99-99">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    set_header
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>set_header</code> sets or modifies a HTTP header of the <code>HttpResponse</code>.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'SetStatusCode', 1)" onmouseover="showTip(event, 'SetStatusCode', 1)">
+                    x.SetStatusCode(state, code)
+                  </code>
+                  <div class="tip" id="SetStatusCode">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * code:int) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L95-95">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    set_status_code
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>set_status_code</code> changes the status code of the <code>HttpResponse</code>.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'SignOff', 1)" onmouseover="showTip(event, 'SignOff', 1)">
+                    x.SignOff(state, scheme)
+                  </code>
+                  <div class="tip" id="SignOff">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * scheme:string) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L55-55">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    sign_off
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>sign_off</code> signs off the currently logged in user.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Text', 1)" onmouseover="showTip(event, 'Text', 1)">
+                    x.Text(state, cnt)
+                  </code>
+                  <div class="tip" id="Text">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * cnt:string) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L111-111">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    text
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>text</code> sets or modifies the body of the <code>HttpResponse</code> by sending a plain text value to the client. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. It also sets the <code>Content-Type</code> HTTP header to <code>text/plain</code>.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Warbler', 1)" onmouseover="showTip(event, 'Warbler', 1)">
+                    x.Warbler(state)
+                  </code>
+                  <div class="tip" id="Warbler">
+                    <b>
+                      Signature:
+                    </b>
+                    state:HttpHandler -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L151-151">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    use_warbler
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p>If your route is not returning a static response, then you should wrap your function with a warbler. Functions in F# are eagerly evaluated and the warbler will help to evaluate the function every time the route is hit.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Xml', 1)" onmouseover="showTip(event, 'Xml', 1)">
+                    x.Xml(state, cnt)
+                  </code>
+                  <div class="tip" id="Xml">
+                    <b>
+                      Signature:
+                    </b>
+                    (state:HttpHandler * cnt:'?42674) -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L119-119">
+                    <i class="fab fa-github"></i>
+                  </a>
+                  <br/>
+                  <b>
+                    CE Custom Operation: 
+                  </b>
+                  <code>
+                    xml
+                  </code>
+                  <br/>
+                </td>
+                <td>
+                  <p><code>xml</code> sets or modifies the body of the <code>HttpResponse</code> by sending an XML serialized object to the client. This http handler triggers a response to the client and other http handlers will not be able to modify the HTTP headers afterwards any more. It also sets the <code>Content-Type</code> HTTP header to <code>application/xml</code>.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'Yield', 1)" onmouseover="showTip(event, 'Yield', 1)">
+                    x.Yield(arg1)
+                  </code>
+                  <div class="tip" id="Yield">
+                    <b>
+                      Signature:
+                    </b>
+                    '?42653 -> HttpHandler
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Pipelines.fs#L39-39">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  
+
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

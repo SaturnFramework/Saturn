@@ -1,0 +1,767 @@
+<html class="js csstransforms3d">
+  <head>
+    <meta charSet="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      Saturn | Controller
+    </title>
+    <link rel="icon" type="image/png" sizes="32x32" href="https://saturnframework.org/static/img/favicon.png"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/atom-one-dark-reasonable.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme.css"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/tips.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/css/perfect-scrollbar.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/atom-one-dark.min.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"/>
+    <link rel="stylesheet" href="https://saturnframework.org/static/css/theme-blue.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <nav id="sidebar">
+      <div id="header-wrapper">
+        <div id="header">
+          <h2 id="logo">
+            Saturn
+          </h2>
+        </div>
+        <div class="searchbox">
+          <label for="search-by">
+            <i class="fas fa-search"></i>
+          </label>
+          <input data-search-input="" id="search-by" type="search" placeholder="Search..."/>
+          <span data-search-clear="">
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.8/lunr.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/JavaScript-autoComplete/1.0.4/auto-complete.min.js"></script>
+        <script type="text/javascript">
+          var baseurl ='https://saturnframework.org/'
+        </script>
+        <script type="text/javascript" src="https://saturnframework.org/static/js/search.js"></script>
+      </div>
+      <div class="highlightable">
+        <ul class="topics">
+          <li id="menu-explanations" class="dd-item menu-group-link">
+            <a>
+              Explanation
+            </a>
+          </li>
+          <li id="menu-tutorials" class="dd-item menu-group-link">
+            <a>
+              Tutorials
+            </a>
+          </li>
+          <li id="menu-refs" class="dd-item menu-group-link menu-group-link-active">
+            <a>
+              API References
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-explanations" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/explanations/overview.html" class="padding">
+              Saturn Overview
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/directory-structure.html" class="padding">
+              Directory Structure
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/scaffolding.html" class="padding">
+              Scaffolding
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/pipeline.html" class="padding">
+              Pipeline
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/routing.html" class="padding">
+              Router
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/view.html" class="padding">
+              View Engine
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/controller.html" class="padding">
+              Controllers
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/explanations/endpoint-routing.html" class="padding">
+              Endpoint Routing
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-tutorials" class="submenu">
+          <li>
+            <a href="https://saturnframework.org/tutorials/how-to-start.html" class="padding">
+              Getting started
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-saturn-to-an-existing-giraffe-app.html" class="padding">
+              Adding Saturn to an existing Giraffe application
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/tutorials/adding-pages.html" class="padding">
+              Adding Pages
+            </a>
+          </li>
+        </ul>
+        <ul id="submenu-refs" class="submenu submenu-active">
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn/index.html" class="padding">
+              Saturn
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.AzureFunctions/index.html" class="padding">
+              Saturn.AzureFunctions
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Authorization/index.html" class="padding">
+              Saturn.Extensions.Authorization
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.gRPC/index.html" class="padding">
+              Saturn.Extensions.gRPC
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.HttpSys/index.html" class="padding">
+              Saturn.Extensions.HttpSys
+            </a>
+          </li>
+          <li>
+            <a href="https://saturnframework.org/reference/Saturn.Extensions.Turbolinks/index.html" class="padding">
+              Saturn.Extensions.Turbolinks
+            </a>
+          </li>
+        </ul>
+        <section id="shortcuts">
+          <h3>
+            Shortucts
+          </h3>
+          <ul>
+            <li>
+              <a class="padding" href="/">
+                <i class="fas fa-home"></i>
+                Home
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://safe-stack.github.io/">
+                <i class="fas fa-cubes"></i>
+                SAFE Stack
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="https://github.com/SaturnFramework/Saturn">
+                <i class="fab fa-github"></i>
+                GitHub repo
+              </a>
+            </li>
+            <li>
+              <a class="padding" href="/license.html">
+                <i class="far fa-file-alt"></i>
+                License
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section id="footer">
+          <p>Built with <a href="https://github.com/ionide/Fornax">Fornax</a>
+        </section>
+      </div>
+    </nav>
+    <section id="body">
+      <div id="overlay"></div>
+      <div class="padding highlightable">
+        <div id="body-inner">
+          <span id="sidebar-toggle-span">
+            <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+              <i class="fas fa-bars"></i>
+               navigation
+            </a>
+          </span>
+          <div class="api-page">
+            <h2>
+              Controller
+            </h2>
+            <b>
+              Namespace: 
+            </b>
+            <a href="Saturn.html">
+              Saturn
+            </a>
+            <br/>
+            <b>
+              Parent: 
+            </b>
+            <a href="saturn-controllerhelpers.html">
+              ControllerHelpers
+            </a>
+            <span>
+              <p>Module containing helpers for <code>controller</code> actions</p>
+
+
+            </span>
+            <br/>
+            <b>
+              Values and Functions
+            </b>
+            <table>
+              <tr>
+                <th width="35%">
+                  Name
+                </th>
+                <th width="65%">
+                  Description
+                </th>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'json', 1)" onmouseover="showTip(event, 'json', 1)">
+                    json ctx obj
+                  </code>
+                  <div class="tip" id="json">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> obj:'a -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L21-21">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns to the client content serialized to JSON.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'jsonCustom', 1)" onmouseover="showTip(event, 'jsonCustom', 1)">
+                    jsonCustom ctx settings obj
+                  </code>
+                  <div class="tip" id="jsonCustom">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> settings:'?42468 -> obj:'?42469 -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L25-25">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns to the client content serialized to JSON. Accepts custom serialization settings</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'xml', 1)" onmouseover="showTip(event, 'xml', 1)">
+                    xml ctx obj
+                  </code>
+                  <div class="tip" id="xml">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> obj:'a -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L29-29">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns to the client content serialized to XML.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'text', 1)" onmouseover="showTip(event, 'text', 1)">
+                    text ctx value
+                  </code>
+                  <div class="tip" id="text">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> value:string -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L33-33">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns to the client content as string.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'html', 1)" onmouseover="showTip(event, 'html', 1)">
+                    html ctx template
+                  </code>
+                  <div class="tip" id="html">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> template:string -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L37-37">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns the string template as html to the client.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'renderHtml', 1)" onmouseover="showTip(event, 'renderHtml', 1)">
+                    renderHtml ctx template
+                  </code>
+                  <div class="tip" id="renderHtml">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> template:XmlNode -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L42-42">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns to the client rendered html template.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'file', 1)" onmouseover="showTip(event, 'file', 1)">
+                    file ctx path
+                  </code>
+                  <div class="tip" id="file">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> path:string -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L46-46">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns to the client static file.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'response', 1)" onmouseover="showTip(event, 'response', 1)">
+                    response ctx output
+                  </code>
+                  <div class="tip" id="response">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> output:'a -> Task<HttpContext option>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L50-50">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Returns to the client response according to accepted content type (<code>Accept</code> header, and if it's not present <code>Content-Type</code> header)</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getJson', 1)" onmouseover="showTip(event, 'getJson', 1)">
+                    getJson(ctx)
+                  </code>
+                  <div class="tip" id="getJson">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> Task<'a>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L108-108">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets model from body as JSON.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getXml', 1)" onmouseover="showTip(event, 'getXml', 1)">
+                    getXml(ctx)
+                  </code>
+                  <div class="tip" id="getXml">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> Task<'a>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L112-112">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets model from body as XML.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getForm', 1)" onmouseover="showTip(event, 'getForm', 1)">
+                    getForm(ctx)
+                  </code>
+                  <div class="tip" id="getForm">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> Task<'a>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L116-116">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets model from urelencoded body.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getFormCulture', 1)" onmouseover="showTip(event, 'getFormCulture', 1)">
+                    getFormCulture ctx culture
+                  </code>
+                  <div class="tip" id="getFormCulture">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> culture:string -> Task<'a>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L120-120">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets model from urelencoded body. Accepts culture name</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getQuery', 1)" onmouseover="showTip(event, 'getQuery', 1)">
+                    getQuery(ctx)
+                  </code>
+                  <div class="tip" id="getQuery">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> 'a
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L125-125">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets model from query string.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getQueryCulture', 1)" onmouseover="showTip(event, 'getQueryCulture', 1)">
+                    getQueryCulture ctx culture
+                  </code>
+                  <div class="tip" id="getQueryCulture">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> culture:string -> 'a
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L129-129">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets model from query string. Accepts culture name</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getModel', 1)" onmouseover="showTip(event, 'getModel', 1)">
+                    getModel(ctx)
+                  </code>
+                  <div class="tip" id="getModel">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> Task<'a>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L134-134">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Get model based on <code>HttpMethod</code> and <code>Content-Type</code> of request.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getModelCustom', 1)" onmouseover="showTip(event, 'getModelCustom', 1)">
+                    getModelCustom ctx culture
+                  </code>
+                  <div class="tip" id="getModelCustom">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> culture:string option -> Task<'a>
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L141-141">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Get model based on <code>HttpMethod</code> and <code>Content-Type</code> of request. Accepts custom culture.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'loadModel', 1)" onmouseover="showTip(event, 'loadModel', 1)">
+                    loadModel(ctx)
+                  </code>
+                  <div class="tip" id="loadModel">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> 'a option
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L148-148">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Loads model populated by <code>fetchModel</code> pipeline</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getPath', 1)" onmouseover="showTip(event, 'getPath', 1)">
+                    getPath(ctx)
+                  </code>
+                  <div class="tip" id="getPath">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> string
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L155-155">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets path of the request - it's relative to current <code>scope</code></p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getUrl', 1)" onmouseover="showTip(event, 'getUrl', 1)">
+                    getUrl(ctx)
+                  </code>
+                  <div class="tip" id="getUrl">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> string option
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L159-159">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets url of the request</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'getConfig', 1)" onmouseover="showTip(event, 'getConfig', 1)">
+                    getConfig(ctx)
+                  </code>
+                  <div class="tip" id="getConfig">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> 'a
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L168-168">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Gets the contents of the <code>Configuration</code> key in the HttpContext dictionary, unboxed as the given type.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'sendDownload', 1)" onmouseover="showTip(event, 'sendDownload', 1)">
+                    sendDownload ctx path
+                  </code>
+                  <div class="tip" id="sendDownload">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> path:string -> HttpFuncResult
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L172-172">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Sends the contents of a file as the body of the response. Does not set a Content-Type.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'sendDownloadBinary', 1)" onmouseover="showTip(event, 'sendDownloadBinary', 1)">
+                    sendDownloadBinary ctx content
+                  </code>
+                  <div class="tip" id="sendDownloadBinary">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> content:byte [] -> HttpFuncResult
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L177-177">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Send bytes as the body of the response. Does not set a Content-Type.</p>
+
+
+                </td>
+              </tr>
+              <tr>
+                <td class="memberName">
+                  <code onmouseout="hideTip(event, 'redirect', 1)" onmouseover="showTip(event, 'redirect', 1)">
+                    redirect ctx path
+                  </code>
+                  <div class="tip" id="redirect">
+                    <b>
+                      Signature:
+                    </b>
+                    ctx:HttpContext -> path:string -> HttpFuncResult
+                  </div>
+                  <br/>
+                  <a class="sourcelink" href="https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/ControllerHelpers.fs#L181-181">
+                    <i class="fab fa-github"></i>
+                  </a>
+                </td>
+                <td>
+                  <p>Perform a temporary redirect to the provided location.</p>
+
+
+                </td>
+              </tr>
+            </table>
+            <br/>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="https://saturnframework.org/static/js/modernizr.custom-3.6.0.js"></script>
+    <script src="https://saturnframework.org/static/js/scripts.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.4/jquery.sticky.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/1.5.0/perfect-scrollbar.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mermaid/8.5.2/mermaid.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/languages/fsharp.min.js"></script>
+    <script src="https://saturnframework.org/static/js/tips.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad()
+    </script>
+    <script>
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>
