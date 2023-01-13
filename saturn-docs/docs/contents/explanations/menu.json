@@ -1,0 +1,32 @@
+[
+    {
+        "type": "section",
+        "label": "EXPLANATION",
+        "items": [
+            "contents/explanations/overview",
+            "contents/explanations/directory-structure",
+            "contents/explanations/scaffolding",
+            "contents/explanations/pipeline",
+            "contents/explanations/routing",
+            "contents/explanations/view",
+            "contents/explanations/controller",
+            "contents/explanations/endpoint-routing"
+        ]
+    },
+    {
+        "type": "section",
+        "label": "TUTORIALS",
+        "items": [
+            "contents/tutorials/adding-pages",
+            "contents/tutorials/adding-saturn-to-an-existing-giraffe-app",
+            "contents/tutorials/how-to-start"
+        ]
+    },
+    {
+        "type": "section",
+        "label": "API REFERENCES",
+        "items": [
+            "contents/api-reference/create-a-page"
+        ]
+    }
+]

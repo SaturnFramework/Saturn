@@ -1,0 +1,10 @@
+# Dependencies
+/node_modules
+
+# Production
+docs_deploy/
+.nacara/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

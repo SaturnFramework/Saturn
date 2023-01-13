@@ -1,0 +1,25 @@
+{
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "engines": {
+        "node": "^12.20.0 || ^14.13.1 || >=16.0.0",
+        "npm": ">=7.0.0"
+    },
+    "scripts": {
+        "build": "nacara build",
+        "clean": "nacara clean",
+        "watch": "nacara watch",
+        "serve": "nacara serve"
+    },
+    "devDependencies": {
+        "@babel/preset-react": "^7.18.6",
+        "@babel/register": "^7.18.9",
+        "bulma": "^0.9.4",
+        "gatsby-remark-vscode": "^3.3.1",
+        "nacara": "^1.8.0",
+        "nacara-layout-standard": "^1.8.0",
+        "unified": "^10.1.2",
+        "vscode-theme-onelight": "github:akamud/vscode-theme-onelight"
+    }
+}

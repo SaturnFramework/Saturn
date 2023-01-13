@@ -1,0 +1,1160 @@
+/* ----------------------------------------------------------------------------------------
+* Author        : Coderspoint
+* Template Name : Planhost - Html5 Hosting Landing page
+* File          : Planhost main CSS file
+* Version       : 1.0
+* ---------------------------------------------------------------------------------------- */
+
+
+
+
+
+/* INDEX
+----------------------------------------------------------------------------------------
+
+01. General css
+
+02. Navigation area css
+
+03. Slider area css
+
+04. Hero area css
+
+05. Price area css
+
+06. Action area css
+
+07. Service area css
+
+08. Pricing area css
+
+09. Testimonial area css
+
+10. Why Choose area css
+
+11. Subscribe area css
+
+12. Client area css
+
+13. Contact area css
+
+14. Footer area css
+
+-------------------------------------------------------------------------------------- */
+
+
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto:400,500');
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                       01. General css
+* -------------------------------------------------------------------------------------- */
+
+html,
+body {
+    height: 100%
+}
+
+body {
+    color: #777;
+    width: 100%;
+    height: 100%;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-top: 75px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #222;
+    font-family: 'Roboto', sans-serif;
+}
+
+h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+p {
+    letter-spacing: 0px;
+}
+
+a {
+    text-decoration: none;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+a:focus {
+    outline: none;
+    text-decoration: none;
+}
+
+ul,
+li {
+    margin: 0;
+    padding: 0;
+}
+
+fieldset {
+    border: 0 none;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.btn.active.focus,
+.btn.active:focus,
+.btn.focus,
+.btn.focus:active,
+.btn:active:focus,
+.btn:focus {
+    outline: none;
+}
+
+.btn, input[type='submit'] {
+    display: inline-block;
+    background: transparent;
+    padding: 10px 25px;
+    border-radius: 0px;
+    transition: 0.3s ease-out;
+    -moz-transition: 0.3s ease-out;
+    -webkit-transition: 0.3s ease-out;
+    letter-spacing: 0px;
+    border: 1px solid transparent;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'Roboto';
+    color: #fff;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    background: #8da7f4; /* Old browsers */
+    background: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+}
+
+.btn:hover, input[type="submit"]:hover {
+    color: #8da7f4;
+    background: #fff;
+    border: 1px solid #8da7f4;
+}
+
+.btn-white {
+    color: #8da7f4;
+    background: #fff;
+}
+
+.btn-white:hover {
+    color: #fff;
+    border: 1px solid #fff;
+    background: transparent;
+}
+
+.btn-trnsp {
+    border: 1px solid #fff;
+    background: transparent;
+}
+
+.btn-trnsp:hover {
+    border: 1px solid #fff;
+    background: #fff;
+}
+
+.btn-gry {
+    color: #222;
+    background: #f9f9ff;
+    border: 1px solid #ececec;
+}
+
+.btn-gry:hover {
+    color: #8da7f4;
+    background: #fff;
+    border: 1px solid #8da7f4;
+}
+
+
+
+
+.section-big {
+    padding: 100px 0px;
+}
+
+.section-small {
+    padding: 70px 0px;
+}
+
+.section-title {
+    margin: auto;
+    max-width: 600px;
+    margin-bottom: 30px;
+}
+
+.section-title.white h2 {
+    color: #fff;
+}
+
+.section-title h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    line-height: 40px;
+    margin-top: 0;
+}
+
+.section-title p {}
+
+
+/* preloader css */
+
+#preloader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99999;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    background-image: url(../img/preloader.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #fff;
+}
+
+.table {
+    display: table;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+.table-cell {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+img {
+    max-width: 100%;
+}
+
+.space {
+    height: 30px;
+}
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                               02. Navigation area css
+* --------------------------------------------------------------------------------------- */
+.menu-area {
+    background: #fff;
+    height: 75px;
+}
+.sticky-menu {
+    box-shadow: 0px 3px 4.7px 0.3px rgba(141, 167, 244, 0.3);
+    transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-out;
+}
+
+.mainmenu {
+    margin-top: 12px;
+    transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-out;
+}
+
+.navbar {
+    margin-bottom: 0;
+    border: 0px;
+}
+
+.nav.navbar-nav.navbar-right {
+    margin-right: 0;
+}
+
+.navbar-brand {
+    display: block;
+    color: #8da7f4;
+    text-transform: uppercase;
+    font-size: 36px;
+    padding: 0;
+}
+.navbar-brand span {
+    color: #f45e58;
+}
+.navbar-brand:hover {
+    color: #8da7f4;
+}
+
+.navbar-nav  li {
+    float: none;
+    display: inline-block;
+}
+
+.navbar-nav li a {
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    color: #222;
+}
+
+.navbar-nav a.btn {
+    color: #fff;
+    padding: 10px 25px;
+    margin-left: 20px;
+}
+
+.navbar-nav a.btn:hover {
+    color: #8da7f4;
+}
+
+.nav > li > a:hover,
+.nav > li > a:active,
+.nav > li > a:focus {
+    background: none;
+}
+
+.mainmenu .navbar-nav li.active a {
+    color: #8da7f4;
+}
+
+
+/* Mobile Nav css */
+.navbar-toggle .icon-bar {
+    background: #8da7f4;
+}
+
+
+/* ----------------------------------------------------------------------------------------
+*                               03. Slider area css
+* -------------------------------------------------------------------------------------- */
+
+.slider-area {
+    min-height: 400px;
+    background-image: url("../img/bg/slider-bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.slider-area .carousel,
+.slider-area .carousel-inner,
+.slider-area .item {
+    height: 100%;
+}
+
+@media (min-width: 992px) {
+    .slider-area {
+        height: 100%;
+        height: calc(50% - 75px);
+        height: expression(50% - 75px);
+        height: -webkit-calc(50% - 75px);
+        height: -moz-calc(50% - 75px);
+        height: -o-calc(50% - 75px);
+    }
+}
+
+.intro-text {
+    text-align: left;
+    color: #fff;
+}
+
+.intro-text h1 {
+    color: inherit;
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 50px;
+}
+
+.intro-text p {
+    color: inherit;
+}
+
+.line-through {
+    text-decoration: line-through;
+}
+
+.intro-text .btn {
+    margin-top: 30px;
+    margin-right: 15px;
+}
+
+@media(max-width: 991px) {
+    .intro-text {
+        margin: 80px auto;
+        text-align: center;
+    }
+    .hero-overlay h2 {
+        margin-top: 0px;
+        font-size: 1.5em;
+    }
+}
+
+
+#carousel-example-generic .animated {
+    animation-delay: .5s;
+}
+
+#slider .carousel-indicators li {
+    width: 30px;
+    height: 3px;
+    border: none;
+    background: #eee;
+    border-radius: 0px;
+    margin: 2px 2px;
+}
+
+#slider .carousel-indicators li.active {
+    width: 30px;
+    height: 8px;
+    border: none;
+    background: #fff;
+    border-radius: 0px;
+}
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                               04. Hero area css
+* ---------------------------------------------------------------------------------------*/
+
+.hero-box {
+    position: relative;
+    margin-top: 30px;
+    padding: 50px 30px;
+    border: 1px solid #ececec;
+}
+
+.hero-box:hover {
+    color: #fff;
+    border: none;
+    transition: 0.3s ease-out;
+    transform: scale(1.02, 1.02);
+    box-shadow: 0px 20px 50px 0px rgba(141, 167, 244, 0.5);
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    background: #8da7f4; /* Old browsers */
+    background: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+}
+
+.hero-box img {
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+.hero-box i.fa,
+.hero-box span {
+    font-size: 40px;
+    line-height: 40px;
+    margin-bottom: 10px;
+    color: #8da7f4;
+}
+
+.hero-box h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.hero-box p {
+    margin-bottom: 0px;
+}
+
+.hero-box:hover i.fa,
+.hero-box:hover span,
+.hero-box:hover h3,
+.hero-box:hover p {
+    color: #fff;
+}
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                   05. Price area css
+* --------------------------------------------------------------------------------------- */
+.pricing-area {
+    background-color: #f9f9ff;
+    background-image: url("../img/bg/test-bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.price-item {
+    margin: 0;
+    margin-top: 30px;
+    padding: 60px 30px;
+    text-align: center;
+    position: relative;
+    transition: 0.3s ease-out;
+    background-color: #fff;
+    border: 1px solid #ececec;
+}
+
+.price-item ul {
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0px;
+}
+
+.price-item .info {}
+
+.price-item.featured {
+    box-shadow: 0px 20px 50px 0px rgba(141, 167, 244, 0.5);
+}
+
+.price-item h3 {
+    margin-top: 0px;
+    font-size: 25px;
+}
+
+.price-item p.desc {
+    display: none;
+}
+
+.price span {
+    font-size: 15px;
+    color: #777;
+}
+
+.price-item p.desc {}
+
+.price-item p.price {
+    margin-top: 35px;
+    font-size: 42px;
+    font-family: 'Roboto';
+    font-weight: 500;
+    line-height: 42px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    color: #8da7f4; /* Old browsers */
+    color: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    color: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    color: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+}
+
+.price-item p.price .dollar {}
+
+.price-item p.price .number {}
+
+.price-item .features {
+    margin: 30px 0;
+}
+
+.price-item.featured {
+    position: relative;
+}
+
+.price-item.featured:before {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 3px;
+    top: 0;
+    left: 0;
+   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    background: #8da7f4; /* Old browsers */
+    background: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+}
+
+.price-item.featured p.level,
+.price-item.featured p.price {}
+
+.price-item .features li {
+    padding: 5px 0;
+}
+
+.price-item a.btn {
+    display: inline-block;
+}
+
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                   06. Action area css
+* --------------------------------------------------------------------------------------- */
+.action-area {
+    color: #fff;
+    position: relative;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    background: #8da7f4; /* Old browsers */
+    background: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+
+}
+
+.action-area h2 {
+    color: #fff;
+    margin: 0;
+}
+
+.action-area p {
+    margin: 0;
+    margin-top: 5px;
+}
+
+.action-area .btn {
+    margin-top: 10px;
+    float: right;
+}
+
+@media (max-width: 767px) {
+    .action-area {
+        text-align: center;
+    }
+    .action-area .btn {
+        float: none;
+    }
+}
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                   07. Service area css
+* --------------------------------------------------------------------------------------- */
+.service-area {}
+
+.service-box {
+    text-align: center;
+    padding: 40px 30px;
+    margin-top: 30px;
+    border: 1px solid #ececec;
+    transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+}
+
+.service-box:hover {
+    transform: scale(1.02, 1.02);
+    box-shadow: 0px 20px 50px 0px rgba(141, 167, 244, 0.5);
+}
+
+.service-box i.fa,
+.service-box span {
+    font-size: 40px;
+    line-height: 40px;
+    margin-bottom: 10px;
+    color: #8da7f4;
+}
+
+.service-box p {
+    margin-bottom: 0px;
+}
+
+
+
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                08. Testimonial area css
+* --------------------------------------------------------------------------------------- */
+.testimonial-area {
+    background-color: #f9f9ff;
+    background-image: url("../img/bg/test-bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.testimonial-content {
+    text-align: right;
+}
+
+.single-testimonial {
+    background-color: #fff;
+    padding: 30px;
+    margin: 30px 15px;
+    overflow: hidden;
+    border: 1px solid #ececec;
+}
+
+.single-testimonial:hover {
+    transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    box-shadow: 0px 10px 30px 0px rgba(141, 167, 244, 0.2);
+}
+
+.single-testimonial h3 {
+    margin-bottom: 10px;
+}
+
+.ratings i.fa {
+    color: #ffde01;
+}
+
+.ratings {
+    margin-bottom: 20px;
+}
+
+.single-testimonial i.fa {
+    font-size: 15px;
+    display: inline-block;
+    float: left;
+    margin-right: 5px;
+}
+
+.testimonial-area h3 {
+    margin-top: 0px;
+}
+
+.single-testimonial p {
+    line-height: 25px;
+}
+
+.single-testimonial img {
+    float: left;
+    margin-right: 20px;
+    border-radius: 200px;
+    margin-bottom: 50px;
+}
+
+.single-testimonial .test-right {
+    overflow: hidden;
+}
+
+
+
+.owl-theme .owl-controls {
+    margin-top: 15px;
+    height: 20px;
+}
+
+.owl-theme .owl-controls .owl-page span {
+    display: block;
+    width: 20px;
+    height: 5px;
+    margin: 5px 7px;
+    filter: Alpha(Opacity=50);
+    opacity: .5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    background: #d1dbfa;
+}
+
+.owl-theme .owl-controls .owl-buttons div {
+    font-size: 25px;
+    background: none;
+    padding: 5px;
+}
+
+.owl-pagination {
+    text-align: center;
+}
+.owl-pagination .owl-page {
+    display: inline-block;
+}
+.owl-theme .owl-controls .owl-page span {
+    width: 30px;
+    height: 3px;
+    margin: 2px 4px;
+    transition: 0.5s ease;
+    -webkit-transition: 0.5s ease;
+}
+.owl-pagination .owl-page.active span {
+    height: 8px;
+    background-color: #8da7f4;
+}
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                   09. Why Choose area css
+* --------------------------------------------------------------------------------------- */
+
+.choose-box {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.choose-box:hover {
+    transform: scale(1.02, 1.02);
+    transition: 0.3s;
+    -moz-transition: 0.3s;
+    -webkit-transition: 0.3s;
+    box-shadow: 0px 20px 50px 0px rgba(141, 167, 244, 0.5);
+}
+
+.ico-box {
+    background-color: #f9f9ff;
+}
+
+.choose-box:hover .ico-box {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    background: #8da7f4; /* Old browsers */
+    background: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+}
+
+.ico-box span,
+.ico-box i.fa {
+    font-size: 45px;
+    line-height: 200px;
+    margin-bottom: 10px;
+    color: #8da7f4;
+}
+
+.choose-box:hover .ico-box span,
+.choose-box:hover .ico-box i.fa {
+    color: #fff;
+}
+
+.choose-content {
+    padding: 30px;
+    border: 1px solid #ececec;
+}
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                10. Subscribe area css
+* --------------------------------------------------------------------------------------- */
+.subscribe-area {
+    color: #fff;
+
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    background: #8da7f4; /* Old browsers */
+    background: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+}
+
+.subscribe-box {
+    text-align: center;
+    position: relative;
+}
+
+.subscribe-box h2 {
+    color: #fff;
+    font-size: 36px;
+    font-weight: 400;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+.subscribe-box p {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+.newsletter-form {
+    max-width: 570px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+.newsletter-form input {
+    height: 45px;
+    display: inline-block;
+    width: 70%;
+    padding: 5px 10px;
+    padding-top: 0px;
+    float: left;
+    color: #fff;
+    border-bottom: 1px solid #93c9f3;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.newsletter-form input::placeholder {
+    color: #fff;
+}
+
+.newsletter-form .mc-submit {
+    height: 45px;
+    width: 29.9%;
+    border: 1px solid #fff;
+    position: relative;
+    display: inline-block;
+    float: left;
+    color: #222;
+    background: #fff;
+}
+
+.newsletter-form .mc-submit:hover {
+    color: #fff;
+    border: 1px solid #fff;
+    background: transparent;
+}
+
+.subscribe-area .error {
+    text-align: left;
+}
+
+.mailchimp-alerts {
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.mailchimp-success{
+    color: green;
+}
+
+.mailchimp-error{
+    color: red;
+}
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                   11. Client area css
+* --------------------------------------------------------------------------------------- */
+.client-area {
+    border-bottom: 1px solid #eee;
+}
+
+.owl-client {
+    margin-top: 30px;
+}
+
+.owl-client .item {
+    margin: 0 7px;
+    height: 100px;
+}
+
+.owl-client .item img {
+    width: auto;
+    max-width: 100%;
+    padding: 0 15px;
+}
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                   12. Contact area css
+* --------------------------------------------------------------------------------------- */
+.contact-area {
+    background-color: #f9f9ff;
+    background-image: url("../img/bg/test-bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+.contact-address-box {
+    margin: auto;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 970px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 20px 50px 0px rgba(141, 167, 244, 0.5);
+}
+
+.contact-form {
+    padding: 70px 30px;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#8da7f4+0,8da7f4+13,80aef2+32,47cde9+84,38d5e7+100 */
+    background: #8da7f4; /* Old browsers */
+    background: -moz-linear-gradient(left,  #8da7f4 0%, #8da7f4 13%, #80aef2 32%, #47cde9 84%, #38d5e7 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right,  #8da7f4 0%,#8da7f4 13%,#80aef2 32%,#47cde9 84%,#38d5e7 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8da7f4', endColorstr='#38d5e7',GradientType=1 ); /* IE6-9 */
+}
+
+.contact-form {
+    width: 60%;
+    float: left;
+    display: inline-block;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: #fff;
+}
+
+.address {
+    width: 40%;
+    float: left;
+    display: inline-block;
+    padding: 30px;
+}
+
+@media (max-width: 767px) {
+    .contact-address-box {
+        display: block;
+    }
+    .contact-form, .address {
+        width: 100%;
+        float: none;
+        display: block;
+    }
+    .address {
+        padding-top: 70px;
+    }
+}
+
+.form-control {
+    display: block;
+    border: 1px solid #84c9f1;
+    width: 100%;
+    height: 45px;
+    padding: 5px 15px;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    background-image: none;
+    border-radius: 0px;
+    box-shadow: none;
+    margin-bottom: 5px;
+}
+
+.form-control:focus {
+    border-color: #fff;
+    outline: 0;
+    box-shadow: none;
+}
+
+.contact-form textarea#message {
+    padding-top: 10px;
+    height: 130px;
+}
+
+#submitButton {
+    float: right;
+    background: #fff;
+    color: #222;
+}
+
+#submitButton:hover {
+    color: #fff;
+    border: 1px solid #fff;
+    background: transparent;
+}
+
+.success {
+    color: #50B948;
+    font-weight: 700;
+    padding: 10px;
+    text-align: center;
+}
+
+.error {
+    color: #ff0000;
+    font-weight: 700;
+    padding: 10px;
+    text-align: center;
+}
+
+.contact-info {
+    margin-bottom: 30px;
+}
+
+.address span.lnr, .address i.fa {
+    font-size: 20px;
+    line-height: 30px;
+    float: left;
+    display: inline-block;
+    width: 40px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    color: #8da7f4;
+}
+
+.address a {
+    color: #777;
+}
+
+.address a:hover {
+    color: #8da7f4;
+}
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------
+*                                   20. Footer area css
+* --------------------------------------------------------------------------------------- */
+.footer-area {
+    background: #f9f9ff;
+    padding: 30px 0px;
+}
+
+.footer-area p {
+    margin: 0px;
+}
+
+@media (min-width: 768px) {
+    .social-links{
+        float: right;
+    }
+}
+
+.social-links li {
+    list-style: none;
+    float: left;
+    line-height: 30px;
+}
+
+
+.social-links li a i {
+    color: #777;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.social-links li a:hover i {
+    color: #8da7f4;
+}
+
+@media (max-width: 767px) {
+    .footer-area {
+        text-align: center;
+    }
+    .footer-area .social-links {
+        float:none;
+        display:table;
+        margin: auto;
+    }
+}
+
+.add {
+    font-size: 17px;
+}
