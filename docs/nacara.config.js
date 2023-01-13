@@ -12,12 +12,12 @@ export default {
     "navbar": {
         "start": [
             {
-                "pinned": true,
+                "pinned": false,
                 "label": "Home",
                 "url": "/"
             },
             {
-                "pinned": true,
+                "pinned": false,
                 "label": "Guides",
                 "items": [
                     {
@@ -57,6 +57,36 @@ export default {
                         "section": "scaffolding",
                         "label": "Scaffolding",
                         "url": "/contents/explanations/scaffolding.html",
+                    },
+                    "divider",
+                    {
+                        "section": "pipeline",
+                        "label": "Pipeline",
+                        "url": "/contents/explanations/pipeline.html",
+                    },
+                    "divider",
+                    {
+                        "section": "router",
+                        "label": "Router",
+                        "url": "/contents/explanations/routing.html",
+                    },
+                    "divider",
+                    {
+                        "section": "view-engine",
+                        "label": "View Engine",
+                        "url": "/contents/explanations/view.html",
+                    },
+                    "divider",
+                    {
+                        "section": "controllers",
+                        "label": "Controllers",
+                        "url": "/contents/explanations/controller.html",
+                    },
+                    "divider",
+                    {
+                        "section": "endpoint-routing",
+                        "label": "Endpoint Routing",
+                        "url": "/contents/explanations/endpoint-routing.html",
                     },
                 ]
             }
