@@ -101,11 +101,9 @@ let init args =
                         Framework = Some "net6.0" })
                 n))
 
-    // TODO remove this block of code
-    // TODO remove unused packages due to the change to nacara
-    // Target.create "Docs" (fun _ ->
-    //     Shell.cleanDirs [ "docs\\_public" ]
-    //     runDotNet @"fornax build" "docs")
+    Target.create "Docs" (fun _ ->
+        Shell.cleanDirs [ "docs/docs_deploy" ]
+        runTool "npx" "nacara build" "docs")
 
     Target.create "Test" (fun _ ->
         runDotNet @"run --project .\tests\Saturn.UnitTests\Saturn.UnitTests.fsproj -c Release -- --summary" ".")
