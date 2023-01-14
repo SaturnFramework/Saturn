@@ -21,21 +21,6 @@ nuget FSharp.Control.Websockets >= 0.2
 
 # as a library, saturn should have a lower min version of fsharp.core. users can float
 
-group Docs
-  source https://api.nuget.org/v3/index.json
-  framework: netstandard2.0
-  storage: local
-
-  nuget FSharp.Formatting prerelease
-  nuget Newtonsoft.Json
-
-group DocsAsp
-  source https://api.nuget.org/v3/index.json
-  framework: net6.0
-  storage: local
-
-  nuget Microsoft.AspNetCore.App.Ref
-
 group Build
     source https://api.nuget.org/v3/index.json
     framework:net6.0
