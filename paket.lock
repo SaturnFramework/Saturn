@@ -1181,16 +1181,3 @@ NUGET
     System.Threading.Tasks.Dataflow (6.0)
     System.Windows.Extensions (6.0)
       System.Drawing.Common (>= 6.0)
-
-GROUP Docs
-RESTRICTION: == netstandard2.0
-NUGET
-  remote: https://api.nuget.org/v3/index.json
-    FSharp.Formatting (15.0)
-    Newtonsoft.Json (13.0.1)
-
-GROUP DocsAsp
-RESTRICTION: == net6.0
-NUGET
-  remote: https://api.nuget.org/v3/index.json
-    Microsoft.AspNetCore.App.Ref (6.0.3)
