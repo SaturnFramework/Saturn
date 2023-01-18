@@ -23,8 +23,7 @@ module Router =
   type RouterState =
     { Routes: Dictionary<string * RouteType, HttpHandler list>
       RoutesF: Dictionary<string * RouteType, (obj -> HttpHandler) list>
-      Forawrds: Dictionary<string, Endpoint list>
-
+      Forwards: Dictionary<string, Endpoint list>
       Pipelines: HttpHandler list
     }
     with
@@ -94,16 +93,16 @@ module Router =
 
     let addForward state path action : RouterState =
       let lst =
-        match state.Forawrds.TryGetValue((path)) with
+        match state.Forwards.TryGetValue((path)) with
         | false, _ -> []
         | true, lst -> lst
-      state.Forawrds.[(path)] <-  action@lst
+      state.Forwards.[(path)] <-  action@lst
       state
 
     member __.Yield(_) : RouterState =
       { Routes = Dictionary()
         RoutesF = Dictionary()
-        Forawrds = Dictionary()
+        Forwards = Dictionary()
         Pipelines = [] }
 
     member __.Run(state : RouterState) : Endpoint list =
@@ -143,7 +142,7 @@ module Router =
       let deletes = generateRoutes RouteType.Delete
 
       let forwards =
-        state.Forawrds
+        state.Forwards
         |> Seq.map (fun (KeyValue (p, lst)) ->
           subRoute p lst
         )
