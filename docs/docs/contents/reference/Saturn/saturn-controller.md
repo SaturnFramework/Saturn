@@ -74,8 +74,8 @@ Module with `controller` computation expression.
 
 **Values and Functions**
 
-| name | Description | Implementation Link |
-|-|-|-|
-| `except(actions)` | Returns list of all actions except given actions. | [link](https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Controller.fs#L31-31) |
-| `response ctx input` | | [link](https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Controller.fs#L58-58) |
-| `controller` | Computation expression used to create controllers. | [link](https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Controller.fs#L470-470) |
+| name                 | Description                                        | Implementation Link                                                                             |
+|----------------------|----------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| `except(actions)`    | Returns list of all actions except given actions.  | [link](https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Controller.fs#L31-31)   |
+| `response ctx input` |                                                    | [link](https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Controller.fs#L58-58)   |
+| `controller`         | Computation expression used to create controllers. | [link](https://github.com/SaturnFramework/Saturn/tree/master/src/Saturn/Controller.fs#L470-470) |
