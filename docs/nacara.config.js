@@ -4,7 +4,7 @@ export default {
     "siteMetadata": {
         "url": "https://saturnframework.org",
         "baseUrl": "/",
-        "editUrl" : "https://github.com/SaturnFramework/Saturn",
+        "editUrl" : "https://github.com/SaturnFramework/Saturn/docs/docs",
         "title": "Saturn Docs",
         "favIcon": "static/img/icon.png",
         "serverPort": 8080,
