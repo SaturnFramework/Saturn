@@ -1,6 +1,7 @@
 name: Release docs
 
 on:
+  workflow_dispatch: # manual trigger
   push:
     branches:
     - main
