@@ -1,0 +1,25 @@
+---
+title: Saturn | Channels
+layout: standard
+---
+
+# Channels
+
+**Namespace:** [Saturn](./saturn.html)
+
+**Parent:** [Saturn](./saturn.html)
+
+**Declared Types**
+
+| Type                                                        | Description                                                                                                                                                                                                                                                                                                                                       |
+|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [ChannelPath](./saturn-channels-channelpath.html)           | Url (relative to root application url) on which channel is hosted. Type alias for `string`.                                                                                                                                                                                                                                                       |
+| [ClientInfo](./saturn-channels-clientinfo.html)             | Type representing information about client that has executed some channel action It's passed as an argument in channel actions (`join`, `handle`, `terminate`).                                                                                                                                                                                   |
+| [IChannel](./saturn-channels-ichannel.html)                 | Interface of the internal representation of the channel. Shouldn't be used manually, you get its instance from the `channel` Computation Expression.                                                                                                                                                                                              |
+| [ISocketHub](./saturn-channels-isockethub.html)             | Interface representing server side Socket Hub, giving you ability to brodcast messages (either to particular socket or to all sockets). You can get instance of it with `ctx.GetService&lt;Saturn.Channels.ISocketHub>()` from any place that has access to HttpContext instance (`controller` actions, `channel` actions, normal `HttpHandler`). |
+| [JoinResult](./saturn-channels-joinresult.html)             | Type representing result of `join` action. It can be either succesful (`Ok`) or you can reject client connection (`Rejected`).                                                                                                                                                                                                                    |
+| [Message<'a>](./saturn-channels-message-1.html)             | Types representing channels message. It always includes topic, reference id of the message (random GUID), and payload object.                                                                                                                                                                                                                     |
+| [SocketHub](./saturn-channels-sockethub.html)               | A type that wraps access to connected websockets by endpoint.                                                                                                                                                                                                                                                                                     |
+| [SocketId](./saturn-channels-socketid.html)                 | Socket Id. Type alias for `Guid`.                                                                                                                                                                                                                                                                                                                 |
+| [SocketMiddleware](./saturn-channels-socketmiddleware.html) |                                                                                                                                                                                                                                                                                                                                                   |
+| [Topic](./saturn-channels-topic.html)                       | Topic of the channel. Type alias for `string`.                                                                                                                                                                                                                                                                                                    |
