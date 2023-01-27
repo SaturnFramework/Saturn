@@ -70,6 +70,13 @@ $body-size: 16px;
 .content {
     pre > code {
         width: 100%;
+        white-space: pre;
+        overflow: scroll;
+        text-overflow: clip clip;
+    }
+
+    .section {
+        padding: 2.5rem;
     }
 }
 // End gatsby-remark-vscode specific
