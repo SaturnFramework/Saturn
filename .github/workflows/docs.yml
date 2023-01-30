@@ -14,16 +14,22 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16
+    - name: Install NPM deps
+      working-directory: ./docs
+      run: npm ci
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.200
     - name: Restore tools
       run: dotnet tool restore
+
     - name: Run Nacara
       run: dotnet run -- Docs
     - name: Deploy
