@@ -93,7 +93,7 @@ let topRouter = router {
         get "/a" otherHelloWorld2
     })
 
-    // or can be defined separatly and used as HttpHandler
+    // or can be defined separately and used as HttpHandler
     forward "/api" apiRouter
 
     // same with controllers
