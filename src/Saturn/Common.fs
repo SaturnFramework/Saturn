@@ -37,9 +37,9 @@ module Common =
   let private getSavedSubPath (ctx : HttpContext) =
     let inline strOption (str : string) =
       if String.IsNullOrEmpty str then None else Some str
-    if ctx.Items.ContainsKey RouteKey
-    then ctx.Items.Item RouteKey |> string |> strOption
-    else None
+    match ctx.Items.TryGetValue RouteKey with
+    | true, route -> route |> string |> strOption
+    | false, _ -> None
 
   let private handlerWithRootedPath (path : string) (handler : HttpHandler) : HttpHandler =
     fun (next : HttpFunc) (ctx : HttpContext) ->

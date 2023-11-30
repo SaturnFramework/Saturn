@@ -183,10 +183,9 @@ module Controller =
     member __.Plug(state, actions, handler) =
       let addPlug state action handler =
         let newplugs =
-          if state.Plugs.ContainsKey action then
-            state.Plugs.Add(action, (handler::state.Plugs.[action]))
-          else
-            state.Plugs.Add(action,[handler])
+          match state.Plugs.TryGetValue action with
+          | true, acts -> state.Plugs.Add(action, (handler::acts))
+          | false, _ -> state.Plugs.Add(action,[handler])
         {state with Plugs = newplugs}
 
       if actions |> List.contains All then
