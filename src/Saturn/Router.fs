@@ -207,33 +207,33 @@ module Router =
 
       let lst =
         choose [
-          for e in gets do
-            yield GET >=> e
           for e in getsf do
             yield GET >=> e
+          for e in gets do
+            yield GET >=> e
 
-          for e in posts do
-            yield POST >=> e
           for e in postsf do
             yield POST >=> e
+          for e in posts do
+            yield POST >=> e
 
-          for e in patches do
-            yield PATCH >=> e
           for e in patchesf do
             yield PATCH >=> e
+          for e in patches do
+            yield PATCH >=> e
 
-          for e in puts do
-            yield PUT >=> e
           for e in putsf do
             yield PUT >=> e
+          for e in puts do
+            yield PUT >=> e
 
-          for e in deletes do
-            yield DELETE >=> e
           for e in deletesf do
             yield DELETE >=> e
+          for e in deletes do
+            yield DELETE >=> e
 
-          yield! forwards
           yield! forwardsf
+          yield! forwards
           if state.NotFoundHandler.IsSome then
             siteMap.NotFound ()
             yield state.NotFoundHandler.Value
