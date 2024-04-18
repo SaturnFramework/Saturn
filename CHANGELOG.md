@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.0] - 18.04.2024
+
+### Changed
+
+* Updated the base Giraffe dependency from 6.0.0 to 6.4.0
+* Reduced the number of dictionary double-lookups in core handlers (thanks @Thorium!)
+
 ## [0.16.1] - 09.04.2022
 
 * try to trigger release
