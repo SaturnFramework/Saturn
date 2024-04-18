@@ -151,7 +151,7 @@ let init args =
     // Workaround for https://github.com/fsharp/FAKE/issues/2242
     let pushPackage _ =
         let nugetCmd fileName key =
-            sprintf "nuget push %s -k %s -s nuget.org" fileName key
+            sprintf "nuget push %s -k %s -s nuget.org --skip-duplicate" fileName key
 
         let key =
             //Environment.environVarOrFail "nugetKey"
