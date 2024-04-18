@@ -16,7 +16,7 @@ The easiest way to get started is to use the provided template:
 
 1. Install the `dotnet` template with `dotnet new -i Saturn.Template`
 2. Create a new folder and move into it - `mkdir SaturnSample && cd SaturnSample`
-3. Create a new Saturn application - `dotnet new saturn -lang F#`
+3. Create a new Saturn application - `dotnet new Saturn -lang F#`
 4. Install all necessary dev tools - `dotnet tool restore`
 6. Create a new controller with `dotnet saturn gen Book Books id:string title:string author:string`
 7. Run migrations that will create the database and Books table (as for now, the generator is using only SQLite DB) - `dotnet saturn migration`
