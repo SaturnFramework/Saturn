@@ -355,22 +355,59 @@ module Application =
 
     ///Enables using static file hosting.
     [<CustomOperation("use_static")>]
-    member __.UseStatic(state, path : string) =
-      let middleware (app : IApplicationBuilder) =
-        match app.UseDefaultFiles(), state.MimeTypes with
-        |app, [] -> app.UseStaticFiles()
-        |app, mimes ->
-            let provider = FileExtensionContentTypeProvider()
-            mimes |> List.iter (fun (extension, mime) -> provider.Mappings.[extension] <- mime)
-            app.UseStaticFiles(StaticFileOptions(ContentTypeProvider=provider))
+    member __.UseStatic(state: ApplicationState, path: string, ?cacheControls: Saturn.CacheControls.CacheControl list) =
+      
+      let middleware (app:IApplicationBuilder) =
+        //server files
+        let fileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), path))
+        let requestPath: PathString = PathString("/" + path)
+
+        //add mine types
+        let fileExtensionProvider =
+          match state.MimeTypes with
+          | [] -> None
+          | mines ->
+            let fileExtensionContentTypeProvider = FileExtensionContentTypeProvider()
+            mines |> List.iter (fun (extension, mime) -> fileExtensionContentTypeProvider.Mappings.[extension] <- mime)
+            Some fileExtensionContentTypeProvider
+
+        let onPrepareResponse cacheControlHeaders = 
+          //add cache values
+          let handler cacheControlHeaders (ctx : StaticFileResponseContext) =
+            let logger = ctx.Context.GetLogger()        
+            let values = cacheControlHeaders |> CacheControls.generate
+            ctx.Context.Response.Headers.Append(Microsoft.Net.Http.Headers.HeaderNames.CacheControl, values)
+            logger.LogInformation $"Cache Header {values} was added to response"
+
+          System.Action<StaticFileResponseContext>(cacheControlHeaders |> handler) 
+
+
+        //use a suitable options
+        let options = 
+          match fileExtensionProvider, cacheControls with
+          | Some provider, Some cacheControlHeaders ->
+            StaticFileOptions(ContentTypeProvider = provider, OnPrepareResponse = (cacheControlHeaders |> onPrepareResponse) , FileProvider = fileProvider, RequestPath = requestPath)
+          | Some provider, None ->
+            StaticFileOptions(ContentTypeProvider = provider, RequestPath = requestPath)
+          | None, Some cacheControlHeaders ->
+            StaticFileOptions(OnPrepareResponse = (cacheControlHeaders |> onPrepareResponse), FileProvider = fileProvider, RequestPath = requestPath)
+          | None, None ->
+            StaticFileOptions(FileProvider = fileProvider, RequestPath = requestPath)
+
+        app.UseStaticFiles options
+
       let host (builder: IWebHostBuilder) =
-        let p = Path.Combine(Directory.GetCurrentDirectory(), path)
+        let p = Path.Combine(Directory.GetCurrentDirectory(), path)    
         builder
           .UseWebRoot(p)
+
       { state with
           AppConfigs = middleware::state.AppConfigs
           WebHostConfigs = host::state.WebHostConfigs
-      }
+      }        
+
+    [<CustomOperation("use_static")>]
+    member __.UseStatic(state, path : string) = __.UseStatic(state, path)
 
     [<CustomOperation("use_config")>]
     member __.UseConfig(state : ApplicationState, configBuilder : IConfiguration -> 'a) =
