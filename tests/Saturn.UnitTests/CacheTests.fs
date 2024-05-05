@@ -3,6 +3,7 @@ module CacheTests
 
 open Giraffe
 open Saturn.Endpoint
+open Saturn.CacheControls
 open System.Collections.Generic
 open System
 
@@ -22,7 +23,7 @@ let tests =
       let emptyContext = getEmptyContext "GET" "/static/index.html"
       let maxAge = 3600
 
-      let cacheValues = []
+      let cacheValues =  [ ]
       let context = testHostWithContext (hostFromControllerCached testCiRouter cacheValues) emptyContext
 
       let body = getBody' context
@@ -37,7 +38,7 @@ let tests =
     Expecto.Tests.testCase "Correct status code overloaded" <| fun _ ->
       let emptyContext = getEmptyContext "GET" "/static/index.html"
       let maxAge = 3600
-      let cacheValues = [Saturn.CacheControls.CacheControl.Public; Saturn.CacheControls.CacheControl.MaxAge maxAge]
+      let cacheValues =  [ CacheControl.Public; CacheControl.MaxAge 3600 ]
       let context = testHostWithContext (hostFromControllerCached testCiRouter cacheValues) emptyContext
 
       let body = getBody' context

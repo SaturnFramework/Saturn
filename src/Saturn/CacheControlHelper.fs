@@ -3,6 +3,8 @@ namespace Saturn
 [<AutoOpen>]
 module CacheControls =
 
+  /// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+  /// response header values for cache-control
   type CacheControl =
     | NoCache
     | NoStore

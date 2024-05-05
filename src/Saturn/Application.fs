@@ -356,6 +356,11 @@ module Application =
     ///Enables using static file hosting.
     [<CustomOperation("use_static")>]
     member __.UseStatic(state: ApplicationState, path: string, ?cacheControls: Saturn.CacheControls.CacheControl list) =
+      /// what should the type of cacheControls be ?
+      ///   string
+      ///   an instance of Microsoft.Net.Http.Headers.CacheControlHeaderValue
+      ///   or fsharp union type as here
+      ///   some other option
       
       let middleware (app:IApplicationBuilder) =
         //server files
