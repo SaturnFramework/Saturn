@@ -143,3 +143,13 @@ let hostFromController ctr =
     service_config (fun sc -> sc.AddSingleton<IDependency>(dependency ()))
   }
   app.Build()
+
+let hostFromControllerCached ctr cacheValues =
+  let app = application {
+    use_endpoint_router ctr
+    webhost_config (fun hs -> hs.UseTestServer ())
+    logging (fun lg -> lg.ClearProviders() |> ignore)
+    service_config (fun sc -> sc.AddSingleton<IDependency>(dependency ()))
+    use_static "static" cacheValues
+  }
+  app.Build()

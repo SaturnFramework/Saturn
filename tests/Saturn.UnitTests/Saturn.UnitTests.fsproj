@@ -3,15 +3,18 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <RunWorkingDirectory>$(MSBuildThisFileDirectory)</RunWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Saturn\Saturn.fsproj">
       <Name>Saturn.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
+  
   <ItemGroup>
     <Compile Include="Helpers.fs" />
     <Compile Include="SimpleTests.fs" />
+    <Compile Include="CacheTests.fs" />
     <Compile Include="ControllerTests.fs" />
     <Compile Include="LinksTests.fs" />
     <Compile Include="RouterTests.fs" />
