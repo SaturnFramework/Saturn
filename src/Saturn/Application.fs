@@ -224,6 +224,8 @@ module Application =
         )
 
     ///Defines top-level router used for the application
+    ///
+    ///This can only be called once, and not after `no_router`!
     [<CustomOperation("use_router")>]
     member __.Router(state, handler) =
       match state.NoRouter, state.Router with
@@ -237,6 +239,8 @@ module Application =
       {state with EndpointRouter = Some routes}
 
     ///Disable warning message about lack of `router` definition. Should be used for channels-only or gRPC applications.
+    ///
+    ///This cannot be called after `use_router`!
     [<CustomOperation("no_router")>]
     member __.NoRouter(state) =
       match state.Router with
