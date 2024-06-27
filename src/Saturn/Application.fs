@@ -399,11 +399,8 @@ module Application =
 
       {state with AppConfigs=middleware::state.AppConfigs}
 
-    ///Enables usage of the URL Rewriting Middleware
-    ///If you used `force_ssl` operation, this option will override it. You'll have to specify "AddRedirectToHttps" on your RewriteOptions.
-    ///Usage example:
-    /// use_rewriter RewriteOptions().AddRedirectToNonWwwPermanent().AddRedirectToHttps()
-    ///For more information see https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting?view=aspnetcore-6.0
+    ///Enables usage of the URL Rewriting Middleware, more information can be found at https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting
+    ///Usage example: use_rewriter RewriteOptions().AddRedirectToNonWwwPermanent()
     [<CustomOperation("use_rewriter")>]
     member __.UseRewriter(state : ApplicationState, options : RewriteOptions) =
       let middleware (app : IApplicationBuilder) =
