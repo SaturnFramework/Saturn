@@ -368,7 +368,7 @@ module Controller =
         //   yield state.NotFoundHandler.Value
 
         for (subRoute, sCs) in state.SubControllers do
-          if not (subRoute.StartsWith("/")) then
+          if not (subRoute.StartsWith '/') then
             failwith (sprintf "Subcontroller route '%s' is not valid, these routes should start with a '/'." subRoute)
 
           let fullRoute = keyFormat() + subRoute
@@ -385,7 +385,7 @@ module Controller =
             routef (PrintfFormat<'Key -> obj,_,_,_,'Key> fullRoute) (fun key -> fun nxt ctx -> task {
               let v = ctx.Request.Path.Value
               let v =
-                if (v.EndsWith "/") then
+                if (v.EndsWith '/') then
                   v.Substring(0, v.Length - 1)
                 else
                   v
