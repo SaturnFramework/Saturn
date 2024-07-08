@@ -230,7 +230,7 @@ module Controller =
             x.FormattedRouteFunc state (PrintfFormat<_,_,_,_,'Key * string> (route + "/%s")) (fst >> actionHandler)
 
           fun next ctx ->
-            let hasTrailingSlash = (SubRouting.getNextPartOfPath ctx).EndsWith '/'
+            let hasTrailingSlash = (SubRouting.getNextPartOfPath ctx).LastIndexOf '/' = 0
             // If we still have more segments beyond our current segment we'll only match up to the next "/".
             // ASP.NET Core decodes everything but "/" characters for Request.Path, so we won't match those by accident here.
             (if hasTrailingSlash then routeHandler else segmentRouteHandler) next ctx
