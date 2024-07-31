@@ -41,3 +41,37 @@ let tests =
         Expect.equal (getBody ctx) """{"id":"myId","links":["myLink1","myLink2"]}""" "Result should be equal"
 
   ]
+
+//---------------------------`Application only takes one router` tests----------------------------------------
+
+[<Tests>]
+let routerTests =
+  testList "Application only takes one router" [
+    testCase "Second router throws" (fun _ ->
+      let app () =
+        application {
+          use_router (text "")
+          use_router (text "")
+        }
+
+      Expect.throws (app >> ignore) "Application did not fail on second router!"
+    )
+    testCase "Adding a router after `no_router` throws" (fun _ ->
+      let app () =
+        application {
+          no_router
+          use_router (text "")
+        }
+
+      Expect.throws (app >> ignore) "Application did not fail on router after no_router!"
+    )
+    testCase "Adding a `no_router after `use_router` throws" (fun _ ->
+      let app () =
+        application {
+          use_router (text "")
+          no_router
+        }
+
+      Expect.throws (app >> ignore) "Application did not fail on no_router after use_router!"
+    )
+  ]
