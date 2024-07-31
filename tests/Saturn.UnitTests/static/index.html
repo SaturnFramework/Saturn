@@ -1,0 +1,25 @@
+<h1>Hello from static</h1>
+<h2 id="clock"></h2>
+
+<script>
+    if(window.fetch) {
+        fetch(location, {method:'HEAD'})
+        .then(function(r) {
+            console.log(Array.from(r.headers));
+            Array.from(r.headers)
+            .filter(item => item[0] == "etag" || item[0] == "cache-control" || item[0] == "last-modified")
+            .map(item => item[0] + "\n" + item[1] + "\n\n")
+            .forEach(function(item) {
+                document.body.appendChild(document.createElement("pre")).append(item);
+            });  
+        });    
+    }
+    else {
+        document.write("This does not work in your browser - no support for fetch API");
+    }
+
+    (function () {
+        var clockElement = document.getElementById( "clock" );
+        clock.innerHTML = "Last Page Refresh " + (new Date().toLocaleTimeString());
+    }());    
+</script>
