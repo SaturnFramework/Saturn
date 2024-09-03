@@ -4,6 +4,7 @@ storage: none
 framework: net6.0
 
 nuget Expecto
+nuget FSharp.Control.Websockets >= 0.3.0
 nuget NSubstitute
 nuget BenchmarkDotNet
 nuget Microsoft.AspNetCore.TestHost
@@ -17,7 +18,6 @@ nuget Microsoft.NET.Sdk.Functions
 nuget protobuf-net.Grpc.AspNetCore
 nuget protobuf-net.Grpc.HttpClient
 nuget System.ServiceModel.Primitives
-nuget FSharp.Control.Websockets >= 0.2
 
 # as a library, saturn should have a lower min version of fsharp.core. users can float
 
