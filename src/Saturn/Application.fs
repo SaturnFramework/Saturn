@@ -63,6 +63,7 @@ module Application =
     ErrorHandler: ErrorHandler option
     Pipelines: HttpHandler list
     Urls: string list
+    Sockets : string list
     MimeTypes: (string*string) list
     AppConfigs: (IApplicationBuilder -> IApplicationBuilder) list
     HostConfigs: (IHostBuilder -> IHostBuilder) list
@@ -104,6 +105,7 @@ module Application =
   ///     pipe_through endpointPipe
   ///     use_router topRouter
   ///     url "http://0.0.0.0:8085/"
+  ///     socket "/tmp/socket"
   ///     memory_cache
   ///     use_static "static"
   ///     use_gzip
@@ -114,7 +116,7 @@ module Application =
       let errorHandler (ex : Exception) (logger : ILogger) =
         logger.LogError(EventId(), ex, "An unhandled exception has occurred while executing the request.")
         clearResponse >=> Giraffe.HttpStatusCodeHandlers.ServerErrors.INTERNAL_ERROR ex.Message
-      {Router = None; EndpointRouter = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; WebHostConfigs = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false;  NoWebhost = false; Channels = [] }
+      {Router = None; EndpointRouter = None; ErrorHandler = Some errorHandler; Pipelines = []; Urls = []; Sockets = []; MimeTypes = []; AppConfigs = []; HostConfigs = []; ServicesConfig = []; WebHostConfigs = []; CliArguments = None; CookiesAlreadyAdded = false; NoRouter = false;  NoWebhost = false; Channels = [] }
 
     member __.Run(state: ApplicationState) : IHostBuilder  =
       // to build the app we have to separate our configurations and our pipelines.
@@ -215,6 +217,12 @@ module Application =
               wbhst.UseUrls(state.Urls |> List.toArray)
             else wbhst
           let wbhst =
+            if not (state.Sockets |> List.isEmpty) then
+              wbhst.ConfigureKestrel (fun options ->
+                state.Sockets |> List.iter options.ListenUnixSocket
+              )
+            else wbhst
+          let wbhst =
             wbhst.Configure(fun ab ->
               (ab, useParts)
               ||> Seq.fold (fun ab part -> part ab)
@@ -278,6 +286,11 @@ module Application =
     [<CustomOperation("url")>]
     member __.Url(state, url) =
       {state with Urls = url::state.Urls}
+
+    ///Adds socket
+    [<CustomOperation("socket")>]
+    member __.Socket(state, socket) =
+      {state with Sockets = socket::state.Sockets}
 
     ///Adds MIME types definitions as a list of (extension, mime)
     [<CustomOperation("use_mime_types")>]
